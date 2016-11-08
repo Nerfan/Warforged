@@ -27,13 +27,10 @@ namespace CardGame
         public void newTurn()
         {
             var dict = new Dictionary<PHASES, List<MyMethod>>();
-            dict.Add(PHASES.PRE_DAWN, new List<MyMethod>());
             dict.Add(PHASES.DAWN, new List<MyMethod>());
-            dict.Add(PHASES.POST_DAWN, new List<MyMethod>());
+            dict.Add(PHASES.DECLARATION, new List<MyMethod>());
             dict.Add(PHASES.MAIN, new List<MyMethod>());
-            dict.Add(PHASES.PRE_DUSK, new List<MyMethod>());
             dict.Add(PHASES.DUSK, new List<MyMethod>());
-            dict.Add(PHASES.POST_DUSK, new List<MyMethod>());
             turnMethods.Add(dict);
         }
 
@@ -43,26 +40,19 @@ namespace CardGame
             {
                 newTurn();
             }
-            PHASES[] phases = new PHASES[] { PHASES.PRE_DAWN,PHASES.DAWN,PHASES.POST_DAWN,PHASES.MAIN,PHASES.PRE_DUSK,PHASES.DUSK,PHASES.POST_DUSK};
             Dictionary<PHASES, List<MyMethod>> dict = turnMethods[currentTurn];
-            //foreach(PHASES phase in phases)
-            //{
-                List<MyMethod> lst = dict[phase];
-                foreach (MyMethod d in lst)
-                {
-                    d.func.DynamicInvoke(d.parameters);
-                }
-            //}
+            List<MyMethod> lst = dict[phase];
+            foreach (MyMethod d in lst)
+            {
+                d.func.DynamicInvoke(d.parameters);
+            }
         }
     }
     public enum PHASES
     {
-        PRE_DAWN,
         DAWN,
-        POST_DAWN,
+        DECLARATION,
         MAIN,
-        PRE_DUSK,
         DUSK,
-        POST_DUSK
     }
 }
