@@ -2,8 +2,8 @@
 
 namespace Warforged
 {
-	public class AdriusAspirer : Character
-	{
+    public class AdriusAspirer : Character
+    {
         public AdriusAspirer() : base()
         {
             name = "Adrius";
@@ -26,6 +26,6 @@ namespace Warforged
                 user.damage = 1 + user.empower;
             }
         }
-	}
+    }
 }
 

@@ -8,8 +8,10 @@ namespace Warforged
 		Character p2;
 		public Game ()
 		{
-			p1 = new AdriusAspirer();
-			p2 = new AdriusAspirer();
+			p1 = new Edros();
+			p2 = new Edros();
+            p1.setOpponent(p2);
+            p2.setOpponent(p1);
             p1.playCard(p1.hand[0]);
             p2.playCard(p2.hand[0]);
 		}
@@ -18,13 +20,13 @@ namespace Warforged
 		{
 			// Store current info
             // Declaration phase
+            //      idk exactly how I want to handle green cards
             // Strive now and those effects happen
 			// Calclate damages
-            int p1dmg = p1.damage - p2.negate;
-            int p2dmg = p2.damage - p1.negate;
             // Deal damages
-            p1.takeDamage(p2dmg);
-            p2.takeDamage(p1dmg);
+            p1.mainPhase();
+            p2.mainPhase();
+
             // Heal
             // If anyone dies, do it at the end
 		}
