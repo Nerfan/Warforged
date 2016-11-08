@@ -8,22 +8,22 @@ namespace Warforged
         {
             name = "Adrius";
             title = "The Aspirer";
-            hand.Add(new ShatteringBlow());
+            hand.Add(new ShatteringBlow(this));
         }
 
         /* CARDS */
         private class ShatteringBlow : Card
         {
-            public ShatteringBlow()
+            public ShatteringBlow(Character user) : base(user)
             {
                 name = "Shattering Blow";
                 effect = "Deal 1 damage.";
                 color = Color.red;
             }
 
-            public override void activate(Character user)
+            public override void activate()
             {
-                user.damage = 1 + user.empower;
+                user.damage += 1;
             }
         }
     }
