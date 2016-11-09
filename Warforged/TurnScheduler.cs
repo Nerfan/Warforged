@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace CardGame
+namespace Warforged
 {
     public class TurnScheduler
     {

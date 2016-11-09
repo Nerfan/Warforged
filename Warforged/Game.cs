@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading;
 
 namespace Warforged
 {
@@ -30,6 +31,9 @@ namespace Warforged
 
 		public static void Main()
 		{
+            Thread UIThread = new Thread(UITestThread);
+            UIThread.SetApartmentState(ApartmentState.STA);
+            UIThread.Start();
             Game game = new Game();
             Console.WriteLine("{0} hand size", game.p1.hand.Count);
             game.p1.playCard(game.p1.hand[0]);
@@ -55,6 +59,13 @@ namespace Warforged
             Console.WriteLine("{0}", game.p1.hp);
             Console.WriteLine("{0}", game.p2.hp);
 		}
+
+        [STAThreadAttribute]
+        public static void UITestThread()
+        {
+            GameWindow gw = new GameWindow();
+            gw.ShowDialog();
+        }
 	}
 }
 

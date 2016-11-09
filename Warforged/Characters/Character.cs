@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Reflection;
+using System.Windows.Media;
 
 namespace Warforged
 {
@@ -343,6 +345,13 @@ namespace Warforged
             // Nothing other than cards need this reference,
             // since cards are only called through the reference in the first place
             protected Character user;
+
+            //Used in the UI. This is the image assosiated with the card.
+            public Brush CardImage { get; protected set; }
+
+            //A variable used to easily get the current directory of card images
+            public static string ImageDir = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + System.IO.Path.DirectorySeparatorChar + "CardImages" + System.IO.Path.DirectorySeparatorChar;
+
 
             protected Card(Character user)
             {

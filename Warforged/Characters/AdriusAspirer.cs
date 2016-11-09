@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Windows.Media;
 
 namespace Warforged
 {
@@ -19,6 +20,7 @@ namespace Warforged
                 name = "Shattering Blow";
                 effect = "Deal 1 damage.";
                 color = Color.red;
+                CardImage = new SolidColorBrush(System.Windows.Media.Color.FromRgb(255,0,0));
             }
 
             public override void activate()

@@ -1,0 +1,11 @@
+J:\Code\CardGame\Warforged\Warforged.exe.config
+J:\Code\CardGame\Warforged\obj\x86\Release\GameWindow.baml
+J:\Code\CardGame\Warforged\obj\x86\Release\GameWindow.g.cs
+J:\Code\CardGame\Warforged\obj\x86\Release\Warforged_Content.g.cs
+J:\Code\CardGame\Warforged\obj\x86\Release\Warforged_MarkupCompile.cache
+J:\Code\CardGame\Warforged\obj\x86\Release\Warforged.g.resources
+J:\Code\CardGame\Warforged\obj\x86\Release\Warforged.exe
+J:\Code\CardGame\Warforged\obj\x86\Release\Warforged.pdb
+J:\Code\CardGame\Warforged\Warforged.exe
+J:\Code\CardGame\Warforged\Warforged.pdb
+J:\Code\CardGame\Warforged\obj\x86\Release\Warforged.csprojResolveAssemblyReference.cache

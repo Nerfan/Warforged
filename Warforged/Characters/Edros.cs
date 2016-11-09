@@ -1,4 +1,6 @@
 using System;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 
 namespace Warforged
 {
@@ -63,6 +65,10 @@ namespace Warforged
                 name = "Purging Lightning";
                 effect = "Deal 2 damage.\nBloodlust: Deal 2 additional damage";
                 color = Color.red;
+                CardImage = new ImageBrush()
+                {
+                    ImageSource = new BitmapImage(new Uri(@ImageDir + "Edros" + System.IO.Path.DirectorySeparatorChar + "Purging Lightning.png"))
+                };
             }
 
             public override void activate()
@@ -83,6 +89,10 @@ namespace Warforged
                 name = "Hand of Toren";
                 effect = "Deal 1 damage.\nAlign (B, R, R): Deal 3 additional damage.";
                 color = Color.red;
+                CardImage = new ImageBrush()
+                {
+                    ImageSource = new BitmapImage(new Uri(@ImageDir + "Edros" + System.IO.Path.DirectorySeparatorChar + "Hand of Toren.png"))
+                };
             }
 
             public override void activate()
@@ -103,6 +113,10 @@ namespace Warforged
                 name = "Rolling Thunder";
                 effect = "Chain (R): Deal 3 damage.\nStrike: Bolster";
                 color = Color.red;
+                CardImage = new ImageBrush()
+                {
+                    ImageSource = new BitmapImage(new Uri(@ImageDir + "Edros" + System.IO.Path.DirectorySeparatorChar + "Rolling Thunder.png"))
+                };
             }
 
             public override void activate()
@@ -124,6 +138,10 @@ namespace Warforged
                 name = "Pillar of Lightning";
                 effect = "Deal 2 damage.\nCounter(G): Seal (B)";
                 color = Color.red;
+                CardImage = new ImageBrush()
+                {
+                    ImageSource = new BitmapImage(new Uri(@ImageDir + "Edros" + System.IO.Path.DirectorySeparatorChar + "Pillar of Lightning.png"))
+                };
             }
 
             public override void activate()
@@ -144,6 +162,10 @@ namespace Warforged
                 name = "Celestial Surge";
                 effect = "Deal 2 damage.\nStrike: Empower (1).";
                 color = Color.red;
+                CardImage = new ImageBrush()
+                {
+                    ImageSource = new BitmapImage(new Uri(@ImageDir + "Edros" + System.IO.Path.DirectorySeparatorChar + "Celestial Surge.png"))
+                };
             }
 
             public override void activate()
@@ -162,6 +184,10 @@ namespace Warforged
                 name = "Sky Blessed Shield";
                 effect = "Gain 2 health.\nEndure (3): Counter (R): Reflect.";
                 color = Color.blue;
+                CardImage = new ImageBrush()
+                {
+                    ImageSource = new BitmapImage(new Uri(@ImageDir + "Edros" + System.IO.Path.DirectorySeparatorChar + "Sky Blessed Shield.png"))
+                };
             }
 
             public override void activate()
@@ -182,6 +208,10 @@ namespace Warforged
                 name = "Toren's Favored";
                 effect = "Strive(1): Negate 3 damage.";
                 color = Color.blue;
+                CardImage = new ImageBrush()
+                {
+                    ImageSource = new BitmapImage(new Uri(@ImageDir + "Edros" + System.IO.Path.DirectorySeparatorChar + "Toren's Favored.png"))
+                };
             }
 
             public override void activate()
@@ -219,6 +249,10 @@ namespace Warforged
                 name = "Faith Unquestioned";
                 effect = "Swap 1 Offense card in your hand with 1 Standby card.\nStrive(1): Send a Standby Defense card to your hand.";
                 color = Color.green;
+                CardImage = new ImageBrush()
+                {
+                    ImageSource = new BitmapImage(new Uri(@ImageDir + "Edros" + System.IO.Path.DirectorySeparatorChar + "Faith Unquestioned.png"))
+                };
             }
 
             public override void activate()
@@ -249,6 +283,10 @@ namespace Warforged
                 effect = "Depart: Deal damage equal to the amount of Standby Offense cards you have.";
                 color = Color.black;
                 active = false;
+                CardImage = new ImageBrush()
+                {
+                    ImageSource = new BitmapImage(new Uri(@ImageDir + "Edros" + System.IO.Path.DirectorySeparatorChar + "Wrath of Lightning.png"))
+                };
             }
 
             public override void depart()
@@ -264,6 +302,10 @@ namespace Warforged
                 effect = "Depart: Return up to 2 Standby cards to your hand.";
                 color = Color.black;
                 active = false;
+                CardImage = new ImageBrush()
+                {
+                    ImageSource = new BitmapImage(new Uri(@ImageDir + "Edros" + System.IO.Path.DirectorySeparatorChar + "Scorn of Thunder.png"))
+                };
             }
 
             public override void depart()
@@ -279,6 +321,10 @@ namespace Warforged
                 effect = "Depart: Gain health equal to amount of health your opponent is missing.";
                 color = Color.black;
                 active = false;
+                CardImage = new ImageBrush()
+                {
+                    ImageSource = new BitmapImage(new Uri(@ImageDir + "Edros" + System.IO.Path.DirectorySeparatorChar + "Grace of Heaven.png"))
+                };
             }
 
             public override void depart()
@@ -295,6 +341,10 @@ namespace Warforged
                 color = Color.red;
                 setAwakening();
                 active = false;
+                CardImage = new ImageBrush()
+                {
+                    ImageSource = new BitmapImage(new Uri(@ImageDir + "Edros" + System.IO.Path.DirectorySeparatorChar + "Crashing Sky.png"))
+                };
             }
 
             public override void activate()

@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
@@ -7,7 +7,8 @@
     <OutputType>Exe</OutputType>
     <RootNamespace>Warforged</RootNamespace>
     <AssemblyName>Warforged</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
@@ -23,11 +24,11 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DebugType>full</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>bin\Release</OutputPath>
+    <OutputPath>.\</OutputPath>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <Externalconsole>true</Externalconsole>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="PresentationCore" />
@@ -37,8 +38,9 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
+    <Compile Include="Characters\Edros.cs" />
+    <Compile Include="GameWindow.xaml.cs">
+      <DependentUpon>GameWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="MyMethod.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -50,15 +52,31 @@
   </ItemGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
-    <Content Include="A Soldier%27s Remorse.png" />
+    <Content Include="CardImages\Edros\Celestial Surge.png" />
+    <Content Include="CardImages\Edros\Crashing Sky.png" />
+    <Content Include="CardImages\Edros\Edros.png" />
+    <Content Include="CardImages\Edros\Faith Unquestioned.png" />
+    <Content Include="CardImages\Edros\Grace of Heaven.png" />
+    <Content Include="CardImages\Edros\Hand of Toren.png" />
+    <Content Include="CardImages\Edros\Pillar of Lightning.png" />
+    <Content Include="CardImages\Edros\Purging Lightning.png" />
+    <Content Include="CardImages\Edros\Rolling Thunder.png" />
+    <Content Include="CardImages\Edros\Scorn of Thunder.png" />
+    <Content Include="CardImages\Edros\Sky Blessed Shield.png" />
+    <Content Include="CardImages\Edros\Toren%27s Favored.png" />
+    <Content Include="CardImages\Edros\Wrath of Lightning.png" />
+    <Content Include="CardImages\Tyras\A Soldier%27s Remorse.png" />
   </ItemGroup>
   <ItemGroup>
-    <Page Include="MainWindow.xaml">
+    <Page Include="GameWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
   </ItemGroup>
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
   </ItemGroup>
 </Project>

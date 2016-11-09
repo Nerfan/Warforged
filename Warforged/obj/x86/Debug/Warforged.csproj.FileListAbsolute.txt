@@ -1,6 +1,4 @@
 J:\Code\CardGame\Warforged\obj\x86\Debug\Warforged.csprojResolveAssemblyReference.cache
-J:\Code\CardGame\Warforged\obj\x86\Debug\MainWindow.baml
-J:\Code\CardGame\Warforged\obj\x86\Debug\MainWindow.g.cs
 J:\Code\CardGame\Warforged\obj\x86\Debug\Warforged_Content.g.cs
 J:\Code\CardGame\Warforged\obj\x86\Debug\Warforged_MarkupCompile.cache
 J:\Code\CardGame\Warforged\obj\x86\Debug\Warforged.g.resources
@@ -8,3 +6,6 @@ J:\Code\CardGame\Warforged\bin\Debug\Warforged.exe
 J:\Code\CardGame\Warforged\bin\Debug\Warforged.pdb
 J:\Code\CardGame\Warforged\obj\x86\Debug\Warforged.exe
 J:\Code\CardGame\Warforged\obj\x86\Debug\Warforged.pdb
+J:\Code\CardGame\Warforged\bin\Debug\Warforged.exe.config
+J:\Code\CardGame\Warforged\obj\x86\Debug\GameWindow.baml
+J:\Code\CardGame\Warforged\obj\x86\Debug\GameWindow.g.cs
