@@ -31,6 +31,20 @@ namespace Warforged
         int OHandIndex = 0;
         List<Rectangle> Hand = new List<Rectangle>();
         List<Rectangle> OHand = new List<Rectangle>();
+
+        List<Rectangle> Link1 = new List<Rectangle>();
+        List<Rectangle> Link2 = new List<Rectangle>();
+        List<Rectangle> Link3 = new List<Rectangle>();
+        List<Rectangle> Link4 = new List<Rectangle>();
+
+        List<Rectangle> OLink1 = new List<Rectangle>();
+        List<Rectangle> OLink2 = new List<Rectangle>();
+        List<Rectangle> OLink3 = new List<Rectangle>();
+        List<Rectangle> OLink4 = new List<Rectangle>();
+
+        List<Rectangle> Suspended = new List<Rectangle>();
+
+        List<Rectangle> OSuspended = new List<Rectangle>();
         public GameWindow()
         {
             InitializeComponent();
@@ -67,8 +81,104 @@ namespace Warforged
             OHand.Add(OHand8);
             OHand.Add(OHand9);
             OHand.Add(OHand10);
-            
-            foreach(Rectangle h in Hand)
+
+            Link1.Add(Link1_1);
+            Link1.Add(Link1_2);
+            Link1.Add(Link1_3);
+            Link1.Add(Link1_4);
+            Link1.Add(Link1_5);
+            Link1.Add(Link1_6);
+            Link1.Add(Link1_7);
+            Link1.Add(Link1_8);
+
+            Link2.Add(Link2_1);
+            Link2.Add(Link2_2);
+            Link2.Add(Link2_3);
+            Link2.Add(Link2_4);
+            Link2.Add(Link2_5);
+            Link2.Add(Link2_6);
+            Link2.Add(Link2_7);
+            Link2.Add(Link2_8);
+
+
+            Link3.Add(Link3_1);
+            Link3.Add(Link3_2);
+            Link3.Add(Link3_3);
+            Link3.Add(Link3_4);
+            Link3.Add(Link3_5);
+            Link3.Add(Link3_6);
+            Link3.Add(Link3_7);
+            Link3.Add(Link3_8);
+
+            Link4.Add(Link4_1);
+            Link4.Add(Link4_2);
+            Link4.Add(Link4_3);
+            Link4.Add(Link4_4);
+            Link4.Add(Link4_5);
+            Link4.Add(Link4_6);
+            Link4.Add(Link4_7);
+            Link4.Add(Link4_8);
+
+            OLink1.Add(OLink1_1);
+            OLink1.Add(OLink1_2);
+            OLink1.Add(OLink1_3);
+            OLink1.Add(OLink1_4);
+            OLink1.Add(OLink1_5);
+            OLink1.Add(OLink1_6);
+            OLink1.Add(OLink1_7);
+            OLink1.Add(OLink1_8);
+
+            OLink2.Add(OLink2_1);
+            OLink2.Add(OLink2_2);
+            OLink2.Add(OLink2_3);
+            OLink2.Add(OLink2_4);
+            OLink2.Add(OLink2_5);
+            OLink2.Add(OLink2_6);
+            OLink2.Add(OLink2_7);
+            OLink2.Add(OLink2_8);
+
+
+            OLink3.Add(OLink3_1);
+            OLink3.Add(OLink3_2);
+            OLink3.Add(OLink3_3);
+            OLink3.Add(OLink3_4);
+            OLink3.Add(OLink3_5);
+            OLink3.Add(OLink3_6);
+            OLink3.Add(OLink3_7);
+            OLink3.Add(OLink3_8);
+
+            OLink4.Add(OLink4_1);
+            OLink4.Add(OLink4_2);
+            OLink4.Add(OLink4_3);
+            OLink4.Add(OLink4_4);
+            OLink4.Add(OLink4_5);
+            OLink4.Add(OLink4_6);
+            OLink4.Add(OLink4_7);
+            OLink4.Add(OLink4_8);
+
+            Suspended.Add(Suspend1);
+            Suspended.Add(Suspend2);
+            Suspended.Add(Suspend3);
+            Suspended.Add(Suspend4);
+            Suspended.Add(Suspend5);
+            Suspended.Add(Suspend6);
+            Suspended.Add(Suspend7);
+            Suspended.Add(Suspend8);
+            Suspended.Add(Suspend9);
+            Suspended.Add(Suspend10);
+
+            OSuspended.Add(OSuspend1);
+            OSuspended.Add(OSuspend2);
+            OSuspended.Add(OSuspend3);
+            OSuspended.Add(OSuspend4);
+            OSuspended.Add(OSuspend5);
+            OSuspended.Add(OSuspend6);
+            OSuspended.Add(OSuspend7);
+            OSuspended.Add(OSuspend8);
+            OSuspended.Add(OSuspend9);
+            OSuspended.Add(OSuspend10);
+
+            foreach (Rectangle h in Hand)
             {
                 h.Visibility = Visibility.Hidden;
             }
@@ -97,6 +207,51 @@ namespace Warforged
             {
                 ImageSource = new BitmapImage(new Uri(Character.Card.ImageDir+"Edros"+System.IO.Path.DirectorySeparatorChar+"Edros.png"))
             };
+            Lineup1.Fill = e.invocation[0].CardImage;
+            Lineup2.Fill = e.invocation[1].CardImage;
+            Lineup3.Fill = e.invocation[2].CardImage;
+            Lineup4.Fill = e.invocation[3].CardImage;
+
+
+            OLineup1.Fill = e.invocation[0].CardImage;
+            OLineup2.Fill = e.invocation[1].CardImage;
+            OLineup3.Fill = e.invocation[2].CardImage;
+            OLineup4.Fill = e.invocation[3].CardImage;
+            for (int i = 0; i < 10; ++i)
+            {
+                if(i >=8 )
+                {
+                    Suspended[i].Fill = CharacterSlot.Fill;
+                    OSuspended[i].Fill = CharacterSlot.Fill;
+                }
+                else if(i >=4)
+                {
+                    Link1[i].Fill = e.standby[i - 4].CardImage;
+                    Link2[i].Fill = e.standby[i - 4].CardImage;
+                    Link3[i].Fill = e.standby[i - 4].CardImage;
+                    Link4[i].Fill = e.standby[i - 4].CardImage;
+                    OLink1[i].Fill = e.standby[i - 4].CardImage;
+                    OLink2[i].Fill = e.standby[i - 4].CardImage;
+                    OLink3[i].Fill = e.standby[i - 4].CardImage;
+                    OLink4[i].Fill = e.standby[i - 4].CardImage;
+                    Suspended[i].Fill = e.standby[i - 4].CardImage;
+                    OSuspended[i].Fill = e.standby[i - 4].CardImage;
+                }
+                else
+                {
+                    Link1[i].Fill = e.hand[i].CardImage;
+                    Link2[i].Fill = e.hand[i].CardImage;
+                    Link3[i].Fill = e.hand[i].CardImage;
+                    Link4[i].Fill = e.hand[i].CardImage;
+                    OLink1[i].Fill = e.hand[i].CardImage;
+                    OLink2[i].Fill = e.hand[i].CardImage;
+                    OLink3[i].Fill = e.hand[i].CardImage;
+                    OLink4[i].Fill = e.hand[i].CardImage;
+                    Suspended[i].Fill = e.hand[i].CardImage;
+                    OSuspended[i].Fill = e.hand[i].CardImage;
+                }
+            }
+            
         }
 
         //Adds the card to the standby position.
