@@ -15,7 +15,6 @@ namespace Warforged
         }
 		public string name{get; protected set;}
 		public string effect{get; protected set;}
-		public Color color{get; protected set;}
 
 		public abstract void activate(Character user);
 	}

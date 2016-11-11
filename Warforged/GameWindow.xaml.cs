@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -22,10 +23,20 @@ namespace Warforged
     /// </summary>
     public partial class GameWindow : Window
     {
+        private string sideText = "Health : {0}\n" +
+"Empower: {1}\n" +
+"Reinforce: {2}\n" +
+"Seal: {3}\n" +
+"Last: {4}\n" +
+"Negated: {5}\n" +
+"Healed: {6}\n" +
+"Damage: {7}\n";
         private Label cardZoom = new Label();
         Brush defaultBrush = null;
         Brush BackofCard = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0, 0, 0));
+        public static string ImageDir = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + System.IO.Path.DirectorySeparatorChar + "CardImages" + System.IO.Path.DirectorySeparatorChar;
 
+        bool allowClick = false;
 
         int HandIndex = 0;
         int OHandIndex = 0;
@@ -45,6 +56,12 @@ namespace Warforged
         List<Rectangle> Suspended = new List<Rectangle>();
 
         List<Rectangle> OSuspended = new List<Rectangle>();
+        public Dictionary<string, Brush> CardImages = new Dictionary<string, Brush>();
+        public Dictionary<string, Brush> OCardImages = new Dictionary<string, Brush>();
+
+        List<Button> Choices = new List<Button>();
+
+        public GameWindowLibrary library = null;
         public GameWindow()
         {
             InitializeComponent();
@@ -58,6 +75,13 @@ namespace Warforged
             Choice6.Visibility = Visibility.Hidden;
             Choice7.Visibility = Visibility.Hidden;
 
+            Choices.Add(Choice1);
+            Choices.Add(Choice2);
+            Choices.Add(Choice3);
+            Choices.Add(Choice4);
+            Choices.Add(Choice5);
+            Choices.Add(Choice6);
+            Choices.Add(Choice7);
 
             Hand.Add(Hand1);
             Hand.Add(Hand2);
@@ -186,72 +210,335 @@ namespace Warforged
             {
                 h.Visibility = Visibility.Hidden;
             }
-
-            Edros e = new Edros();
-
-            foreach(Character.Card c in e.hand)
+            foreach (Rectangle h in Suspended)
             {
-                AddToHand(c);
+                h.Visibility = Visibility.Hidden;
+                h.Fill = defaultBrush;
             }
-            AddToStandby(e.standby[0], 0);
-            AddToStandby(e.standby[1], 1);
-            AddToStandby(e.standby[2], 2);
-            AddToStandby(e.standby[3], 3);
-
-            AddToLineup(e.invocation[0], 0);
-            AddToLineup(e.invocation[1], 1);
-            AddToLineup(e.invocation[2], 2);
-            AddToLineup(e.invocation[3], 3);
-
+            foreach (Rectangle h in OSuspended)
+            {
+                h.Visibility = Visibility.Hidden;
+                h.Fill = defaultBrush;
+            }
+            foreach (Rectangle h in Link1)
+            {
+                h.Visibility = Visibility.Hidden;
+                h.Fill = defaultBrush;
+            }
+            foreach (Rectangle h in Link2)
+            {
+                h.Visibility = Visibility.Hidden;
+                h.Fill = defaultBrush;
+            }
+            foreach (Rectangle h in Link3)
+            {
+                h.Visibility = Visibility.Hidden;
+                h.Fill = defaultBrush;
+            }
+            foreach (Rectangle h in Link4)
+            {
+                h.Visibility = Visibility.Hidden;
+                h.Fill = defaultBrush;
+            }
+            foreach (Rectangle h in OLink1)
+            {
+                h.Visibility = Visibility.Hidden;
+                h.Fill = defaultBrush;
+            }
+            foreach (Rectangle h in OLink2)
+            {
+                h.Visibility = Visibility.Hidden;
+                h.Fill = defaultBrush;
+            }
+            foreach (Rectangle h in OLink3)
+            {
+                h.Visibility = Visibility.Hidden;
+                h.Fill = defaultBrush;
+            }
+            foreach (Rectangle h in OLink4)
+            {
+                h.Visibility = Visibility.Hidden;
+                h.Fill = defaultBrush;
+            }
+            
+            foreach (Rectangle r in grid.Children.OfType<Rectangle>())
+            {
+                r.MouseLeftButtonUp += cardClicked;
+                r.Fill = defaultBrush;
+            }
+            /*Edros e = new Edros();
+            e.setOpponent(new Edros());
+            e.opponent.setOpponent(e);
             CharacterSlot.Fill = new ImageBrush()
             {
-                ImageSource = new BitmapImage(new Uri(Character.Card.ImageDir+"Edros"+System.IO.Path.DirectorySeparatorChar+"Edros.png"))
+                ImageSource = new BitmapImage(new Uri(@ImageDir+"Edros"+System.IO.Path.DirectorySeparatorChar+"Edros.png"))
             };
-            Lineup1.Fill = e.invocation[0].CardImage;
-            Lineup2.Fill = e.invocation[1].CardImage;
-            Lineup3.Fill = e.invocation[2].CardImage;
-            Lineup4.Fill = e.invocation[3].CardImage;
+            e.playCard(e.hand[1]);
+            e.opponent.playCard(e.opponent.hand[0]);
+            e.opponent.declarePhase();
+            e.declarePhase();
+            e.opponent.damagePhase();
+            e.damagePhase();
+            e.playCard(e.hand[2]);
+            e.opponent.playCard(e.opponent.hand[0]);
+            e.opponent.declarePhase();
+            e.declarePhase();
+            e.opponent.damagePhase();
+            e.damagePhase();
+            UpdateUI(e, true);
+            UpdateOpponentUI(e.opponent, true, true);
+            multiPrompt("Test Prompt Text",new List<string>() { "1s", "2s" , "3s" , "4s" , "5s" , "6s" , "7s" },new List<object>() { "1s", "2s", "3s", "4s", "5s", "6s", "7s" });*/
+        }
+        
 
+        public void waitForClick()
+        {
+            allowClick = true;
+        }
 
-            OLineup1.Fill = e.invocation[0].CardImage;
-            OLineup2.Fill = e.invocation[1].CardImage;
-            OLineup3.Fill = e.invocation[2].CardImage;
-            OLineup4.Fill = e.invocation[3].CardImage;
-            for (int i = 0; i < 10; ++i)
+        public void yesnoPrompt(string text)
+        {
+            PromptText.Content = text;
+            Choice1.Content = "Yes";
+            Choice2.Content = "No";
+            Choice1.DataContext = true;
+            Choice2.DataContext = false;
+            Choice1.Visibility = Visibility.Visible;
+            Choice2.Visibility = Visibility.Visible;
+        }
+
+        public void setPromptText(string text)
+        {
+            PromptText.Content = text;
+        }
+
+        public void multiPrompt(string text,List<string> buttonTexts,List<object> returnTypes)
+        {
+            int count = buttonTexts.Count < returnTypes.Count ? buttonTexts.Count:returnTypes.Count;
+            count = Math.Min(count, 7);
+            for(int i = 0; i<count; ++i)
             {
-                if(i >=8 )
+                Choices[i].Content = buttonTexts[i];
+                Choices[i].DataContext = returnTypes[i];
+                Choices[i].Visibility = Visibility.Visible;
+            }
+            PromptText.Content = text;
+        }
+        public void UpdateOpponentUI(Character ch, bool showCurrCard, bool showHand)
+        {
+            for (int i = 0; i < 10; i += 1)
+            {
+                if (ch.hand.Count <= i)
                 {
-                    Suspended[i].Fill = CharacterSlot.Fill;
-                    OSuspended[i].Fill = CharacterSlot.Fill;
+                    OHand[i].Fill = defaultBrush;
+                    OHand[i].DataContext = null;
+                    OHand[i].Visibility = Visibility.Hidden;
                 }
-                else if(i >=4)
+                else if (showHand)
                 {
-                    Link1[i].Fill = e.standby[i - 4].CardImage;
-                    Link2[i].Fill = e.standby[i - 4].CardImage;
-                    Link3[i].Fill = e.standby[i - 4].CardImage;
-                    Link4[i].Fill = e.standby[i - 4].CardImage;
-                    OLink1[i].Fill = e.standby[i - 4].CardImage;
-                    OLink2[i].Fill = e.standby[i - 4].CardImage;
-                    OLink3[i].Fill = e.standby[i - 4].CardImage;
-                    OLink4[i].Fill = e.standby[i - 4].CardImage;
-                    Suspended[i].Fill = e.standby[i - 4].CardImage;
-                    OSuspended[i].Fill = e.standby[i - 4].CardImage;
+                    OHand[i].Fill = OCardImages[ch.hand[i].name];
+                    OHand[i].DataContext = ch.hand[i];
+                    OHand[i].Visibility = Visibility.Visible;
                 }
                 else
                 {
-                    Link1[i].Fill = e.hand[i].CardImage;
-                    Link2[i].Fill = e.hand[i].CardImage;
-                    Link3[i].Fill = e.hand[i].CardImage;
-                    Link4[i].Fill = e.hand[i].CardImage;
-                    OLink1[i].Fill = e.hand[i].CardImage;
-                    OLink2[i].Fill = e.hand[i].CardImage;
-                    OLink3[i].Fill = e.hand[i].CardImage;
-                    OLink4[i].Fill = e.hand[i].CardImage;
-                    Suspended[i].Fill = e.hand[i].CardImage;
-                    OSuspended[i].Fill = e.hand[i].CardImage;
+                    OHand[i].Fill = BackofCard;
+                    OHand[i].DataContext = ch.hand[i];
+                    OHand[i].Visibility = Visibility.Visible;
                 }
             }
+            List<Rectangle> standbyList = new List<Rectangle>() { OLeftStandby, OMiddleLeftStandby, OMiddleRightStandby, ORightStandby };
+            for (int i = 0; i < 4; ++i)
+            {
+                if (ch.standby.Count <= i)
+                {
+                    standbyList[i].Fill = defaultBrush;
+                    standbyList[i].DataContext = null;
+                }
+                else
+                {
+                    standbyList[i].Fill = OCardImages[ch.standby[i].name];
+                    standbyList[i].DataContext = ch.standby[i];
+                }
+            }
+            List<Rectangle> invocationList = new List<Rectangle>() { OLineup1, OLineup2, OLineup3, OLineup4 };
+            for (int i = 0; i < 4; ++i)
+            {
+                if (ch.invocation.Count <= i)
+                {
+                    invocationList[i].Fill = defaultBrush;
+                    invocationList[i].DataContext = null;
+                }
+                else if (ch.invocation[i].active)
+                {
+                    invocationList[i].Fill = OCardImages[ch.invocation[i].name];
+                    invocationList[i].DataContext = ch.invocation[i];
+                }
+                else
+                {
+                    invocationList[i].Fill = BackofCard;
+                    invocationList[i].DataContext = ch.invocation[i];
+                }
+            }
+            if (ch.currCard == null)
+            {
+                OPlaySlot.Fill = defaultBrush;
+                OPlaySlot.DataContext = null;
+            }
+            else if (showCurrCard)
+            {
+                OPlaySlot.Fill = OCardImages[ch.currCard.name];
+                OPlaySlot.DataContext = ch.currCard;
+            }
+            else
+            {
+                OPlaySlot.Fill = BackofCard;
+                OPlaySlot.DataContext = ch.currCard;
+            }
+            string prevCardName = "None";
+            if (ch.prevCard != null)
+            {
+                prevCardName = ch.prevCard.name;
+            }
+            string fmt = string.Format(sideText, ch.hp, ch.empower, ch.reinforce, "None", prevCardName, false, false, false);
+            OSidePanel.Content = fmt;
+
+        }
+
+        public void UpdateUI(Character ch, bool showCurrCard)
+        {
+            for(int i =0; i<10; i+=1)
+            {
+                if(ch.hand.Count <=i)
+                {
+                    Hand[i].Fill = defaultBrush;
+                    Hand[i].DataContext = null;
+                    Hand[i].Visibility = Visibility.Hidden;
+                }
+                else
+                {
+                    Hand[i].Fill = CardImages[ch.hand[i].name];
+                    Hand[i].DataContext = ch.hand[i];
+                    Hand[i].Visibility = Visibility.Visible;
+                }
+            }
+            List<Rectangle> standbyList = new List<Rectangle>() { LeftStandby,MiddleLeftStandby,MiddleRightStandby,RightStandby};
+            for(int i =0;i<4;++i)
+            {
+                if(ch.standby.Count <= i)
+                {
+                    standbyList[i].Fill = defaultBrush;
+                    standbyList[i].DataContext = null;
+                }
+                else
+                {
+                    standbyList[i].Fill = CardImages[ch.standby[i].name];
+                    standbyList[i].DataContext = ch.standby[i];
+                }
+            }
+            List<Rectangle> invocationList = new List<Rectangle>() {Lineup1,Lineup2,Lineup3,Lineup4 };
+            for (int i = 0; i < 4; ++i)
+            {
+                if (ch.invocation.Count <= i)
+                {
+                    invocationList[i].Fill = defaultBrush;
+                    invocationList[i].DataContext = null;
+                }
+                else if(ch.invocation[i].active)
+                {
+                    invocationList[i].Fill = CardImages[ch.invocation[i].name];
+                    invocationList[i].DataContext = ch.invocation[i];
+                }
+                else
+                {
+                    invocationList[i].Fill = BackofCard;
+                    invocationList[i].DataContext = ch.invocation[i];
+                }
+            }
+            if (ch.currCard == null)
+            {
+                PlaySlot.Fill = defaultBrush;
+                PlaySlot.DataContext = null;
+            }
+            else if(showCurrCard)
+            {
+                PlaySlot.Fill = CardImages[ch.currCard.name];
+                PlaySlot.DataContext = ch.currCard;
+            }
+            else
+            {
+                PlaySlot.Fill = BackofCard;
+                PlaySlot.DataContext = ch.currCard;
+            }
+            string prevCardName = "None";
+            if(ch.prevCard != null)
+            {
+                prevCardName = ch.prevCard.name;
+            }
+            string fmt = string.Format(sideText,ch.hp, ch.empower, ch.reinforce, "None", prevCardName, false, false, false);
+            SidePanel.Content = fmt;
+
+        }
+
+
+        public void setupEdros(Dictionary<string,Brush> CardImages)
+        {
             
+            CardImages.Add("Celestial Surge", new ImageBrush()
+            {
+                ImageSource = new BitmapImage(new Uri(@ImageDir + "Edros" + System.IO.Path.DirectorySeparatorChar + "Celestial Surge.png"))
+            });
+            CardImages.Add("Purging Lightning", new ImageBrush()
+            {
+                ImageSource = new BitmapImage(new Uri(@ImageDir + "Edros" + System.IO.Path.DirectorySeparatorChar + "Purging Lightning.png"))
+            });
+            CardImages.Add("Crashing Sky", new ImageBrush()
+            {
+                ImageSource = new BitmapImage(new Uri(@ImageDir + "Edros" + System.IO.Path.DirectorySeparatorChar + "Crashing Sky.png"))
+            });
+            CardImages.Add("Edros", new ImageBrush()
+            {
+                ImageSource = new BitmapImage(new Uri(@ImageDir + "Edros" + System.IO.Path.DirectorySeparatorChar + "Edros.png"))
+            });
+
+            CardImages.Add("Faith Unquestioned", new ImageBrush()
+            {
+                ImageSource = new BitmapImage(new Uri(@ImageDir + "Edros" + System.IO.Path.DirectorySeparatorChar + "Faith Unquestioned.png"))
+            });
+            CardImages.Add("Grace of Heaven", new ImageBrush()
+            {
+                ImageSource = new BitmapImage(new Uri(@ImageDir + "Edros" + System.IO.Path.DirectorySeparatorChar + "Grace of Heaven.png"))
+            });
+            CardImages.Add("Hand of Toren", new ImageBrush()
+            {
+                ImageSource = new BitmapImage(new Uri(@ImageDir + "Edros" + System.IO.Path.DirectorySeparatorChar + "Hand of Toren.png"))
+            });
+
+            CardImages.Add("Pillar of Lightning", new ImageBrush()
+            {
+                ImageSource = new BitmapImage(new Uri(@ImageDir + "Edros" + System.IO.Path.DirectorySeparatorChar + "Pillar of Lightning.png"))
+            });
+            CardImages.Add("Rolling Thunder", new ImageBrush()
+            {
+                ImageSource = new BitmapImage(new Uri(@ImageDir + "Edros" + System.IO.Path.DirectorySeparatorChar + "Rolling Thunder.png"))
+            });
+            CardImages.Add("Scorn of Thunder", new ImageBrush()
+            {
+                ImageSource = new BitmapImage(new Uri(@ImageDir + "Edros" + System.IO.Path.DirectorySeparatorChar + "Scorn of Thunder.png"))
+            });
+
+            CardImages.Add("Sky Blessed Shield", new ImageBrush()
+            {
+                ImageSource = new BitmapImage(new Uri(@ImageDir + "Edros" + System.IO.Path.DirectorySeparatorChar + "Sky Blessed Shield.png"))
+            });
+            CardImages.Add("Toren's Favored", new ImageBrush()
+            {
+                ImageSource = new BitmapImage(new Uri(@ImageDir + "Edros" + System.IO.Path.DirectorySeparatorChar + "Toren's Favored.png"))
+            });
+            CardImages.Add("Wrath of Lightning", new ImageBrush()
+            {
+                ImageSource = new BitmapImage(new Uri(@ImageDir + "Edros" + System.IO.Path.DirectorySeparatorChar + "Wrath of Lightning.png"))
+            });
         }
 
         //Adds the card to the standby position.
@@ -261,22 +548,22 @@ namespace Warforged
         {
             if(position == 0)
             {
-                RightStandby.Fill = c.CardImage;
+                RightStandby.Fill = CardImages[c.name];
                 RightStandby.DataContext = c;
             }
             if(position == 1)
             {
-                MiddleRightStandby.Fill = c.CardImage;
+                MiddleRightStandby.Fill = CardImages[c.name];
                 MiddleRightStandby.DataContext = c;
             }
             if (position == 2)
             {
-                MiddleLeftStandby.Fill = c.CardImage;
+                MiddleLeftStandby.Fill = CardImages[c.name];
                 MiddleLeftStandby.DataContext = c;
             }
             if (position == 3)
             {
-                LeftStandby.Fill = c.CardImage;
+                LeftStandby.Fill = CardImages[c.name];
                 LeftStandby.DataContext = c;
             }
         }
@@ -316,7 +603,7 @@ namespace Warforged
                 return;
             }
 
-            Hand[HandIndex].Fill = c.CardImage;
+            Hand[HandIndex].Fill = CardImages[c.name];
             Hand[HandIndex].DataContext = c;
             Hand[HandIndex].Visibility = Visibility.Visible;
             ++HandIndex;
@@ -347,7 +634,7 @@ namespace Warforged
         {
             
             var rect = (Rectangle)sender;
-            if (rect.Fill == defaultBrush && ! (rect.Fill is ImageBrush))
+            if (rect.Fill == defaultBrush || ! (rect.Fill is ImageBrush))
                 return;
             var imgB = (ImageBrush)rect.Fill;
             if(!(imgB.ImageSource is BitmapImage))
@@ -381,6 +668,28 @@ namespace Warforged
             if (rect.Fill == defaultBrush)
                 return;
             grid.Children.Remove(cardZoom);
+        }
+
+
+        private void ChoiceClicked(object sender, RoutedEventArgs e)
+        {
+            
+            Button choice = (Button)sender;
+            foreach (Button b in Choices)
+            {
+                b.Visibility = Visibility.Hidden;
+            }
+            library.setReturnObject(choice.DataContext);
+        }
+
+        public void cardClicked(object sender, RoutedEventArgs e)
+        {
+            Rectangle r = (Rectangle)sender;
+            if(r.Fill != defaultBrush && allowClick)
+            {
+                library.setReturnObject(r.DataContext);
+                allowClick = false;
+            }
         }
     }
 }

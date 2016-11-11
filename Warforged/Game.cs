@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
+using System.Windows;
 
 namespace Warforged
 {
@@ -31,9 +33,16 @@ namespace Warforged
 
 		public static void Main()
 		{
-            Thread UIThread = new Thread(UITestThread);
-            UIThread.SetApartmentState(ApartmentState.STA);
-            UIThread.Start();
+            Thread thread = new Thread(UIThread);
+            thread.SetApartmentState(ApartmentState.STA);
+            thread.Start();
+            barrier.SignalAndWait();
+            GameWindowLibrary library = new GameWindowLibrary(gameWindow);
+            library.setupEdros(false);
+            library.setupEdros(true);
+            Console.WriteLine(library.yesnoPrompt("Could you hit yes please?"));
+            Console.WriteLine(library.yesnoPrompt("Could you hit no please?"));
+            Console.WriteLine(library.multiPrompt("Hit any button",new List<string>() {"b1", "b2", "b3", "b4", "b5", "b6", "b7", }, new List<object>() { "b1", "b2", "b3", "b4", "b5", "b6", "b7", }));
             Game game = new Game();
             Console.WriteLine("{0} hand size", game.p1.hand.Count);
             game.p1.playCard(game.p1.hand[0]);
@@ -58,13 +67,22 @@ namespace Warforged
             Console.WriteLine("{0} hand size", game.p1.hand.Count);
             Console.WriteLine("{0}", game.p1.hp);
             Console.WriteLine("{0}", game.p2.hp);
-		}
+            while (true)
+            {
+                library.updateUI(game.p1, true);
+                library.updateOpponentUI(game.p2, true, false);
+                Console.WriteLine(library.waitForClick().name);
+            }
+        }
 
+        public static GameWindow gameWindow = null;
+        public static Barrier barrier = new Barrier(2);
         [STAThreadAttribute]
-        public static void UITestThread()
+        public static void UIThread()
         {
-            GameWindow gw = new GameWindow();
-            gw.ShowDialog();
+            gameWindow = new GameWindow();
+            barrier.SignalAndWait();
+            gameWindow.ShowDialog();
         }
 	}
 }
