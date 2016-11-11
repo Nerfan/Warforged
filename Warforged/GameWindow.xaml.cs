@@ -290,6 +290,468 @@ namespace Warforged
             multiPrompt("Test Prompt Text",new List<string>() { "1s", "2s" , "3s" , "4s" , "5s" , "6s" , "7s" },new List<object>() { "1s", "2s", "3s", "4s", "5s", "6s", "7s" });*/
         }
         
+        public void highlight(Character.Card card,byte r,byte g,byte b)
+        {
+            if(PlaySlot.DataContext != null && PlaySlot.DataContext == card)
+            {
+                PlaySlot.Stroke = new SolidColorBrush(System.Windows.Media.Color.FromRgb(r, g, b));
+                PlaySlot.StrokeThickness = 3.0;
+                return;
+            }
+            if (OPlaySlot.DataContext != null && OPlaySlot.DataContext == card)
+            {
+                OPlaySlot.Stroke = new SolidColorBrush(System.Windows.Media.Color.FromRgb(r, g, b));
+                OPlaySlot.StrokeThickness = 3.0;
+                return;
+            }
+            foreach (Rectangle rect in Hand)
+            {
+                if(rect.DataContext == null)
+                {
+                    continue;
+                }
+                if(rect.DataContext == card)
+                {
+                    rect.Stroke = new SolidColorBrush(System.Windows.Media.Color.FromRgb(r,g,b));
+                    rect.StrokeThickness = 3.0;
+                    return;
+                }
+            }
+            foreach (Rectangle rect in new List<Rectangle> (){LeftStandby,MiddleLeftStandby,MiddleRightStandby,RightStandby })
+            {
+                if (rect.DataContext == null)
+                {
+                    continue;
+                }
+                if (rect.DataContext == card)
+                {
+                    rect.Stroke = new SolidColorBrush(System.Windows.Media.Color.FromRgb(r, g, b));
+                    rect.StrokeThickness = 3.0;
+                    return;
+                }
+            }
+            foreach (Rectangle rect in new List<Rectangle>() { Lineup1, Lineup2, Lineup3, Lineup4 })
+            {
+                if (rect.DataContext == null)
+                {
+                    continue;
+                }
+                if (rect.DataContext == card)
+                {
+                    rect.Stroke = new SolidColorBrush(System.Windows.Media.Color.FromRgb(r, g, b));
+                    rect.StrokeThickness = 3.0;
+                    return;
+                }
+            }
+
+            foreach (Rectangle rect in Suspended)
+            {
+                if (rect.DataContext == null)
+                {
+                    continue;
+                }
+                if (rect.DataContext == card)
+                {
+                    rect.Stroke = new SolidColorBrush(System.Windows.Media.Color.FromRgb(r, g, b));
+                    rect.StrokeThickness = 3.0;
+                    return;
+                }
+            }
+
+            foreach (Rectangle rect in Link1)
+            {
+                if (rect.DataContext == null)
+                {
+                    continue;
+                }
+                if (rect.DataContext == card)
+                {
+                    rect.Stroke = new SolidColorBrush(System.Windows.Media.Color.FromRgb(r, g, b));
+                    rect.StrokeThickness = 3.0;
+                    return;
+                }
+            }
+            foreach (Rectangle rect in Link2)
+            {
+                if (rect.DataContext == null)
+                {
+                    continue;
+                }
+                if (rect.DataContext == card)
+                {
+                    rect.Stroke = new SolidColorBrush(System.Windows.Media.Color.FromRgb(r, g, b));
+                    rect.StrokeThickness = 3.0;
+                    return;
+                }
+            }
+            foreach (Rectangle rect in Link3)
+            {
+                if (rect.DataContext == null)
+                {
+                    continue;
+                }
+                if (rect.DataContext == card)
+                {
+                    rect.Stroke = new SolidColorBrush(System.Windows.Media.Color.FromRgb(r, g, b));
+                    rect.StrokeThickness = 3.0;
+                    return;
+                }
+            }
+            foreach (Rectangle rect in Link4)
+            {
+                if (rect.DataContext == null)
+                {
+                    continue;
+                }
+                if (rect.DataContext == card)
+                {
+                    rect.Stroke = new SolidColorBrush(System.Windows.Media.Color.FromRgb(r, g, b));
+                    rect.StrokeThickness = 3.0;
+                    return;
+                }
+            }
+
+            //Opponent Cards
+
+            foreach (Rectangle rect in OHand)
+            {
+                if (rect.DataContext == null)
+                {
+                    continue;
+                }
+                if (rect.DataContext == card)
+                {
+                    rect.Stroke = new SolidColorBrush(System.Windows.Media.Color.FromRgb(r, g, b));
+                    rect.StrokeThickness = 3.0;
+                    return;
+                }
+            }
+            foreach (Rectangle rect in new List<Rectangle>() { OLeftStandby, OMiddleLeftStandby, OMiddleRightStandby, ORightStandby })
+            {
+                if (rect.DataContext == null)
+                {
+                    continue;
+                }
+                if (rect.DataContext == card)
+                {
+                    rect.Stroke = new SolidColorBrush(System.Windows.Media.Color.FromRgb(r, g, b));
+                    rect.StrokeThickness = 3.0;
+                    return;
+                }
+            }
+            foreach (Rectangle rect in new List<Rectangle>() { OLineup1, OLineup2, OLineup3, OLineup4 })
+            {
+                if (rect.DataContext == null)
+                {
+                    continue;
+                }
+                if (rect.DataContext == card)
+                {
+                    rect.Stroke = new SolidColorBrush(System.Windows.Media.Color.FromRgb(r, g, b));
+                    rect.StrokeThickness = 3.0;
+                    return;
+                }
+            }
+
+            foreach (Rectangle rect in OSuspended)
+            {
+                if (rect.DataContext == null)
+                {
+                    continue;
+                }
+                if (rect.DataContext == card)
+                {
+                    rect.Stroke = new SolidColorBrush(System.Windows.Media.Color.FromRgb(r, g, b));
+                    rect.StrokeThickness = 3.0;
+                    return;
+                }
+            }
+
+            foreach (Rectangle rect in OLink1)
+            {
+                if (rect.DataContext == null)
+                {
+                    continue;
+                }
+                if (rect.DataContext == card)
+                {
+                    rect.Stroke = new SolidColorBrush(System.Windows.Media.Color.FromRgb(r, g, b));
+                    rect.StrokeThickness = 3.0;
+                    return;
+                }
+            }
+            foreach (Rectangle rect in OLink2)
+            {
+                if (rect.DataContext == null)
+                {
+                    continue;
+                }
+                if (rect.DataContext == card)
+                {
+                    rect.Stroke = new SolidColorBrush(System.Windows.Media.Color.FromRgb(r, g, b));
+                    rect.StrokeThickness = 3.0;
+                    return;
+                }
+            }
+            foreach (Rectangle rect in OLink3)
+            {
+                if (rect.DataContext == null)
+                {
+                    continue;
+                }
+                if (rect.DataContext == card)
+                {
+                    rect.Stroke = new SolidColorBrush(System.Windows.Media.Color.FromRgb(r, g, b));
+                    rect.StrokeThickness = 3.0;
+                    return;
+                }
+            }
+            foreach (Rectangle rect in OLink4)
+            {
+                if (rect.DataContext == null)
+                {
+                    continue;
+                }
+                if (rect.DataContext == card)
+                {
+                    rect.Stroke = new SolidColorBrush(System.Windows.Media.Color.FromRgb(r, g, b));
+                    rect.StrokeThickness = 3.0;
+                    return;
+                }
+            }
+        }
+
+
+        public void clearHighlight(Character.Card card)
+        {
+            if (PlaySlot.DataContext != null && PlaySlot.DataContext == card)
+            {
+                PlaySlot.Stroke = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0, 0, 0));
+                PlaySlot.StrokeThickness = 1.0;
+                return;
+            }
+            if (OPlaySlot.DataContext != null && OPlaySlot.DataContext == card)
+            {
+                OPlaySlot.Stroke = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0, 0, 0));
+                OPlaySlot.StrokeThickness = 1.0;
+                return;
+            }
+            foreach (Rectangle rect in Hand)
+            {
+                if (rect.DataContext == null)
+                {
+                    continue;
+                }
+                if (rect.DataContext == card)
+                {
+                    rect.Stroke = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0, 0, 0));
+                    rect.StrokeThickness = 1.0;
+                    return;
+                }
+            }
+            foreach (Rectangle rect in new List<Rectangle>() { LeftStandby, MiddleLeftStandby, MiddleRightStandby, RightStandby })
+            {
+                if (rect.DataContext == null)
+                {
+                    continue;
+                }
+                if (rect.DataContext == card)
+                {
+                    rect.Stroke = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0, 0, 0));
+                    rect.StrokeThickness = 1.0;
+                    return;
+                }
+            }
+            foreach (Rectangle rect in new List<Rectangle>() { Lineup1, Lineup2, Lineup3, Lineup4 })
+            {
+                if (rect.DataContext == null)
+                {
+                    continue;
+                }
+                if (rect.DataContext == card)
+                {
+                    rect.Stroke = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0, 0, 0));
+                    rect.StrokeThickness = 1.0;
+                    return;
+                }
+            }
+
+            foreach (Rectangle rect in Suspended)
+            {
+                if (rect.DataContext == null)
+                {
+                    continue;
+                }
+                if (rect.DataContext == card)
+                {
+                    rect.Stroke = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0, 0, 0));
+                    rect.StrokeThickness = 1.0;
+                    return;
+                }
+            }
+
+            foreach (Rectangle rect in Link1)
+            {
+                if (rect.DataContext == null)
+                {
+                    continue;
+                }
+                if (rect.DataContext == card)
+                {
+                    rect.Stroke = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0, 0, 0));
+                    rect.StrokeThickness = 1.0;
+                    return;
+                }
+            }
+            foreach (Rectangle rect in Link2)
+            {
+                if (rect.DataContext == null)
+                {
+                    continue;
+                }
+                if (rect.DataContext == card)
+                {
+                    rect.Stroke = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0, 0, 0));
+                    rect.StrokeThickness = 1.0;
+                    return;
+                }
+            }
+            foreach (Rectangle rect in Link3)
+            {
+                if (rect.DataContext == null)
+                {
+                    continue;
+                }
+                if (rect.DataContext == card)
+                {
+                    rect.Stroke = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0, 0, 0));
+                    rect.StrokeThickness = 1.0;
+                    return;
+                }
+            }
+            foreach (Rectangle rect in Link4)
+            {
+                if (rect.DataContext == null)
+                {
+                    continue;
+                }
+                if (rect.DataContext == card)
+                {
+                    rect.Stroke = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0, 0, 0));
+                    rect.StrokeThickness = 1.0;
+                    return;
+                }
+            }
+
+            //Opponent Cards
+
+            foreach (Rectangle rect in OHand)
+            {
+                if (rect.DataContext == null)
+                {
+                    continue;
+                }
+                if (rect.DataContext == card)
+                {
+                    rect.Stroke = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0, 0, 0));
+                    rect.StrokeThickness = 1.0;
+                    return;
+                }
+            }
+            foreach (Rectangle rect in new List<Rectangle>() { OLeftStandby, OMiddleLeftStandby, OMiddleRightStandby, ORightStandby })
+            {
+                if (rect.DataContext == null)
+                {
+                    continue;
+                }
+                if (rect.DataContext == card)
+                {
+                    rect.Stroke = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0, 0, 0));
+                    rect.StrokeThickness = 1.0;
+                    return;
+                }
+            }
+            foreach (Rectangle rect in new List<Rectangle>() { OLineup1, OLineup2, OLineup3, OLineup4 })
+            {
+                if (rect.DataContext == null)
+                {
+                    continue;
+                }
+                if (rect.DataContext == card)
+                {
+                    rect.Stroke = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0, 0, 0));
+                    rect.StrokeThickness = 1.0;
+                    return;
+                }
+            }
+
+            foreach (Rectangle rect in OSuspended)
+            {
+                if (rect.DataContext == null)
+                {
+                    continue;
+                }
+                if (rect.DataContext == card)
+                {
+                    rect.Stroke = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0, 0, 0));
+                    rect.StrokeThickness = 1.0;
+                    return;
+                }
+            }
+
+            foreach (Rectangle rect in OLink1)
+            {
+                if (rect.DataContext == null)
+                {
+                    continue;
+                }
+                if (rect.DataContext == card)
+                {
+                    rect.Stroke = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0, 0, 0));
+                    rect.StrokeThickness = 1.0;
+                    return;
+                }
+            }
+            foreach (Rectangle rect in OLink2)
+            {
+                if (rect.DataContext == null)
+                {
+                    continue;
+                }
+                if (rect.DataContext == card)
+                {
+                    rect.Stroke = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0, 0, 0));
+                    rect.StrokeThickness = 1.0;
+                    return;
+                }
+            }
+            foreach (Rectangle rect in OLink3)
+            {
+                if (rect.DataContext == null)
+                {
+                    continue;
+                }
+                if (rect.DataContext == card)
+                {
+                    rect.Stroke = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0, 0, 0));
+                    rect.StrokeThickness = 1.0;
+                    return;
+                }
+            }
+            foreach (Rectangle rect in OLink4)
+            {
+                if (rect.DataContext == null)
+                {
+                    continue;
+                }
+                if (rect.DataContext == card)
+                {
+                    rect.Stroke = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0, 0, 0));
+                    rect.StrokeThickness = 1.0;
+                    return;
+                }
+            }
+        }
 
         public void waitForClick()
         {
@@ -403,6 +865,15 @@ namespace Warforged
             string fmt = string.Format(sideText, ch.hp, ch.empower, ch.reinforce, "None", prevCardName, false, false, false);
             OSidePanel.Content = fmt;
 
+        }
+
+        public void clearAllHighlighting()
+        {
+            foreach (Rectangle r in grid.Children.OfType<Rectangle>())
+            {
+                r.Stroke = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0, 0, 0));
+                r.StrokeThickness = 1.0;
+            }
         }
 
         public void UpdateUI(Character ch, bool showCurrCard)
@@ -679,6 +1150,7 @@ namespace Warforged
             {
                 b.Visibility = Visibility.Hidden;
             }
+            allowClick = false;
             library.setReturnObject(choice.DataContext);
         }
 
@@ -687,8 +1159,12 @@ namespace Warforged
             Rectangle r = (Rectangle)sender;
             if(r.Fill != defaultBrush && allowClick)
             {
-                library.setReturnObject(r.DataContext);
                 allowClick = false;
+                foreach (Button b in Choices)
+                {
+                    b.Visibility = Visibility.Hidden;
+                }
+                library.setReturnObject(r.DataContext);
             }
         }
     }

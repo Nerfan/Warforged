@@ -12,6 +12,11 @@ namespace Warforged
             hand.Add(new ShatteringBlow(this));
         }
 
+        public override void setupUIForOpponent(GameWindowLibrary lib)
+        {
+            //TODO: Call lib.setupAdrius(2);
+        }
+
         /* CARDS */
         private class ShatteringBlow : Card
         {

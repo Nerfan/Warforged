@@ -52,7 +52,7 @@
         <Label Content="" HorizontalAlignment="Left" Height="823" Margin="332,0,-17,0" VerticalAlignment="Top" Width="25" BorderBrush="Black" BorderThickness="4,0,0,0" Grid.Column="1"/>
         <Label x:Name="OSidePanel" Content="Health : 10&#xA;Empower: 0&#xA;Reinforce: 0&#xA;Seal: None&#xA;Last: None&#xA;Negated: false&#xA;Healed: false&#xA;Damage: false&#xA;" HorizontalAlignment="Left" Margin="342,9,-118,0" VerticalAlignment="Top" Width="116" Height="253" Grid.Column="1"/>
         <Label Content="" HorizontalAlignment="Left" Height="12" Margin="0,670,0,0" VerticalAlignment="Top" Width="1184" BorderThickness="0,4,0,0" BorderBrush="Black" Grid.ColumnSpan="2"/>
-        <Label x:Name="PromptText" Content="Some Text" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Height="67" Margin="0,687,0,0" VerticalAlignment="Top" Width="1182" FontFamily="Traditional Arabic" FontSize="36" TextOptions.TextHintingMode="Fixed" Grid.ColumnSpan="2"/>
+        <Label x:Name="PromptText" Content="" HorizontalContentAlignment="Center" HorizontalAlignment="Left" Height="67" Margin="0,687,0,0" VerticalAlignment="Top" Width="1182" FontFamily="Traditional Arabic" FontSize="36" TextOptions.TextHintingMode="Fixed" Grid.ColumnSpan="2"/>
         <Button x:Name="Choice7" Content="Button" HorizontalAlignment="Left" Margin="10,759,0,0" VerticalAlignment="Top" Width="82" Height="54" Click="ChoiceClicked"/>
         <Button x:Name="Choice5" Content="Button" HorizontalAlignment="Left" Margin="161,759,0,0" VerticalAlignment="Top" Width="82" Height="54" Click="ChoiceClicked"/>
         <Button x:Name="Choice3" Content="Button" HorizontalAlignment="Left" Margin="335,759,0,0" VerticalAlignment="Top" Width="82" Height="54" Click="ChoiceClicked"/>

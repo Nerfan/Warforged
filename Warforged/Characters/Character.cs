@@ -41,10 +41,12 @@ namespace Warforged
         // Represents the opposing character
         // Should be fine this way since the game is 1v1
         public Character opponent{get; protected set;}
+        public GameWindowLibrary library { get; protected set; }
 
         public void setOpponent(Character opponent)
         {
             this.opponent = opponent;
+            opponent.setupUIForOpponent(library);
         }
 
         public Character()
@@ -66,6 +68,7 @@ namespace Warforged
             standby = new List<Card>();
             hand = new List<Card>();
             invocation = new List<Card>();
+            library = new GameWindowLibrary();
         }
 
         public void bolster()
@@ -122,19 +125,28 @@ namespace Warforged
         /// Play a card from your hand
         /// If your hand does not contain the card, the method returns false
         /// Returns true otherwise
-        public bool playCard(Card card)
+        public bool playCard()
         {
-            if (!hand.Contains(card))
+            if(hand.Count == 0)
             {
+                currCard = null;
                 return false;
             }
-            if (card.color == seal)
+            while (true)
             {
-                return false;
+                Card card = library.waitForClick();
+                if (!hand.Contains(card))
+                {
+                    continue;
+                }
+                if (card.color == seal)
+                {
+                    continue;
+                }
+                currCard = card;
+                hand.Remove(card);
+                return true;
             }
-            currCard = card;
-            hand.Remove(card);
-            return true;
         }
 
         /// After both players have played their cards, activate this method.
@@ -308,6 +320,7 @@ namespace Warforged
         public void sealColor(Color color)
         {
             opponent.seal = color;
+            opponent.setupUIForOpponent(library);
         }
 
         /// Swap a standby card with a card in your hand
@@ -333,6 +346,8 @@ namespace Warforged
             hand.Add(card);
             standby.Remove(card);
         }
+
+        public abstract void setupUIForOpponent(GameWindowLibrary lib);
 
         /* Nested class representing a generic card */
         public abstract class Card

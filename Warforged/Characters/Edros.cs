@@ -27,6 +27,12 @@ namespace Warforged
             invocation.Add(new ScornofThunder(this));
             invocation.Add(new CrashingSky(this));
             invocation.Add(new WrathofLightning(this));
+            library.setupEdros(1);
+        }
+
+        public override void setupUIForOpponent(GameWindowLibrary lib)
+        {
+            lib.setupEdros(2);
         }
 
         /// Deal damage to another character
@@ -201,7 +207,7 @@ namespace Warforged
                 // Prompt for input
                 // null should be accepted as input; that means they choose not to strive
                 // store input in striveCard
-                Card striveCard = null;
+                Card striveCard = user.library.waitForClickOrCancel("Strive 1 card");
                 if (user.strive(striveCard))
                 {
                     ((TorensFavored)this).strove = true;
@@ -236,9 +242,88 @@ namespace Warforged
             {
                 // GUI should do checking for offense cards, or right here
                 // TODO ASK FOR CARDS TO SWAP
+                if(canSwap())
+                {
+                    user.library.setPromptText("Swap an offense card from your hand with a standbycard");
+                    while(true)
+                    {
+                        Character.Card card1 = user.library.waitForClick();
+                        user.library.highlight(card1, 255, 255, 0);
+                        Character.Card card2 = user.library.waitForClick();
+                        user.library.clearAllHighlighting();
+                        if(user.hand.Contains(card1) && user.standby.Contains(card2))
+                        {
+                            offenseCard = card1;
+                            standbyCard = card2;
+                            break;
+                        }
+                        else if(user.hand.Contains(card2) && user.standby.Contains(card1))
+                        {
+                            offenseCard = card2;
+                            standbyCard = card1;
+                            break;
+                        }
+                    }
+                }
                 // ASK IF WANT TO STRIVE
                 // ASK WHAT TO STRIVE
+                bool canStrive = false;
+                foreach(Character.Card c in user.standby)
+                {
+                    if(c.color == Color.blue)
+                    {
+                        canStrive = true;
+                        break;
+                    }
+                }
+                while (canStrive)
+                {
+                    Character.Card card = user.library.waitForClickOrCancel("Choose an inherent to strive");
+                    if(card == null)
+                    {
+                        ((FaithUnquestioned)this).strove = false;
+                        break;
+                    }
+                    else if (user.strive(card))
+                    {
+                        ((FaithUnquestioned)this).strove = true;
+                        break;
+                    }
+                }
                 // ASK WHAT TO TAKE
+                int blueCardsInStandby = 0;
+                foreach(Character.Card card in user.standby)
+                {
+                    if(card.color == Color.blue)
+                    {
+                        blueCardsInStandby += 1;
+                    }
+                }
+                while(((FaithUnquestioned)this).strove && (blueCardsInStandby ==2 || standbyCard.color !=Color.blue))
+                {
+                    Character.Card card = user.library.waitForClick();
+                    if(card.color == Color.blue && user.standby.Contains(card) && card != standbyCard)
+                    {
+                        ((FaithUnquestioned)this).defenseCard = card;
+                        break;
+                    }
+                }
+            }
+
+            private bool canSwap()
+            {
+                if (user.hand.Count == 0 || user.standby.Count == 0)
+                {
+                    return false;
+                }
+                foreach(Character.Card card in user.hand)
+                {
+                    if(card.color == Color.red)
+                    {
+                        return true;
+                    }
+                }
+                return false;
             }
         }
 

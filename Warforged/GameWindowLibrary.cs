@@ -15,10 +15,21 @@ namespace Warforged
         private object returnObject = null;
 
         //GameWindowLibrary provides shorthand utility which allows for the model to interact with the UI.
-        public GameWindowLibrary(GameWindow window)
+        public GameWindowLibrary()
         {
-            gameWindow = window;
+            Thread thread = new Thread(UIThread);
+            thread.SetApartmentState(ApartmentState.STA);
+            thread.Start();
+            threadStartbarrier.SignalAndWait();
             gameWindow.library = this;
+        }
+        public Barrier threadStartbarrier = new Barrier(2);
+        [STAThreadAttribute]
+        public void UIThread()
+        {
+            gameWindow = new GameWindow();
+            threadStartbarrier.SignalAndWait();
+            gameWindow.ShowDialog();
         }
         //Tell the UI that a player is going to be Edros. You only need to do this once per game.
         //@param isP2: If this value is 2, the UI is notified that P2 is Edros, otherwise P1 will be Edros
@@ -82,6 +93,34 @@ namespace Warforged
             barrier.SignalAndWait();
             barrier = new Barrier(2);
             return (Character.Card)returnObject;
+        }
+
+        public Character.Card waitForClickOrCancel(string text)
+        {
+            gameWindow.Dispatcher.BeginInvoke((Action)(() => { gameWindow.waitForClick(); gameWindow.multiPrompt(text, new List<string>() { "Cancel" }, new List<object>() { null }); } ));
+            barrier.SignalAndWait();
+            barrier = new Barrier(2);
+            setPromptText("");
+            if(returnObject == null)
+            {
+                return null;
+            }
+            return (Character.Card)returnObject;
+        }
+
+        //These highlighting functions highlight a given card with a given color.
+        //They may also clear highlighting from a card.
+        public void highlight(Character.Card card,byte r, byte g, byte b)
+        {
+            gameWindow.Dispatcher.BeginInvoke((Action)(() => gameWindow.highlight(card,r,g,b) ));
+        }
+        public void clearHighlight(Character.Card card)
+        {
+            gameWindow.Dispatcher.BeginInvoke((Action)(() => gameWindow.clearHighlight(card) ));
+        }
+        public void clearAllHighlighting()
+        {
+            gameWindow.Dispatcher.BeginInvoke((Action)(() => gameWindow.clearAllHighlighting() ));
         }
 
         //Used in the UI to set a returning value to this Library.
