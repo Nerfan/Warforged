@@ -21,11 +21,11 @@ namespace Warforged
             gameWindow.library = this;
         }
         //Tell the UI that a player is going to be Edros. You only need to do this once per game.
-        //@param isP2: If true, the UI is notified that P2 is Edros, otherwise P1 will be Edros
+        //@param isP2: If this value is 2, the UI is notified that P2 is Edros, otherwise P1 will be Edros
         //This function must be called twice, once for each player.
-        public void setupEdros(bool isP2)
+        public void setupEdros(int player)
         {
-            if (isP2)
+            if (player == 2)
             {
                 gameWindow.Dispatcher.BeginInvoke((Action)(() => gameWindow.setupEdros(gameWindow.OCardImages)));
             }
