@@ -34,7 +34,7 @@ namespace Warforged
         private Label cardZoom = new Label();
         Brush defaultBrush = null;
         Brush BackofCard = new SolidColorBrush(System.Windows.Media.Color.FromRgb(0, 0, 0));
-        public static string ImageDir = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + System.IO.Path.DirectorySeparatorChar + "CardImages" + System.IO.Path.DirectorySeparatorChar;
+        public string ImageDir = System.IO.Path.GetDirectoryName(Assembly.GetEntryAssembly().Location) + System.IO.Path.DirectorySeparatorChar + "CardImages" + System.IO.Path.DirectorySeparatorChar;
 
         bool allowClick = false;
 
@@ -788,6 +788,7 @@ namespace Warforged
         }
         public void UpdateOpponentUI(Character ch, bool showCurrCard, bool showHand)
         {
+            grid.Children.Remove(cardZoom);
             for (int i = 0; i < 10; i += 1)
             {
                 if (ch.hand.Count <= i)
@@ -878,7 +879,8 @@ namespace Warforged
 
         public void UpdateUI(Character ch, bool showCurrCard)
         {
-            for(int i =0; i<10; i+=1)
+            grid.Children.Remove(cardZoom);
+            for (int i =0; i<10; i+=1)
             {
                 if(ch.hand.Count <=i)
                 {

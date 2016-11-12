@@ -4,7 +4,7 @@
 exe
 C#
 .cs
-J:\Code\CardGame\Warforged\obj\x86\Release\
+C:\Users\Benjamin\Source\Repos\Warforged\Warforged\obj\x86\Release\
 Warforged
 none
 false
@@ -12,7 +12,7 @@ false
 
 1-1266305381
 141973023248
-14-1194178096
+14-1977485572
 71994693887
 GameWindow.xaml;
 

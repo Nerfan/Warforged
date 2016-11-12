@@ -276,7 +276,16 @@ namespace Warforged
                         break;
                     }
                 }
-                while (canStrive)
+
+                int blueCardsInStandby = 0;
+                foreach (Character.Card card in user.standby)
+                {
+                    if (card.color == Color.blue)
+                    {
+                        blueCardsInStandby += 1;
+                    }
+                }
+                while (canStrive && (blueCardsInStandby == 2 || standbyCard.color != Color.blue))
                 {
                     Character.Card card = user.library.waitForClickOrCancel("Choose an inherent to strive");
                     if(card == null)
@@ -291,16 +300,9 @@ namespace Warforged
                     }
                 }
                 // ASK WHAT TO TAKE
-                int blueCardsInStandby = 0;
-                foreach(Character.Card card in user.standby)
+                while(((FaithUnquestioned)this).strove )
                 {
-                    if(card.color == Color.blue)
-                    {
-                        blueCardsInStandby += 1;
-                    }
-                }
-                while(((FaithUnquestioned)this).strove && (blueCardsInStandby ==2 || standbyCard.color !=Color.blue))
-                {
+                    user.library.setPromptText("Choose a blue standby card to send to your hand");
                     Character.Card card = user.library.waitForClick();
                     if(card.color == Color.blue && user.standby.Contains(card) && card != standbyCard)
                     {
@@ -308,6 +310,7 @@ namespace Warforged
                         break;
                     }
                 }
+                user.library.setPromptText("");
             }
 
             private bool canSwap()
@@ -340,6 +343,15 @@ namespace Warforged
 
             public override void depart()
             {
+                int offenseCards = 0;
+                foreach(Character.Card card in user.standby)
+                {
+                    if(card.color == Color.red)
+                    {
+                        offenseCards += 1;
+                    }
+                }
+                user.damage += offenseCards;
             }
         }
 
@@ -355,6 +367,61 @@ namespace Warforged
 
             public override void depart()
             {
+            Character.Card card1 = null;
+            Character.Card card2 = null;
+            while (true)
+                {
+                    if (user.standby.Count > 0)
+                    {
+                        card1 = user.library.waitForClickOrCancel("Select up to 2 standby cards to send to your hand");
+                        if(card1 != null && !user.standby.Contains(card1))
+                        {
+                            continue;
+                        }
+                        if(card1 == null)
+                        {
+                            break;
+                        }
+                        while (true)
+                        {
+                            if (user.standby.Count > 1)
+                            {
+                                card2 = user.library.waitForClickOrCancel("Select up to 1 more standby card to send to your hand");
+                                if (card2 != null && !user.standby.Contains(card2))
+                                {
+                                    continue;
+                                }
+                                else
+                                {
+                                    goto EndLoop;
+                                }
+                            }
+                            else
+                            {
+                                goto EndLoop;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+                EndLoop:
+                if (card1 == null)
+                {
+                    return;
+                }
+                else if(card2 == null)
+                {
+                    user.hand.Add(card1);
+                }
+                else
+                {
+                    user.takeStandby(card1);
+                    user.takeStandby(card2);
+                }
+
             }
         }
 
@@ -370,6 +437,7 @@ namespace Warforged
 
             public override void depart()
             {
+                user.heal += Math.Max(10-user.opponent.hp,0);
             }
         }
 

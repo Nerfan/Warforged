@@ -129,6 +129,7 @@ namespace Warforged
         {
             returnObject = o;
             this.barrier.SignalAndWait();
+            this.barrier = new Barrier(2);
         }
 
     }
