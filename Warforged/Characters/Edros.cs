@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
@@ -451,9 +452,56 @@ namespace Warforged
                 setAwakening();
                 active = false;
             }
-
+            bool dealsOwnDamage = false;
             public override void activate()
             {
+                if(dealsOwnDamage)
+                {
+                    user.damage += 3 + user.empower;
+                    user.empower = 0;
+                }
+            }
+            public override void declare()
+            {
+                List<string> texts = new List<string>();
+                List<object> returns = new List<object>();
+                texts.Add("0");
+                returns.Add(0);
+                int awakening = 0;
+                for (int i = 0; i < 3; ++i)
+                {
+                    var card = user.invocation[i];
+                    if (card.isAwakening || !card.active)
+                    {
+                        awakening += 1;
+                        continue;
+                    }
+
+                    texts.Add((i + 1 - awakening) + "");
+                    returns.Add(i + 1 - awakening);
+
+                }
+                int cards = (int)user.library.multiPrompt("How many cards do you want to Strive?", texts, returns);
+                for(int i =0; i< cards;++i)
+                {
+                    while(true)
+                    {
+                        user.library.setPromptText("Please select "+(cards-i)+" card(s) to strive");
+                        var card = user.library.waitForClick();
+                        if(user.invocation.Contains(card))
+                        {
+                            user.strive(card);
+                            user.library.updateUI(user, false);
+
+                            break;
+                        }
+                    }
+                }
+                user.library.setPromptText("");
+                if(cards == 3)
+                {
+                    dealsOwnDamage = true;
+                }
             }
         }
     }
