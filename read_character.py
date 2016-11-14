@@ -4,6 +4,7 @@ Create skeleton code for a character class.
 Read a text file copy-pasted from the Warforged Doc.
 """
 
+import sys
 import re
 
 def get_card(read, write, color):
@@ -114,4 +115,9 @@ def main(filename):
 }")
 
 
-main("Tyras.txt")
+if __name__ == "__main__":
+    sys.argv
+    if len(sys.argv) != 2:
+        print("Usage: python3.5 read_character.py filename")
+    else:
+        main(sys.argv[1])
