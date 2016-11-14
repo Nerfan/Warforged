@@ -843,6 +843,8 @@ namespace Warforged
                     invocationList[i].DataContext = ch.invocation[i];
                 }
             }
+            OCharacterSlot.Fill = OCardImages[ch.name];
+            OCharacterSlot.DataContext = "@@NoClick@@";
             if (ch.currCard == null)
             {
                 OPlaySlot.Fill = defaultBrush;
@@ -928,6 +930,8 @@ namespace Warforged
                     invocationList[i].DataContext = ch.invocation[i];
                 }
             }
+            CharacterSlot.Fill = CardImages[ch.name];
+            CharacterSlot.DataContext = "@@NoClick@@";
             if (ch.currCard == null)
             {
                 PlaySlot.Fill = defaultBrush;
@@ -1159,7 +1163,11 @@ namespace Warforged
         public void cardClicked(object sender, RoutedEventArgs e)
         {
             Rectangle r = (Rectangle)sender;
-            if(r.Fill != defaultBrush && allowClick)
+            if("@@NoClick@@".Equals(r.DataContext))
+            {
+                return;
+            }
+            if (r.Fill != defaultBrush && allowClick)
             {
                 allowClick = false;
                 foreach (Button b in Choices)
