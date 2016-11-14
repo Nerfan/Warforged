@@ -74,7 +74,7 @@ namespace Warforged
             public PurgingLightning(Character user) : base(user)
             {
                 name = "Purging Lightning";
-                effect = "Deal 2 damage.\nBloodlust: Deal 2 additional damage";
+                effect = "Deal 2 damage.\nBloodlust: Deal 1 additional damage";
                 color = Color.red;
             }
 
@@ -84,7 +84,7 @@ namespace Warforged
                 user.empower = 0;
                 if (user.bloodlust)
                 {
-                    user.damage += 2;
+                    user.damage += 1;
                 }
             }
         }
@@ -114,7 +114,7 @@ namespace Warforged
             public RollingThunder(Character user) : base(user)
             {
                 name = "Rolling Thunder";
-                effect = "Chain (R): Deal 3 damage.\nStrike: Bolster";
+                effect = "Chain (R): Deal 2 damage.\nStrike: Bolster";
                 color = Color.red;
             }
 
@@ -122,7 +122,7 @@ namespace Warforged
             {
                 if (user.prevCard.color == Color.red)
                 {
-                    user.damage += 3 + user.empower;
+                    user.damage += 2 + user.empower;
                     user.empower = 0;
                 }
                 // Strike, and thus bolster, are deided after both card effects take place
@@ -443,14 +443,22 @@ namespace Warforged
             public GraceofHeaven(Character user) : base(user)
             {
                 name = "Grace of Heaven";
-                effect = "Depart: Gain health equal to amount of health your opponent is missing.";
+                effect = "Depart: Gain 2 health for every non-Offense Standby card.";
                 color = Color.black;
                 active = false;
             }
 
             public override void depart()
             {
-                user.heal += Math.Max(10-user.opponent.hp,0);
+                int hpToGain = 0;
+                foreach(Card c in user.standby)
+                {
+                    if(c.color != Color.red)
+                    {
+                        hpToGain += 2;
+                    }
+                }
+                user.heal += hpToGain;
             }
         }
 

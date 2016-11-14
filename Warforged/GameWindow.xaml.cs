@@ -65,6 +65,7 @@ namespace Warforged
         public GameWindow()
         {
             InitializeComponent();
+            
             defaultBrush = this.PlaySlot.Fill;
 
             Choice1.Visibility = Visibility.Hidden;
@@ -1176,6 +1177,11 @@ namespace Warforged
                 }
                 library.setReturnObject(r.DataContext);
             }
+        }
+
+        private void OnClosed(object sender, EventArgs e)
+        {
+            Environment.Exit(0);
         }
     }
 }

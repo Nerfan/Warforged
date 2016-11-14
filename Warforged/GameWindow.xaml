@@ -1,7 +1,7 @@
 ﻿<Window x:Class="Warforged.GameWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Warforged" Height="850.704" Width="1331" ResizeMode="CanMinimize">
+        Title="Warforged" Height="850.704" Width="1331" ResizeMode="CanMinimize" Closed="OnClosed">
     <Grid x:Name="grid" HorizontalAlignment="Left" Width="1192">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="213*"/>
