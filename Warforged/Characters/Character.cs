@@ -391,6 +391,9 @@ namespace Warforged
             /// Covers anything that the card needs to do before effects happen
             /// i.e. Declaration effects (including swaps, strive)
             public virtual void declare() { }
+
+            /// Happens when a card is removed from suspention
+            public virtual void recall() { }
         }
     }
 }
