@@ -491,6 +491,10 @@ namespace Warforged
                     returns.Add(i + 1 - awakening);
 
                 }
+                if(texts.Count == 0)
+                {
+                    return;
+                }
                 int cards = (int)user.library.multiPrompt("How many cards do you want to Strive?", texts, returns);
                 List<Card> selected = new List<Card>();
                 for(int i =0; i< cards;++i)
