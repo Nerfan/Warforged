@@ -42,6 +42,7 @@ namespace Warforged
         // Should be fine this way since the game is 1v1
         public Character opponent{get; protected set;}
         public GameWindowLibrary library { get; protected set; }
+        private List<Card> stroveCards;
 
         public void setOpponent(Character opponent)
         {
@@ -69,13 +70,14 @@ namespace Warforged
             hand = new List<Card>();
             invocation = new List<Card>();
             library = new GameWindowLibrary();
+            stroveCards = new List<Card>();
         }
 
         public void bolster()
         {
             for (int i = 0; i < invocation.Count; i++)
             {
-                if (!invocation[i].active)
+                if (!invocation[i].active && !stroveCards.Contains(invocation[i]))
                 {
                     invocation[i].active = true;
                     if (invocation[i].color != Color.black)
@@ -106,6 +108,7 @@ namespace Warforged
         /// Also removes overheal from further back than last turn
         public virtual void dawn()
         {
+            stroveCards = new List<Card>();
             negate = 0;
             damage = 0;
             heal = 0;
@@ -198,6 +201,7 @@ namespace Warforged
             }
             card.active = false;
             card.depart();
+            stroveCards.Add(card);
             return true;
         }
 
@@ -320,7 +324,6 @@ namespace Warforged
         public void sealColor(Color color)
         {
             opponent.seal = color;
-            opponent.setupUIForOpponent(library);
         }
 
         /// Swap a standby card with a card in your hand

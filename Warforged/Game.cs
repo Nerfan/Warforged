@@ -62,8 +62,94 @@ namespace Warforged
             // Heal
             // If anyone dies, do it at the end
         }
+        Barrier sync = new Barrier(2);
+        private void takeTurnThread1()
+        {
+            while (true)
+            {
+                p1.library.updateUI(p1, false);
+                p1.library.updateOpponentUI(p2, true, false);
 
-		public static void Main()
+                p1.playCard();
+                p1.library.updateUI(p1, false);
+                sync.SignalAndWait();
+                //sync = new Barrier(2);
+
+                p1.library.updateUI(p1, false);
+                p1.library.updateOpponentUI(p2, false, false);
+
+                p1.declarePhase();
+                sync.SignalAndWait();
+                //sync = new Barrier(2);
+
+                p1.library.updateUI(p1, true);
+                p1.library.updateOpponentUI(p2, true, false);
+                Thread.Sleep(2000);
+                p1.damagePhase();
+                sync.SignalAndWait();
+                //sync = new Barrier(2);
+
+                p1.library.updateUI(p1, true);
+                p1.library.updateOpponentUI(p2, true, false);
+
+                p1.dusk();
+                sync.SignalAndWait();
+                //sync = new Barrier(2);
+
+                p1.library.updateUI(p1, true);
+                p1.library.updateOpponentUI(p2, true, false);
+
+                p1.dawn();
+                sync.SignalAndWait();
+                //sync = new Barrier(2);
+            }
+        }
+
+        private void takeTurnThread2()
+        {
+            while (true)
+            {
+
+
+                p2.library.updateUI(p2, true);
+                p2.library.updateOpponentUI(p1, true, false);
+
+                p2.playCard();
+                p2.library.updateUI(p2, false);
+                sync.SignalAndWait();
+                //sync = new Barrier(2);
+
+                p2.library.updateUI(p2, false);
+                p2.library.updateOpponentUI(p1, false, false);
+
+                p2.declarePhase();
+                sync.SignalAndWait();
+                //sync = new Barrier(2);
+
+                p2.library.updateUI(p2, true);
+                p2.library.updateOpponentUI(p1, true, false);
+                Thread.Sleep(2000);
+                p2.damagePhase();
+                sync.SignalAndWait();
+                //sync = new Barrier(2);
+
+                p2.library.updateUI(p2, true);
+                p2.library.updateOpponentUI(p1, true, false);
+
+                p2.dusk();
+                sync.SignalAndWait();
+                //sync = new Barrier(2);
+
+                p2.library.updateUI(p2, true);
+                p2.library.updateOpponentUI(p1, true, false);
+
+                p2.dawn();
+                sync.SignalAndWait();
+                //sync = new Barrier(2);
+            }
+        }
+
+        public static void Main()
 		{
             
             /*GameWindowLibrary library = new GameWindowLibrary();
@@ -112,10 +198,14 @@ namespace Warforged
                 game.takeTurn();
                 //Console.WriteLine(library.waitForClick().name);
             }*/
-            while(true)
+            /*while(true)
             {
                 game.takeTurn();
-            }
+            }*/
+            Thread thread1 = new Thread(game.takeTurnThread1);
+            Thread thread2 = new Thread(game.takeTurnThread2);
+            thread1.Start();
+            thread2.Start();
         }
 
         

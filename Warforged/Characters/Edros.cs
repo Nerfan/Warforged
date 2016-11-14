@@ -24,10 +24,10 @@ namespace Warforged
             standby.Add(new RollingThunder(this));
             standby.Add(new PurgingLightning(this));
             standby.Add(new FaithUnquestioned(this));
+            invocation.Add(new WrathofLightning(this));
             invocation.Add(new GraceofHeaven(this));
             invocation.Add(new ScornofThunder(this));
             invocation.Add(new CrashingSky(this));
-            invocation.Add(new WrathofLightning(this));
             library.setupEdros(1);
         }
 
@@ -50,13 +50,17 @@ namespace Warforged
             else
             {
                 opponent.takeDamage(tempdamage);
-                bolster();
+                int opponentDamage = opponent.damage - negate;
+                if(tempdamage > 0 ||(opponentDamage > 0 && reflect))
+                {
+                    bolster();
+                }
                 if (((Edros)this).bonusEmp)
                 {
                     empower += 1;
                     ((Edros)this).bonusEmp = false;
                 }
-                if (((Edros)this).bolster2)
+                if (((Edros)this).bolster2 && (tempdamage > 0 || (opponentDamage > 0 && reflect)))
                 {
                     bolster();
                     ((Edros)this).bolster2 = false;
@@ -180,6 +184,7 @@ namespace Warforged
                 {
                     user.reflect = true;
                 }
+                user.empower = 0;
             }
         }
 
@@ -200,6 +205,7 @@ namespace Warforged
                     user.negate += 3 + user.reinforce;
                     user.reinforce = 0;
                 }
+                user.empower = 0;
             }
 
             public override void declare()
@@ -237,6 +243,7 @@ namespace Warforged
                 {
                     user.takeStandby(defenseCard);
                 }
+                user.empower = 0;
             }
 
             public override void declare()
@@ -252,13 +259,13 @@ namespace Warforged
                         user.library.highlight(card1, 255, 255, 0);
                         Character.Card card2 = user.library.waitForClick();
                         user.library.clearAllHighlighting();
-                        if(user.hand.Contains(card1) && user.standby.Contains(card2))
+                        if(user.hand.Contains(card1) && user.standby.Contains(card2) && card1.color == Color.red)
                         {
                             offenseCard = card1;
                             standbyCard = card2;
                             break;
                         }
-                        else if(user.hand.Contains(card2) && user.standby.Contains(card1))
+                        else if(user.hand.Contains(card2) && user.standby.Contains(card1) && card2.color == Color.red)
                         {
                             offenseCard = card2;
                             standbyCard = card1;
@@ -266,18 +273,11 @@ namespace Warforged
                         }
                     }
                 }
+                user.library.highlight(offenseCard,255,255,0);
+                user.library.highlight(standbyCard, 255, 255, 0);
                 // ASK IF WANT TO STRIVE
                 // ASK WHAT TO STRIVE
-                bool canStrive = false;
-                foreach(Character.Card c in user.standby)
-                {
-                    if(c.color == Color.blue)
-                    {
-                        canStrive = true;
-                        break;
-                    }
-                }
-
+                /*
                 int blueCardsInStandby = 0;
                 foreach (Character.Card card in user.standby)
                 {
@@ -285,8 +285,8 @@ namespace Warforged
                     {
                         blueCardsInStandby += 1;
                     }
-                }
-                while (canStrive && (blueCardsInStandby == 2 || standbyCard.color != Color.blue))
+                }*/
+                while (true /*&& (blueCardsInStandby == 2 || standbyCard.color != Color.blue)*/)
                 {
                     Character.Card card = user.library.waitForClickOrCancel("Choose an inherent to strive");
                     if(card == null)
@@ -300,8 +300,17 @@ namespace Warforged
                         break;
                     }
                 }
+                bool canStrive = false;
+                foreach (Character.Card c in user.standby)
+                {
+                    if (c.color == Color.blue && c != standbyCard)
+                    {
+                        canStrive = true;
+                        break;
+                    }
+                }
                 // ASK WHAT TO TAKE
-                while(((FaithUnquestioned)this).strove )
+                while (((FaithUnquestioned)this).strove && canStrive)
                 {
                     user.library.setPromptText("Choose a blue standby card to send to your hand");
                     Character.Card card = user.library.waitForClick();
@@ -312,6 +321,7 @@ namespace Warforged
                     }
                 }
                 user.library.setPromptText("");
+                user.library.clearAllHighlighting();
             }
 
             private bool canSwap()
@@ -355,7 +365,7 @@ namespace Warforged
                 user.damage += offenseCards;
             }
         }
-
+        //TODO: We might be changing the name of this card.
         private class ScornofThunder : Card
         {
             public ScornofThunder(Character user) : base(user)
@@ -383,6 +393,7 @@ namespace Warforged
                         {
                             break;
                         }
+                        user.library.highlight(card1, 0, 0, 255);
                         while (true)
                         {
                             if (user.standby.Count > 1)
@@ -408,14 +419,15 @@ namespace Warforged
                         break;
                     }
                 }
-                EndLoop:
+            EndLoop:
+                user.library.clearAllHighlighting();
                 if (card1 == null)
                 {
                     return;
                 }
                 else if(card2 == null)
                 {
-                    user.hand.Add(card1);
+                    user.takeStandby(card1);
                 }
                 else
                 {
@@ -465,8 +477,6 @@ namespace Warforged
             {
                 List<string> texts = new List<string>();
                 List<object> returns = new List<object>();
-                texts.Add("0");
-                returns.Add(0);
                 int awakening = 0;
                 for (int i = 0; i < 3; ++i)
                 {
@@ -482,26 +492,41 @@ namespace Warforged
 
                 }
                 int cards = (int)user.library.multiPrompt("How many cards do you want to Strive?", texts, returns);
+                List<Card> selected = new List<Card>();
                 for(int i =0; i< cards;++i)
                 {
                     while(true)
                     {
                         user.library.setPromptText("Please select "+(cards-i)+" card(s) to strive");
                         var card = user.library.waitForClick();
-                        if(user.invocation.Contains(card))
+                        if(user.invocation.Contains(card) && !selected.Contains(card))
                         {
-                            user.strive(card);
-                            user.library.updateUI(user, false);
+                            //TODO: Change Scorn of Thunder to 
+                            if (card.name.Equals("Scorn of Thunder") || card.name.Equals("Imminent Storm"))
+                            {
+                                user.library.highlight(card,255,0,0);
+                                selected.Add(card);
+                            }
+                            else
+                            {
+                                user.library.highlight(card, 255, 0, 0);
+                                selected.Insert(0, card);
+                            }
 
                             break;
                         }
                     }
+                }
+                foreach(Card card in  selected)
+                {
+                    user.strive(card);
                 }
                 user.library.setPromptText("");
                 if(cards == 3)
                 {
                     dealsOwnDamage = true;
                 }
+                user.library.clearAllHighlighting();
             }
         }
     }
