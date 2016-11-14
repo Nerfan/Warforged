@@ -40,6 +40,7 @@
   <ItemGroup>
     <Compile Include="Characters\Drade.cs" />
     <Compile Include="Characters\Edros.cs" />
+    <Compile Include="Characters\Tyras.cs" />
     <Compile Include="GameWindowLibrary.cs" />
     <Compile Include="GameWindow.xaml.cs">
       <DependentUpon>GameWindow.xaml</DependentUpon>
