@@ -9,12 +9,18 @@ namespace Warforged
 	{
 		public Character p1;
 		public Character p2;
+        public GameWindowLibrary ui;
 		public Game ()
 		{
 			p1 = new Edros();
 			p2 = new Edros();
             p1.setOpponent(p2);
             p2.setOpponent(p1);
+        }
+
+        public static Character.Card selectCardOrCancel(string prompt)
+        {
+            return ui.waitForClickOrCancel(prompt);
         }
 
 		private void takeTurn()

@@ -214,7 +214,7 @@ namespace Warforged
                 // Prompt for input
                 // null should be accepted as input; that means they choose not to strive
                 // store input in striveCard
-                Card striveCard = user.library.waitForClickOrCancel("Strive 1 card");
+                Card striveCard = Game.selectCardOrCancel("Strive 1 card");
                 if (user.strive(striveCard))
                 {
                     ((TorensFavored)this).strove = true;
@@ -288,7 +288,7 @@ namespace Warforged
                 }*/
                 while (true /*&& (blueCardsInStandby == 2 || standbyCard.color != Color.blue)*/)
                 {
-                    Character.Card card = user.library.waitForClickOrCancel("Choose an inherent to strive");
+                    Character.Card card = Game.selectCardOrCancel("Choose an inherent to strive");
                     if(card == null)
                     {
                         ((FaithUnquestioned)this).strove = false;
@@ -384,7 +384,7 @@ namespace Warforged
                 {
                     if (user.standby.Count > 0)
                     {
-                        card1 = user.library.waitForClickOrCancel("Select up to 2 standby cards to send to your hand");
+                        card1 = Game.selectCardOrCancel("Select up to 2 standby cards to send to your hand");
                         if(card1 != null && !user.standby.Contains(card1))
                         {
                             continue;
@@ -398,7 +398,7 @@ namespace Warforged
                         {
                             if (user.standby.Count > 1)
                             {
-                                card2 = user.library.waitForClickOrCancel("Select up to 1 more standby card to send to your hand");
+                                card2 = Game.selectCardOrCancel("Select up to 1 more standby card to send to your hand");
                                 if (card2 != null && !user.standby.Contains(card2))
                                 {
                                     continue;

@@ -48,7 +48,7 @@ def get_card(read, write, color):
 
 def get_character(read):
     """
-    Read the character's name and bolster and write to file.
+    Read the character's name and title and write to file.
 
     Write the header for the file as well.
     read should be at the beginning of the file,
@@ -116,7 +116,6 @@ def main(filename):
 
 
 if __name__ == "__main__":
-    sys.argv
     if len(sys.argv) != 2:
         print("Usage: python3.5 read_character.py filename")
     else:
