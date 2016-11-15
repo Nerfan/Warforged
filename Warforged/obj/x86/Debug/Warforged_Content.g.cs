@@ -8,6 +8,19 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("cardimages/drade/a%20solemn%20duty.png")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("cardimages/drade/divine%20armor.png")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("cardimages/drade/drade.png")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("cardimages/drade/hallowed%20strike.png")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("cardimages/drade/judgment.png")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("cardimages/drade/oath%20of%20courage.png")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("cardimages/drade/oath%20of%20glory.png")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("cardimages/drade/oath%20of%20vigilance.png")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("cardimages/drade/oath%20of%20virtue.png")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("cardimages/drade/retherec\'s%20blessing.png")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("cardimages/drade/sacred%20spear.png")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("cardimages/drade/sanctuary.png")]
+[assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("cardimages/drade/unwavering%20piety.png")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("cardimages/edros/celestial%20surge.png")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("cardimages/edros/crashing%20sky.png")]
 [assembly: System.Windows.Resources.AssemblyAssociatedContentFileAttribute("cardimages/edros/edros.png")]

@@ -9,8 +9,9 @@ namespace Warforged
 	{
 		public Character p1;
 		public Character p2;
-        public GameWindowLibrary ui;
-		public Game ()
+        public static GameWindowLibrary ui = new GameWindowLibrary();
+
+        public Game ()
 		{
 			p1 = new Edros();
 			p2 = new Edros();

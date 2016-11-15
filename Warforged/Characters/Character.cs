@@ -350,7 +350,7 @@ namespace Warforged
             standby.Remove(card);
         }
 
-        public abstract void setupUIForOpponent(GameWindowLibrary lib);
+        public virtual void setupUIForOpponent(GameWindowLibrary lib) { }
 
         /* Nested class representing a generic card */
         public abstract class Card
