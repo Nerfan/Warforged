@@ -1,0 +1,20 @@
+Base path: J:/Code/Unity/Editor/Data
+Cmd: getPlatforms
+Cmd: compileSnippet
+  api=1 type=0 insize=1456 outsize=376 kw=ETC1_EXTERNAL_ALPHA pd=UNITY_ENABLE_REFLECTION_BUFFERS UNITY_PBS_USE_BRDF1 UNITY_SPECCUBE_BOX_PROJECTION UNITY_SPECCUBE_BLENDING ok=1
+Cmd: disassembleShader
+  api=9 insize=376 outsize=624 ok=1
+Cmd: disassembleShader
+  api=17 insize=422 outsize=1082 ok=1
+Cmd: compileSnippet
+  api=4 type=1 insize=1456 outsize=506 kw=ETC1_EXTERNAL_ALPHA pd=UNITY_ENABLE_REFLECTION_BUFFERS UNITY_PBS_USE_BRDF1 UNITY_SPECCUBE_BOX_PROJECTION UNITY_SPECCUBE_BLENDING ok=1
+Cmd: disassembleShader
+  api=17 insize=506 outsize=1239 ok=1
+Cmd: compileSnippet
+  api=4 type=1 insize=1456 outsize=422 kw=PIXELSNAP_ON pd=UNITY_ENABLE_REFLECTION_BUFFERS UNITY_PBS_USE_BRDF1 UNITY_SPECCUBE_BOX_PROJECTION UNITY_SPECCUBE_BLENDING ok=1
+Cmd: disassembleShader
+  api=17 insize=422 outsize=1082 ok=1
+Cmd: compileSnippet
+  api=4 type=1 insize=1456 outsize=506 kw=ETC1_EXTERNAL_ALPHA PIXELSNAP_ON pd=UNITY_ENABLE_REFLECTION_BUFFERS UNITY_PBS_USE_BRDF1 UNITY_SPECCUBE_BOX_PROJECTION UNITY_SPECCUBE_BLENDING ok=1
+Cmd: disassembleShader
+  api=17 insize=506 outsize=1239 ok=1
