@@ -113,10 +113,10 @@ public class OnClick : MonoBehaviour, IPointerClickHandler
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        if (im != null&&cardTags.Contains(im.tag))
+        if (cardTags.Contains(eventData.pointerCurrentRaycast.gameObject.tag))
         {
-            //Do card clicky stuff
-            cardReturn = cardDict[im.tag];
+            cardReturn = cardDict[eventData.pointerCurrentRaycast.gameObject.tag];
+            Debug.Log("Card click "+cardReturn+" Tag: "+ eventData.pointerCurrentRaycast.gameObject.tag);
         }
         else if (im != null && buttonTags.Contains(im.tag))
         {

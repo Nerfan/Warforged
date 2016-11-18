@@ -118,7 +118,7 @@ public class StartGame : MonoBehaviour {
                 OnClick.Hand[i].sprite = OnClick.CardImages[ch.hand[i].name];
                 OnClick.Hand[i].color = new UnityEngine.Color(1, 1, 1);
                 OnClick.Hand[i].gameObject.SetActive(true);
-                OnClick.cardDict[ch.hand[i].name] = ch.currCard;
+                OnClick.cardDict["Hand"+i] = ch.hand[i];
             }
         }
         /*
@@ -146,7 +146,7 @@ public class StartGame : MonoBehaviour {
                 OnClick.Standby[i].sprite = OnClick.CardImages[ch.standby[i].name];
                 OnClick.Standby[i].color = new UnityEngine.Color(1, 1, 1);
                 OnClick.Standby[i].gameObject.SetActive(true);
-                OnClick.cardDict[ch.standby[i].name] = ch.currCard;
+                OnClick.cardDict["Standby"+(i+1)] = ch.standby[i];
             }
         }
         for (int i = 0; i < OnClick.Invocation.Count; ++i)
@@ -162,14 +162,14 @@ public class StartGame : MonoBehaviour {
                 OnClick.Invocation[i].sprite = null;
                 OnClick.Invocation[i].color = new UnityEngine.Color(0, 0, 0);
                 OnClick.Invocation[i].gameObject.SetActive(true);
-                OnClick.cardDict[ch.invocation[i].name] = ch.currCard;
+                OnClick.cardDict["Invocation" + (i + 1)] = ch.invocation[i];
             }
             else
             {
                 OnClick.Invocation[i].sprite = OnClick.CardImages[ch.invocation[i].name];
                 OnClick.Invocation[i].color = new UnityEngine.Color(1, 1, 1);
                 OnClick.Invocation[i].gameObject.SetActive(true);
-                OnClick.cardDict[ch.invocation[i].name] = ch.currCard;
+                OnClick.cardDict["Invocation"+(i+1)] = ch.invocation[i];
             }
         }
         if(ch.currCard == null)
@@ -183,14 +183,14 @@ public class StartGame : MonoBehaviour {
             OnClick.PlaySlot.sprite = OnClick.CardImages[ch.currCard.name];
             OnClick.PlaySlot.color = new UnityEngine.Color(1, 1, 1);
             OnClick.PlaySlot.gameObject.SetActive(true);
-            OnClick.cardDict[ch.currCard.name] = ch.currCard;
+            OnClick.cardDict["PlaySlot"] = ch.currCard;
         }
         else
         {
             OnClick.PlaySlot.sprite = null;
             OnClick.PlaySlot.color = new UnityEngine.Color(0, 0, 0);
             OnClick.PlaySlot.gameObject.SetActive(true);
-            OnClick.cardDict[ch.currCard.name] = ch.currCard;
+            OnClick.cardDict["PlaySlot"] = ch.currCard;
         }
         OnClick.CharacterSlot.sprite = OnClick.CardImages[ch.name];
         OnClick.CharacterSlot.color = new UnityEngine.Color(1, 1, 1);
