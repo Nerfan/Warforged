@@ -103,7 +103,10 @@ namespace Warforged
                 game.takeTurn();
             }*/
             library = new UnityLibrary();
-            library.yesnoPrompt("Text");
+            library.setupEdros(1);
+            library.updateUI(game.p1,true);
+            library.setPromptText(library.waitForClickOrCancel("Click or Cancel")+"");
+            //library.multiPrompt("Prompt Text",new List<string>() { "b1", "b2", "b3", "b4", "b5", "b6" }, new List<object>() { "b1", "b2", "b3", "b4", "b5", "b6" });
         }
 
     }
