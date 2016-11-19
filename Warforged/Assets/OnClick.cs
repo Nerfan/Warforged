@@ -7,7 +7,7 @@ using System;
 using System.Collections.Generic;
 using Warforged;
 
-public class OnClick : MonoBehaviour, IPointerClickHandler
+public class OnClick : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler, IPointerExitHandler
 {
 
     // Use this for initialization
@@ -19,6 +19,10 @@ public class OnClick : MonoBehaviour, IPointerClickHandler
         {
             cardDict = new Dictionary<string, object>();
             foreach(string t in cardTags)
+            {
+                cardDict.Add(t, NoReturn);
+            }
+            foreach (string t in OcardTags)
             {
                 cardDict.Add(t, NoReturn);
             }
@@ -43,12 +47,44 @@ public class OnClick : MonoBehaviour, IPointerClickHandler
         if(Prompt == null)
         {
             Prompt = gameObject.GetComponent<Text>();
+            if(Prompt != null &&!Prompt.tag.Equals("Prompt"))
+            {
+                Prompt = null;
+            }
         }
         if(im == null)
         {
             return;
         }
-        if(im.tag.StartsWith("Hand"))
+        if(im.tag.StartsWith("OHand"))
+        {
+            OHand.Add(im);
+            OHand.Sort((x, y) => x.tag.CompareTo(y.tag));
+        }
+        else if (im.tag.StartsWith("OInvocation"))
+        {
+            OInvocation.Add(im);
+            OInvocation.Sort((x, y) => x.tag.CompareTo(y.tag));
+        }
+        else if (im.tag.StartsWith("OSuspend"))
+        {
+            OSuspend.Add(im);
+            OSuspend.Sort((x, y) => x.tag.CompareTo(y.tag));
+        }
+        else if (im.tag.Contains("OStandby"))
+        {
+            OStandby.Add(im);
+            OStandby.Sort((x, y) => x.tag.CompareTo(y.tag));
+        }
+        else if (im.tag.Equals("OPlaySlot"))
+        {
+            OPlaySlot = im;
+        }
+        else if (im.tag.Equals("OCharacterSlot"))
+        {
+            OCharacterSlot = im;
+        }
+        else if(im.tag.StartsWith("Hand"))
         {
             Hand.Add(im);
             Hand.Sort((x,y) => x.tag.CompareTo(y.tag));
@@ -76,6 +112,10 @@ public class OnClick : MonoBehaviour, IPointerClickHandler
         {
             CharacterSlot = im;
         }
+        else if(im.tag.Equals("LeftZoom"))
+        {
+            LeftZoom = im;
+        }
     }
 	
 	// Update is called once per frame
@@ -98,16 +138,38 @@ public class OnClick : MonoBehaviour, IPointerClickHandler
             "Link3_1","Link3_2","Link3_3","Link3_4","Link3_5","Link3_6","Link3_7","Link3_8",
             "Link4_1","Link4_2","Link4_3","Link4_4","Link4_5","Link4_6","Link4_7","Link4_8",
             "CharacterSlot","PlaySlot"};
+
+
+    public static Dictionary<string, Sprite> OCardImages = new Dictionary<string, Sprite>();
+    static List<string> OcardTags = new List<string>() {"OInvocation1","OInvocation2","OInvocation3","OInvocation4",
+            "OHand1", "OHand2", "OHand3" , "OHand4" , "OHand5" ,"OHand6" ,"OHand7" ,"OHand8" ,"OHand9" ,"OHand0",
+            "OStandby1","OStandby2","OStandby3","OStandby4",
+            "OSuspend1","OSuspend2","OSuspend3","OSuspend4","OSuspend5","OSuspend6","OSuspend7","OSuspend8","OSuspend9","OSuspend0",
+            "OLink1_1","OLink1_2","OLink1_3","OLink1_4","OLink1_5","OLink1_6","OLink1_7","OLink1_8",
+            "OLink2_1","OLink2_2","OLink2_3","OLink2_4","OLink2_5","OLink2_6","OLink2_7","OLink2_8",
+            "OLink3_1","OLink3_2","OLink3_3","OLink3_4","OLink3_5","OLink3_6","OLink3_7","OLink3_8",
+            "OLink4_1","OLink4_2","OLink4_3","OLink4_4","OLink4_5","OLink4_6","OLink4_7","OLink4_8",
+            "OCharacterSlot","OPlaySlot"};
     static List<string> buttonTags = new List<string>() { "Choice1", "Choice2", "Choice3", "Choice4", "Choice5", "Choice6" };
     static Dictionary<string, object> buttonDict = null;
     private Image im;
     private Button button;
+    public static Image RightZoom = null;
+    public static Image LeftZoom = null;
+
     public static Image CharacterSlot = null;
     public static Image PlaySlot = null;
     public static List<Image> Standby = new List<Image>();
     public static List<Image> Hand = new List<Image>();
     public static List<Image> Invocation = new List<Image>();
     public static List<Image> Suspend = new List<Image>();
+
+    public static Image OCharacterSlot = null;
+    public static Image OPlaySlot = null;
+    public static List<Image> OStandby = new List<Image>();
+    public static List<Image> OHand = new List<Image>();
+    public static List<Image> OInvocation = new List<Image>();
+    public static List<Image> OSuspend = new List<Image>();
     public static object NoReturn = new object();
 
 
@@ -116,7 +178,6 @@ public class OnClick : MonoBehaviour, IPointerClickHandler
         if (cardTags.Contains(eventData.pointerCurrentRaycast.gameObject.tag))
         {
             cardReturn = cardDict[eventData.pointerCurrentRaycast.gameObject.tag];
-            Debug.Log("Card click "+cardReturn+" Tag: "+ eventData.pointerCurrentRaycast.gameObject.tag);
         }
         else if (im != null && buttonTags.Contains(im.tag))
         {
@@ -143,6 +204,31 @@ public class OnClick : MonoBehaviour, IPointerClickHandler
             allButtons[i].gameObject.SetActive(true);
             allButtons[i].GetComponentInChildren<Text>().text = names[i];
             buttonDict[allButtons[i].tag] = returns[i];
+        }
+    }
+
+    public void OnPointerEnter(PointerEventData eventData)
+    {
+        if (cardTags.Contains(eventData.pointerCurrentRaycast.gameObject.tag) || OcardTags.Contains(eventData.pointerCurrentRaycast.gameObject.tag))
+        {
+            var img = eventData.pointerEnter.GetComponent<Image>();
+            if (img != null && LeftZoom != null && img.sprite != null)
+            {
+                LeftZoom.sprite = img.sprite;
+                LeftZoom.color = new UnityEngine.Color(1,1,1,1);
+            }
+        }
+    }
+
+    public void OnPointerExit(PointerEventData eventData)
+    {
+        if (cardTags.Contains(eventData.pointerEnter.gameObject.tag) || OcardTags.Contains(eventData.pointerEnter.gameObject.tag))
+        {
+            var img = eventData.pointerEnter.GetComponent<Image>();
+            if (img != null && LeftZoom != null)
+            {
+                LeftZoom.color = new UnityEngine.Color(1, 1, 1, 0);
+            }
         }
     }
 }

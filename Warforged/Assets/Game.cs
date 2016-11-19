@@ -21,27 +21,30 @@ namespace Warforged
 		public void takeTurn()
         {
             library.updateUI(p1, true);
-            //library.updateOpponentUI(p2, true, false);
+            library.updateOpponentUI(p2, true, false);
 
             p1.playCard();
-
+            //p2.playCard();
+            
             library.updateUI(p1,false);
-            //library.updateOpponentUI(p2, false,false);
+            library.updateOpponentUI(p2, false,false);
 
             p1.declarePhase();
+            //p2.declarePhase();
 
             library.updateUI(p1, true);
-            //library.updateOpponentUI(p2, true, false);
-
+            library.updateOpponentUI(p2, true, false);
+            Thread.Sleep(3000);
             p1.damagePhase();
+            //p2.damagePhase();
 
             library.updateUI(p1, true);
-            //library.updateOpponentUI(p2, true, false);
+            library.updateOpponentUI(p2, true, false);
 
             p1.dusk();
 
             library.updateUI(p1, true);
-            //library.updateOpponentUI(p2, true, false);
+            library.updateOpponentUI(p2, true, false);
 
             p1.dawn();
 
@@ -104,7 +107,9 @@ namespace Warforged
             }*/
             library = new UnityLibrary();
             library.setupEdros(1);
-            library.updateUI(game.p1,true);
+            Thread.Sleep(30);
+            library.setupEdros(2);
+            //library.updateUI(game.p1,true);
             while(true)
             {
                 game.takeTurn();

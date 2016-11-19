@@ -26,6 +26,7 @@ namespace Warforged
             invocation.Add(new GraceofHeaven(this));
             invocation.Add(new ScornofThunder(this));
             invocation.Add(new CrashingSky(this));
+            currCard = hand[0];
         }
         
 

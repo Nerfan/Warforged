@@ -162,7 +162,7 @@ public class StartGame : MonoBehaviour {
                 OnClick.Invocation[i].sprite = null;
                 OnClick.Invocation[i].color = new UnityEngine.Color(0, 0, 0);
                 OnClick.Invocation[i].gameObject.SetActive(true);
-                OnClick.cardDict["Invocation" + (i + 1)] = ch.invocation[i];
+                OnClick.cardDict["Invocation" + (i + 1)] = OnClick.NoReturn; ;
             }
             else
             {
@@ -197,25 +197,129 @@ public class StartGame : MonoBehaviour {
         yield return null;
     }
 
-    public static IEnumerator setupEdros(Dictionary<string, Sprite> CardImages)
+
+    public static IEnumerator updateOpponentUI(Character ch, bool showCurrCard, bool showHand)
+    {
+        for (int i = 0; i < OnClick.OHand.Count; ++i)
+        {
+            if (ch.hand.Count <= i)
+            {
+                OnClick.OHand[i].sprite = null;
+                OnClick.OHand[i].color = new UnityEngine.Color(1.0f, 1.0f, 1.0f, 0.0f);
+                OnClick.OHand[i].gameObject.SetActive(false);
+            }
+            else if(!showHand)
+            {
+                OnClick.OHand[i].sprite = null;
+                OnClick.OHand[i].color = new UnityEngine.Color(0, 0, 0,1);
+                OnClick.OHand[i].gameObject.SetActive(true);
+                OnClick.cardDict["OHand" + i] = ch.hand[i];
+            }
+            else
+            {
+
+                OnClick.OHand[i].sprite = OnClick.OCardImages[ch.hand[i].name];
+                OnClick.OHand[i].color = new UnityEngine.Color(1, 1, 1,1);
+                OnClick.OHand[i].gameObject.SetActive(true);
+                OnClick.cardDict["OHand" + i] = ch.hand[i];
+            }
+        }
+        /*
+        for (int i = 0; i < OnClick.Suspend.Count; ++i)
+        {
+            if (ch.Suspend.Count <= i)
+            {
+                OnClick.Suspend[i].sprite = null;
+            }
+            else
+            {
+                OnClick.Suspend[i].sprite = OnClick.CardImages[ch.name];
+            }
+        }*/
+        for (int i = 0; i < OnClick.OStandby.Count; ++i)
+        {
+            if (ch.standby.Count <= i)
+            {
+                OnClick.OStandby[i].sprite = null;
+                OnClick.OStandby[i].color = new UnityEngine.Color(1.0f, 1.0f, 1.0f, 0.33f);
+                OnClick.OStandby[i].gameObject.SetActive(false);
+            }
+            else
+            {
+                OnClick.OStandby[i].sprite = OnClick.OCardImages[ch.standby[i].name];
+                OnClick.OStandby[i].color = new UnityEngine.Color(1, 1, 1);
+                OnClick.OStandby[i].gameObject.SetActive(true);
+                OnClick.cardDict["OStandby" + (i + 1)] = ch.standby[i];
+            }
+        }
+        for (int i = 0; i < OnClick.OInvocation.Count; ++i)
+        {
+            if (ch.invocation.Count <= i)
+            {
+                OnClick.OInvocation[i].sprite = null;
+                OnClick.OInvocation[i].color = new UnityEngine.Color(1.0f, 1.0f, 1.0f, 0.33f);
+                OnClick.OInvocation[i].gameObject.SetActive(false);
+            }
+            else if (!ch.invocation[i].active)
+            {
+                OnClick.OInvocation[i].sprite = null;
+                OnClick.OInvocation[i].color = new UnityEngine.Color(0, 0, 0);
+                OnClick.OInvocation[i].gameObject.SetActive(true);
+                OnClick.cardDict["OInvocation" + (i + 1)] = OnClick.NoReturn;
+            }
+            else
+            {
+                OnClick.OInvocation[i].sprite = OnClick.OCardImages[ch.invocation[i].name];
+                OnClick.OInvocation[i].color = new UnityEngine.Color(1, 1, 1);
+                OnClick.OInvocation[i].gameObject.SetActive(true);
+                OnClick.cardDict["OInvocation" + (i + 1)] = ch.invocation[i];
+            }
+        }
+        if (ch.currCard == null)
+        {
+            OnClick.OPlaySlot.sprite = null;
+            OnClick.OPlaySlot.color = new UnityEngine.Color(1.0f, 1.0f, 1.0f, 0.33f);
+            OnClick.OPlaySlot.gameObject.SetActive(false);
+        }
+        else if (showCurrCard)
+        {
+            OnClick.OPlaySlot.sprite = OnClick.OCardImages[ch.currCard.name];
+            OnClick.OPlaySlot.color = new UnityEngine.Color(1, 1, 1);
+            OnClick.OPlaySlot.gameObject.SetActive(true);
+            OnClick.cardDict["OPlaySlot"] = ch.currCard;
+        }
+        else
+        {
+            OnClick.OPlaySlot.sprite = null;
+            OnClick.OPlaySlot.color = new UnityEngine.Color(0, 0, 0);
+            OnClick.OPlaySlot.gameObject.SetActive(true);
+            OnClick.cardDict["OPlaySlot"] = ch.currCard;
+        }
+        OnClick.OCharacterSlot.sprite = OnClick.OCardImages[ch.name];
+        OnClick.OCharacterSlot.color = new UnityEngine.Color(1, 1, 1);
+        yield return null;
+    }
+
+
+    public static IEnumerator setupEdros(Dictionary<string, Sprite> CurrCardImages)
     {
 
-        CardImages.Add("Celestial Surge", Resources.Load("CardImages/Edros/Celestial Surge", typeof(Sprite)) as Sprite);
-        CardImages.Add("Purging Lightning", Resources.Load("CardImages/Edros/Purging Lightning", typeof(Sprite)) as Sprite);
-        CardImages.Add("Crashing Sky", Resources.Load("CardImages/Edros/Crashing Sky", typeof(Sprite)) as Sprite);
-        CardImages.Add("Edros", Resources.Load<Sprite>("CardImages/Edros/Edros"));
+        CurrCardImages.Add("Celestial Surge", Resources.Load("CardImages/Edros/Celestial Surge", typeof(Sprite)) as Sprite);
+        CurrCardImages.Add("Purging Lightning", Resources.Load("CardImages/Edros/Purging Lightning", typeof(Sprite)) as Sprite);
+        CurrCardImages.Add("Crashing Sky", Resources.Load("CardImages/Edros/Crashing Sky", typeof(Sprite)) as Sprite);
+        CurrCardImages.Add("Edros", Resources.Load<Sprite>("CardImages/Edros/Edros"));
 
-        CardImages.Add("Faith Unquestioned", Resources.Load("CardImages/Edros/Faith Unquestioned", typeof(Sprite)) as Sprite);
-        CardImages.Add("Grace of Heaven", Resources.Load("CardImages/Edros/Grace of Heaven", typeof(Sprite)) as Sprite);
-        CardImages.Add("Hand of Toren", Resources.Load("CardImages/Edros/Hand of Toren", typeof(Sprite)) as Sprite);
+        CurrCardImages.Add("Faith Unquestioned", Resources.Load("CardImages/Edros/Faith Unquestioned", typeof(Sprite)) as Sprite);
+        CurrCardImages.Add("Grace of Heaven", Resources.Load("CardImages/Edros/Grace of Heaven", typeof(Sprite)) as Sprite);
+        CurrCardImages.Add("Hand of Toren", Resources.Load("CardImages/Edros/Hand of Toren", typeof(Sprite)) as Sprite);
 
-        CardImages.Add("Pillar of Lightning", Resources.Load("CardImages/Edros/Pillar of Lightning", typeof(Sprite)) as Sprite);
-        CardImages.Add("Rolling Thunder", Resources.Load("CardImages/Edros/Rolling Thunder", typeof(Sprite)) as Sprite);
-        CardImages.Add("Scorn of Thunder", Resources.Load("CardImages/Edros/Scorn of Thunder", typeof(Sprite)) as Sprite);
+        CurrCardImages.Add("Pillar of Lightning", Resources.Load("CardImages/Edros/Pillar of Lightning", typeof(Sprite)) as Sprite);
+        CurrCardImages.Add("Rolling Thunder", Resources.Load("CardImages/Edros/Rolling Thunder", typeof(Sprite)) as Sprite);
+        CurrCardImages.Add("Scorn of Thunder", Resources.Load("CardImages/Edros/Scorn of Thunder", typeof(Sprite)) as Sprite);
 
-        CardImages.Add("Sky Blessed Shield", Resources.Load("CardImages/Edros/Sky Blessed Shield", typeof(Sprite)) as Sprite);
-        CardImages.Add("Toren's Favored", Resources.Load("CardImages/Edros/Toren's Favored", typeof(Sprite)) as Sprite);
-        CardImages.Add("Wrath of Lightning", Resources.Load("CardImages/Edros/Wrath of Lightning", typeof(Sprite)) as Sprite);
+        CurrCardImages.Add("Sky Blessed Shield", Resources.Load("CardImages/Edros/Sky Blessed Shield", typeof(Sprite)) as Sprite);
+        CurrCardImages.Add("Toren's Favored", Resources.Load("CardImages/Edros/Toren's Favored", typeof(Sprite)) as Sprite);
+        CurrCardImages.Add("Wrath of Lightning", Resources.Load("CardImages/Edros/Wrath of Lightning", typeof(Sprite)) as Sprite);
         yield return null;
     }
 }
