@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using System.Collections;
 using Warforged;
 using System;
@@ -9,10 +10,11 @@ using System.Collections.Generic;
 public class StartGame : MonoBehaviour {
 
 	// Use this for initialization
-	void Start () {
+	void Start ()
+    {
         OnClick.buttonReturn = OnClick.NoReturn;
         OnClick.cardReturn = OnClick.NoReturn;
-        StartCoroutine(StartModel());
+        StartCoroutine(StartModel(characterPick));
     }
 	
 	// Update is called once per frame
@@ -20,26 +22,23 @@ public class StartGame : MonoBehaviour {
 
 	}
 
+    public static string characterPick = "";
     public delegate IEnumerator ModelSignal();
     public static ModelSignal signal = null;
     public static UnityLibrary lib = null;
     private static int threadID = 0;
 
-    IEnumerator StartModel()
+    public static IEnumerator StartModel(string character)
     {
-        Game g = new Game();
-        Thread t = new Thread(Game.Main);
+        Thread t = new Thread(() => Game.Main(character));
         t.Start();
         yield return new WaitUntil(() => Game.library != null && ((UnityLibrary)Game.library).barrier != null);
         lib = (UnityLibrary)Game.library;
         threadID = lib.barrier.AddThread();
         while (true)
         {
-            Debug.Log("Before Check");
             yield return new WaitUntil(() => signal != null);
-            Debug.Log("After Check");
             yield return signal();
-            Debug.Log("After signal Call");
             lib.barrier.SignalAndWait(threadID);
             signal = null;
         }

@@ -52,7 +52,9 @@ namespace Warforged
             // If anyone dies, do it at the end
         }
 
-        public static void Main()
+        //@param: This will return a string which comes from the UI
+        //The UI tells the model which character has been selected
+        public static void Main(string character)
 		{
             
             /*GameWindowLibrary library = new GameWindowLibrary();
