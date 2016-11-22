@@ -193,6 +193,9 @@ public class StartGame : MonoBehaviour {
         }
         OnClick.CharacterSlot.sprite = OnClick.CardImages[ch.name];
         OnClick.CharacterSlot.color = new UnityEngine.Color(1, 1, 1);
+        OnClick.Health.text = ch.hp + "HP";
+        OnClick.Empower.text = "EMP("+ch.empower+")";
+        OnClick.Reinforce.text = "REI(" + ch.reinforce + ")";
         yield return null;
     }
 
@@ -296,6 +299,9 @@ public class StartGame : MonoBehaviour {
         }
         OnClick.OCharacterSlot.sprite = OnClick.OCardImages[ch.name];
         OnClick.OCharacterSlot.color = new UnityEngine.Color(1, 1, 1);
+        OnClick.OHealth.text = ch.hp + "HP";
+        OnClick.OEmpower.text = "EMP(" + ch.empower + ")";
+        OnClick.OReinforce.text = "REI(" + ch.reinforce + ")";
         yield return null;
     }
 

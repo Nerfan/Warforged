@@ -52,7 +52,60 @@ public class OnClick : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler
                 Prompt = null;
             }
         }
-        if(im == null)
+        if (OHealth == null)
+        {
+            OHealth = gameObject.GetComponent<Text>();
+            if (OHealth != null && !OHealth.tag.Equals("OHealth"))
+            {
+                OHealth = null;
+            }
+        }
+
+        if (Health == null)
+        {
+            Health = gameObject.GetComponent<Text>();
+            if (Health != null && !Health.tag.Equals("Health"))
+            {
+                Health = null;
+            }
+        }
+
+        if (Reinforce == null)
+        {
+            Reinforce = gameObject.GetComponent<Text>();
+            if (Reinforce != null && !Reinforce.tag.Equals("Reinforce"))
+            {
+                Reinforce = null;
+            }
+        }
+
+        if (OReinforce == null)
+        {
+            OReinforce = gameObject.GetComponent<Text>();
+            if (OReinforce != null && !OReinforce.tag.Equals("OReinforce"))
+            {
+                OReinforce = null;
+            }
+        }
+
+        if (Empower == null)
+        {
+            Empower = gameObject.GetComponent<Text>();
+            if (Empower != null && !Empower.tag.Equals("Empower"))
+            {
+                Empower = null;
+            }
+        }
+
+        if (OEmpower == null)
+        {
+            OEmpower = gameObject.GetComponent<Text>();
+            if (OEmpower != null && !OEmpower.tag.Equals("OEmpower"))
+            {
+                OEmpower = null;
+            }
+        }
+        if (im == null)
         {
             return;
         }
@@ -127,6 +180,12 @@ public class OnClick : MonoBehaviour, IPointerClickHandler, IPointerEnterHandler
     public static object buttonReturn = NoReturn;
     public static object cardReturn = NoReturn;
     public static Text Prompt = null;
+    public static Text Health = null;
+    public static Text OHealth = null;
+    public static Text Empower = null;
+    public static Text Reinforce = null;
+    public static Text OEmpower = null;
+    public static Text OReinforce = null;
     public static Dictionary<string, object> cardDict = null;
     public static Dictionary<string, Sprite> CardImages = new Dictionary<string, Sprite>();
     static List<string> cardTags = new List<string>() {"Invocation1","Invocation2","Invocation3","Invocation4",
