@@ -95,10 +95,13 @@ def main(filename):
     while line != "":
         if line.strip() == "Offense (Red)":
             color = "Color.red"
+            write.write("\n// Offense");
         elif line.strip() == "Intent (Green)":
             color = "Color.green"
+            write.write("\n// Intent");
         elif line.strip() == "Defense (Blue)":
             color = "Color.blue"
+            write.write("\n// Defense");
         elif line.strip() == "Inherent Cards":
             color = "Color.black"
         elif line.strip() == "Awakening Cards":
