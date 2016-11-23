@@ -23,7 +23,12 @@ namespace Warforged
 
             public override void activate()
             {
-                //TODO
+                user.damage += 2 + user.empower;
+                user.empower = 0;
+                if (user.opponent.currCard.color == Color.green)
+                {
+                    user.damage += 2;
+                }
             }
         }
 
@@ -38,7 +43,13 @@ namespace Warforged
 
             public override void activate()
             {
-                //TODO
+                user.damage += 2 + user.empower;
+                user.empower = 0;
+                if (user.bloodlust)
+                {
+                    user.negate += 2 + user.reinforce;
+                    user.reinforce = 0;
+                }
             }
         }
 
@@ -53,7 +64,12 @@ namespace Warforged
 
             public override void activate()
             {
-                //TODO
+                user.damage += 2 + user.empower;
+                if (user.prevCard.color == Color.red)
+                {
+                    // TODO declaration
+                    // Wait for Unity branch to merge
+                }
             }
         }
 
@@ -68,7 +84,7 @@ namespace Warforged
 
             public override void activate()
             {
-                //TODO
+                //TODO wait for Unity branch
             }
         }
 
@@ -83,7 +99,7 @@ namespace Warforged
 
             public override void activate()
             {
-                //TODO
+                // TODO wait for unity branch
             }
         }
 
@@ -98,7 +114,12 @@ namespace Warforged
 
             public override void activate()
             {
-                //TODO
+                user.negate += 2 + user.reinforce;
+                user.reinforce == 0;
+                if (user.opponent.currCard.color == Color.red)
+                {
+                    user.sealColor(Color.blue);
+                }
             }
         }
 
@@ -113,7 +134,11 @@ namespace Warforged
 
             public override void activate()
             {
-                //TODO
+                user.heal += 2;
+                if (user.hasAlign("GR"))
+                {
+                    user.negate = 255;
+                }
             }
         }
 
@@ -128,7 +153,12 @@ namespace Warforged
 
             public override void activate()
             {
-                //TODO
+                user.negate += 2 + user.reinforce;
+                user.reinforce = 0;
+                if (user.stalwart)
+                {
+                    user.reflect = true;
+                }
             }
         }
 
@@ -168,7 +198,7 @@ namespace Warforged
             {
                 name = "Sundering Star";
                 effect = "fense\nEffect: Strive (2): Deal 2 damage for each of your standby Offense cards.\nCounter (G): Deal 3 additional damage.";
-                color = Color.black; //TODO;
+                color = Color.red;
             }
 
             public override void activate()
@@ -183,7 +213,7 @@ namespace Warforged
             {
                 name = "In the King’s Wake";
                 effect = "fense\nEffect: Strive (X): Gain 3 health for every Inherent Card you deactivated.\nCounter (R): Safeguard.";
-                color = Color.black; //TODO;
+                color = Color.blue;
             }
 
             public override void activate()
