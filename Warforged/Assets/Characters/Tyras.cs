@@ -369,12 +369,51 @@ namespace Warforged
 
             public override void activate()
             {
-                //TODO
+                // Make sure we have two active inherents
+                bool one = false;
+                bool two = false;
+                foreach (Card inherent in user.invocation)
+                {
+                    if (inherent.active)
+                    {
+                        if (one)
+                        {
+                            two = true;
+                            break;
+                        }
+                        one = true;
+                    }
+                }
+                if (!two)
+                {
+                    break;
+                }
+                // Strive cards NOT A REUSABLE ALGORITHM
+                foreach (Card inherent in user.invocation)
+                {
+                    user.strive(inherent);
+                }
+                // Check standby offense cards
+                user.damage += user.empower;
+                user.empower = 0;
+                foreach (Card card in user.standby)
+                {
+                    if (card.color == Color.red)
+                    {
+                        user.damage += 2;
+                    }
+                }
+                // Counter (G)
+                if (opponent.currCard.color == Color.green)
+                {
+                    user.damage += 3; // TODO ???
+                }
             }
         }
 
         private class IntheKingsWake : Card
         {
+            short strove = 0;
             public IntheKingsWake(Character user) : base(user)
             {
                 name = "In the King’s Wake";
@@ -384,7 +423,45 @@ namespace Warforged
 
             public override void activate()
             {
-                //TODO
+                user.heal += 3 * strove;
+                strove = 0;
+                if (opponent.currCard.color == Color.red)
+                {
+                    user.negate = 255;
+                }
+            }
+
+            public override void declare()
+            {
+                // First declare
+                while (true)
+                {
+                    Card card1 = Game.library.waitForClickOrCancel("Choose an inherent to strive.");
+                    if (card == null)
+                    {
+                        break;
+                    }
+                    else if (user.strive(card))
+                    {
+                        ((IntheKingsWake)this).strove += 1;
+                        break;
+                    }
+                }
+
+                // Second declare
+                while (true)
+                {
+                    Card card2 = Game.library.waitForClickOrCancel("Choose an additional inherent to strive.");
+                    if (card == null)
+                    {
+                        break;
+                    }
+                    else if (user.strive(card))
+                    {
+                        ((IntheKingsWake)this).strove += 1;
+                        break;
+                    }
+                }
             }
         }
     }
