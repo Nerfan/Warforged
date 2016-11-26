@@ -22,13 +22,13 @@ public class StartGame : MonoBehaviour {
 
 	}
 
-    public static string characterPick = "";
+    public static Character characterPick = null;
     public delegate IEnumerator ModelSignal();
     public static ModelSignal signal = null;
     public static UnityLibrary lib = null;
     private static int threadID = 0;
 
-    public static IEnumerator StartModel(string character)
+    public static IEnumerator StartModel(Character character)
     {
         Thread t = new Thread(() => Game.Main(character));
         t.Start();
@@ -103,6 +103,7 @@ public class StartGame : MonoBehaviour {
 
     public static IEnumerator updateUI(Character ch, bool showCurrCard)
     {
+        Debug.Log("Hand");
         for(int i = 0; i<OnClick.Hand.Count; ++i)
         {
             if(ch.hand.Count <= i)
@@ -113,6 +114,7 @@ public class StartGame : MonoBehaviour {
             }
             else
             {
+                Debug.Log(ch.hand[i].name);
 
                 OnClick.Hand[i].sprite = OnClick.CardImages[ch.hand[i].name];
                 OnClick.Hand[i].color = new UnityEngine.Color(1, 1, 1);
@@ -132,6 +134,7 @@ public class StartGame : MonoBehaviour {
                 OnClick.Suspend[i].sprite = OnClick.CardImages[ch.name];
             }
         }*/
+        Debug.Log("Standby");
         for (int i = 0; i < OnClick.Standby.Count; ++i)
         {
             if (ch.standby.Count <= i)
@@ -148,6 +151,7 @@ public class StartGame : MonoBehaviour {
                 OnClick.cardDict["Standby"+(i+1)] = ch.standby[i];
             }
         }
+        Debug.Log("Invocation");
         for (int i = 0; i < OnClick.Invocation.Count; ++i)
         {
             if (ch.invocation.Count <= i)
@@ -319,6 +323,28 @@ public class StartGame : MonoBehaviour {
         CurrCardImages.Add("Sky Blessed Shield", Resources.Load("CardImages/Edros/Sky Blessed Shield", typeof(Sprite)) as Sprite);
         CurrCardImages.Add("Toren's Favored", Resources.Load("CardImages/Edros/Toren's Favored", typeof(Sprite)) as Sprite);
         CurrCardImages.Add("Wrath of Lightning", Resources.Load("CardImages/Edros/Wrath of Lightning", typeof(Sprite)) as Sprite);
+        yield return null;
+    }
+
+    public static IEnumerator setupTyras(Dictionary<string, Sprite> CurrCardImages)
+    {
+
+        CurrCardImages.Add("A Brother's Virtue", Resources.Load("CardImages/Tyras/A Brother's Virtue", typeof(Sprite)) as Sprite);
+        CurrCardImages.Add("A Promise Unbroken", Resources.Load("CardImages/Tyras/A Promise Unbroken", typeof(Sprite)) as Sprite);
+        CurrCardImages.Add("A Soldier's Remorse", Resources.Load("CardImages/Tyras/A Soldier's Remorse", typeof(Sprite)) as Sprite);
+        CurrCardImages.Add("An Oath Unforgotten", Resources.Load<Sprite>("CardImages/Tyras/An Oath Unforgotten"));
+
+        CurrCardImages.Add("Armor of Aldras", Resources.Load("CardImages/Tyras/Armor of Aldras", typeof(Sprite)) as Sprite);
+        CurrCardImages.Add("Decrying Roar", Resources.Load("CardImages/Tyras/Decrying Roar", typeof(Sprite)) as Sprite);
+        CurrCardImages.Add("Grim Knight's Dread", Resources.Load("CardImages/Tyras/Grim Knight's Dread", typeof(Sprite)) as Sprite);
+
+        CurrCardImages.Add("In the King's Wake", Resources.Load("CardImages/Tyras/In the King's Wake", typeof(Sprite)) as Sprite);
+        CurrCardImages.Add("Onrai's Strike", Resources.Load("CardImages/Tyras/Onrai's Strike", typeof(Sprite)) as Sprite);
+        CurrCardImages.Add("Onslaught of Tyras", Resources.Load("CardImages/Tyras/Onslaught of Tyras", typeof(Sprite)) as Sprite);
+
+        CurrCardImages.Add("Sundering Star", Resources.Load("CardImages/Tyras/Sundering Star", typeof(Sprite)) as Sprite);
+        CurrCardImages.Add("Tyras", Resources.Load("CardImages/Tyras/Tyras", typeof(Sprite)) as Sprite);
+        CurrCardImages.Add("Warrior's Resolve", Resources.Load("CardImages/Tyras/Warrior's Resolve", typeof(Sprite)) as Sprite);
         yield return null;
     }
 }

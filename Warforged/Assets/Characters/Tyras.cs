@@ -8,6 +8,18 @@ namespace Warforged
         {
             name = "Tyras";
             title = "Hero of a Lost Age";
+            hand.Add(new OnraisStrike(this));
+            hand.Add(new OnslaughtofTyras(this));
+            hand.Add(new WarriorsResolve(this));
+            hand.Add(new DecryingRoar(this));
+            standby.Add(new ArmorofAldras(this));
+            standby.Add(new ABrothersVirtue(this));
+            standby.Add(new ASoldiersRemorse(this));
+            standby.Add(new GrimKnightsDread(this));
+            invocation.Add(new APromiseUnbroken(this));
+            invocation.Add(new AnOathUnforgotten(this));
+            invocation.Add(new IntheKingsWake(this));
+            invocation.Add(new SunderingStar(this));
         }
 
         public override void dawn()
@@ -48,15 +60,17 @@ namespace Warforged
                         Game.library.setPromptText("Choose a card to take from your standby.");
                         while (true)
                         {
-                            card1 = Game.library.waitForClick();
-                            if (user.standby.Contains(card1))
+                            var card1 = Game.library.waitForClick();
+                            if (standby.Contains(card1))
                             {
+                                takeStandby(card1);
                                 break;
                             }
                         }
                     }
                 }
-                boslter(); // This may cause problems; idk how things should be ordered
+                Game.library.setPromptText("");
+                bolster(); // This may cause problems; idk how things should be ordered
             }
             // Damage applies after this; I don't think that should be an issue
         }
@@ -69,7 +83,7 @@ namespace Warforged
         {
             public OnraisStrike(Character user) : base(user)
             {
-                name = "Onrai’s Strike";
+                name = "Onrai's Strike";
                 effect = "Deal 2 damage.\nCounter (G): Deal 2 additional damage.";
                 color = Color.red;
             }
@@ -111,7 +125,7 @@ namespace Warforged
             Card standbyCard = null;
             public ASoldiersRemorse(Character user) : base(user)
             {
-                name = "A Soldier’s Remorse";
+                name = "A Soldier's Remorse";
                 effect = "Deal 2 damage.\nChain (R): Send a Standby Defense card to your hand.";
                 color = Color.red;
             }
@@ -140,6 +154,8 @@ namespace Warforged
                                 break;
                             }
                         }
+
+                        Game.library.setPromptText("");
                     }
                 }
             }
@@ -151,7 +167,7 @@ namespace Warforged
             Card card2 = null;
             public WarriorsResolve(Character user) : base(user)
             {
-                name = "Warrior’s Resolve";
+                name = "Warrior's Resolve";
                 effect = "Send a Standby card to your hand.\nCounter (B): Send an additional Standby card to your hand.";
                 color = Color.green;
             }
@@ -174,8 +190,10 @@ namespace Warforged
                     {
                         break;
                     }
+
                 }
-                if (opponent.currCard.color == Color.blue)
+                Game.library.setPromptText("");
+                if (user.opponent.currCard.color == Color.blue)
                 {
                     while (true)
                     {
@@ -186,6 +204,8 @@ namespace Warforged
                             break;
                         }
                     }
+
+                    Game.library.setPromptText("");
                 }
             }
         }
@@ -198,7 +218,7 @@ namespace Warforged
             Card handCard2 = null;
             public GrimKnightsDread(Character user) : base(user)
             {
-                name = "Grim Knight’s Dread";
+                name = "Grim Knight's Dread";
                 effect = "Swap 2 cards in your hand with 2 Standby cards.\nEndure (5): Put all Standby Offense cards in your hand.";
                 color = Color.green;
             }
@@ -252,7 +272,7 @@ namespace Warforged
                 // Second swap
                 if (user.standby.Count > 1 && user.hand.Count > 1)
                 {
-                    Game.library.setPromptText("Pick the first pair of cards to swap.");
+                    Game.library.setPromptText("Pick the second pair of cards to swap.");
                     while(true)
                     {
                         Character.Card card1 = Game.library.waitForClick();
@@ -288,7 +308,7 @@ namespace Warforged
             public override void activate()
             {
                 user.negate += 2 + user.reinforce;
-                user.reinforce == 0;
+                user.reinforce = 0;
                 if (user.opponent.currCard.color == Color.red)
                 {
                     user.sealColor(Color.blue);
@@ -319,7 +339,7 @@ namespace Warforged
         {
             public ABrothersVirtue(Character user) : base(user)
             {
-                name = "A Brother’s Virtue";
+                name = "A Brother's Virtue";
                 effect = "Negate 2 damage.\nStalwart: Reflect.";
                 color = Color.blue;
             }
@@ -340,8 +360,9 @@ namespace Warforged
             public AnOathUnforgotten(Character user) : base(user)
             {
                 name = "An Oath Unforgotten";
-                effect = "Whenever you play a counter type of your opponent’s card, send a Standby card to your hand.";
+                effect = "Whenever you play a counter type of your opponent's card, send a Standby card to your hand.";
                 color = Color.black;
+                active = false;
             }
 
             // Effects are covered in declarePhase()
@@ -354,6 +375,7 @@ namespace Warforged
                 name = "A Promise Unbroken";
                 effect = "Bloodlust: Empower (1).\nStalwart: Reinforce (1).";
                 color = Color.black;
+                active = false;
             }
             // Effects are covered in dawn()
         }
@@ -365,6 +387,8 @@ namespace Warforged
                 name = "Sundering Star";
                 effect = "Strive (2): Deal 2 damage for each of your standby Offense cards.\nCounter (G): Deal 3 additional damage.";
                 color = Color.red;
+                setAwakening();
+                active = false;
             }
 
             public override void activate()
@@ -386,7 +410,7 @@ namespace Warforged
                 }
                 if (!two)
                 {
-                    break;
+                    return;
                 }
                 // Strive cards NOT A REUSABLE ALGORITHM
                 foreach (Card inherent in user.invocation)
@@ -404,7 +428,7 @@ namespace Warforged
                     }
                 }
                 // Counter (G)
-                if (opponent.currCard.color == Color.green)
+                if (user.opponent.currCard.color == Color.green)
                 {
                     user.damage += 3; // TODO ???
                 }
@@ -416,16 +440,18 @@ namespace Warforged
             short strove = 0;
             public IntheKingsWake(Character user) : base(user)
             {
-                name = "In the King’s Wake";
+                name = "In the King's Wake";
                 effect = "Strive (X): Gain 3 health for every Inherent Card you deactivated.\nCounter (R): Safeguard.";
                 color = Color.blue;
+                setAwakening();
+                active = false;
             }
 
             public override void activate()
             {
                 user.heal += 3 * strove;
                 strove = 0;
-                if (opponent.currCard.color == Color.red)
+                if (user.opponent.currCard.color == Color.red)
                 {
                     user.negate = 255;
                 }
@@ -437,11 +463,11 @@ namespace Warforged
                 while (true)
                 {
                     Card card1 = Game.library.waitForClickOrCancel("Choose an inherent to strive.");
-                    if (card == null)
+                    if (card1 == null)
                     {
                         break;
                     }
-                    else if (user.strive(card))
+                    else if (user.strive(card1))
                     {
                         ((IntheKingsWake)this).strove += 1;
                         break;
@@ -452,11 +478,11 @@ namespace Warforged
                 while (true)
                 {
                     Card card2 = Game.library.waitForClickOrCancel("Choose an additional inherent to strive.");
-                    if (card == null)
+                    if (card2 == null)
                     {
                         break;
                     }
-                    else if (user.strive(card))
+                    else if (user.strive(card2))
                     {
                         ((IntheKingsWake)this).strove += 1;
                         break;

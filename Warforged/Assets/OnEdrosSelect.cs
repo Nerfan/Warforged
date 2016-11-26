@@ -9,7 +9,7 @@ public class OnEdrosSelect : MonoBehaviour, IPointerClickHandler{
 
     public void OnPointerClick(PointerEventData eventData)
     {
-        StartGame.characterPick = "Edros";
+        StartGame.characterPick = new Warforged.Edros();
         SceneManager.LoadScene("WarforgedBoard",LoadSceneMode.Single);
 
     }

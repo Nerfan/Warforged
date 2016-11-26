@@ -17,6 +17,7 @@ namespace Warforged
         //@param isP2: If this value is 2, the UI is notified that P2 is Edros, otherwise P1 will be Edros
         //This function must be called twice, once for each player.
         public abstract void setupEdros(int player);
+        public abstract void setupTyras(int player);
 
         //Updates the UI for Player 1 based on the character object passed in.
         //@param showCurrCard: If this is true the played card will be shown on the UI, otherwise the back of the card is used.

@@ -81,6 +81,7 @@
     <Compile Include="Assets\Game.cs" />
     <Compile Include="Assets\OnClick.cs" />
     <Compile Include="Assets\OnEdrosSelect.cs" />
+    <Compile Include="Assets\OnTyrasSelect.cs" />
     <Compile Include="Assets\Quit.cs" />
     <Compile Include="Assets\StartGame.cs" />
     <Compile Include="Assets\UnityLibrary.cs" />

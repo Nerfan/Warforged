@@ -37,6 +37,7 @@ namespace Warforged
             OnClick.buttonReturn = OnClick.NoReturn;
             StartGame.signal = () => { return StartGame.multiPrompt(text,buttonTexts,returnTypes); };
             barrier.SignalAndWait(threadID);
+            setPromptText("");
             return returnObject;
         }
 
@@ -57,6 +58,20 @@ namespace Warforged
             else
             {
                 StartGame.signal = () => { return StartGame.setupEdros(OnClick.CardImages); };
+                barrier.SignalAndWait(threadID);
+            }
+        }
+
+        public override void setupTyras(int player)
+        {
+            if (player == 2)
+            {
+                StartGame.signal = () => { return StartGame.setupTyras(OnClick.OCardImages); };
+                barrier.SignalAndWait(threadID);
+            }
+            else
+            {
+                StartGame.signal = () => { return StartGame.setupTyras(OnClick.CardImages); };
                 barrier.SignalAndWait(threadID);
             }
         }
@@ -87,6 +102,7 @@ namespace Warforged
             OnClick.cardReturn = OnClick.NoReturn;
             StartGame.signal = () => { return StartGame.waitForClickOrCancel(text); };
             barrier.SignalAndWait(threadID);
+            setPromptText("");
             return (Character.Card)returnObject;
         }
 
@@ -95,6 +111,7 @@ namespace Warforged
             OnClick.buttonReturn = OnClick.NoReturn;
             StartGame.signal = () => { return StartGame.yesnoPrompt(text); };
             barrier.SignalAndWait(threadID);
+            setPromptText("");
             return (bool)returnObject;
         }
     }
