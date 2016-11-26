@@ -10,6 +10,61 @@ namespace Warforged
             title = "Hero of a Lost Age";
         }
 
+        public override void dawn()
+        {
+            base.dawn();
+            // A Promise Unbroken
+            foreach (Card card in invocation)
+            {
+                if (card is APromiseUnbroken && card.active)
+                {
+                    if (bloodlust)
+                    {
+                        empower += 1;
+                    }
+                    if (stalwart)
+                    {
+                        reinforce += 1;
+                    }
+                }
+            }
+        }
+
+        // playCard()
+
+        public override void declarePhase()
+        {
+            base.declarePhase(); // Activate effects of cards first
+            if (currCard.color - opponent.currCard.color == -1
+                || currCard.color - opponent.currCard.color == 2)
+            {
+                // An Oath Unforgotten
+                // TODO I think there's a more efficient way to do this
+                foreach (Card card in invocation)
+                {
+                    if (card is AnOathUnforgotten && card.active
+                        && standby.Count > 0)
+                    {
+                        Game.library.setPromptText("Choose a card to take from your standby.");
+                        while (true)
+                        {
+                            card1 = Game.library.waitForClick();
+                            if (user.standby.Contains(card1))
+                            {
+                                break;
+                            }
+                        }
+                    }
+                }
+                boslter(); // This may cause problems; idk how things should be ordered
+            }
+            // Damage applies after this; I don't think that should be an issue
+        }
+
+        // damagePhase()
+
+        // dusk()
+
         private class OnraisStrike : Card
         {
             public OnraisStrike(Character user) : base(user)
@@ -53,6 +108,7 @@ namespace Warforged
 
         private class ASoldiersRemorse : Card
         {
+            Card standbyCard = null;
             public ASoldiersRemorse(Character user) : base(user)
             {
                 name = "A Soldier’s Remorse";
@@ -63,16 +119,36 @@ namespace Warforged
             public override void activate()
             {
                 user.damage += 2 + user.empower;
+                user.takeStandby(standbyCard);
+                standbyCard = null;
+            }
+
+            public override void declare()
+            {
                 if (user.prevCard.color == Color.red)
                 {
-                    // TODO declaration
-                    // Wait for Unity branch to merge
+                    while (true)
+                    {
+                        // Ideally this should only happen once
+                        // But if the user chooses an invalid card, try again
+                        Game.library.setPromptText("Choose a blue standby card to send to your hand.");
+                        standbyCard = Game.library.waitForClick();
+                        if (standbyCard != null) // Safety check
+                        {
+                            if (standbyCard.color == Color.blue && user.standby.Contains(standbyCard))
+                            {
+                                break;
+                            }
+                        }
+                    }
                 }
             }
         }
 
         private class WarriorsResolve : Card
         {
+            Card card1 = null;
+            Card card2 = null;
             public WarriorsResolve(Character user) : base(user)
             {
                 name = "Warrior’s Resolve";
@@ -82,12 +158,44 @@ namespace Warforged
 
             public override void activate()
             {
-                //TODO wait for Unity branch
+                user.takeStandby(card1);
+                card1 = null;
+                user.takeStandby(card2);
+                card2 = null;
+            }
+
+            public override void declare()
+            {
+                while (true)
+                {
+                    Game.library.setPromptText("Choose a standby card to send to your hand.");
+                    card1 = Game.library.waitForClick();
+                    if (user.standby.Contains(card1))
+                    {
+                        break;
+                    }
+                }
+                if (opponent.currCard.color == Color.blue)
+                {
+                    while (true)
+                    {
+                        Game.library.setPromptText("Choose a standby card to send to your hand.");
+                        card2 = Game.library.waitForClick();
+                        if (user.standby.Contains(card2))
+                        {
+                            break;
+                        }
+                    }
+                }
             }
         }
 
         private class GrimKnightsDread : Card
         {
+            Card stdbyCard1 = null;
+            Card stdbyCard2 = null;
+            Card handCard1 = null;
+            Card handCard2 = null;
             public GrimKnightsDread(Character user) : base(user)
             {
                 name = "Grim Knight’s Dread";
@@ -97,7 +205,74 @@ namespace Warforged
 
             public override void activate()
             {
-                // TODO wait for unity branch
+                user.swap(handCard1, stdbyCard1);
+                handCard1 = null;
+                stdbyCard1 = null;
+                user.swap(handCard2, stdbyCard2);
+                handCard2 = null;
+                stdbyCard2 = null;
+                if (user.hp <= 5) // TODO does this come before or after
+                {
+                    foreach (Card card in user.standby)
+                    {
+                        if (card.color == Color.red)
+                        {
+                            user.takeStandby(card);
+                        }
+                    }
+                }
+            }
+
+            public override void declare()
+            {
+                // First swap
+                if (user.standby.Count > 0 && user.hand.Count > 0)
+                {
+                    Game.library.setPromptText("Pick the first pair of cards to swap.");
+                    while(true)
+                    {
+                        Character.Card card1 = Game.library.waitForClick();
+                        Game.library.highlight(card1, 255, 255, 0);
+                        Character.Card card2 = Game.library.waitForClick();
+                        Game.library.clearAllHighlighting();
+                        if(user.hand.Contains(card1) && user.standby.Contains(card2))
+                        {
+                            handCard1 = card1;
+                            stdbyCard1 = card2;
+                            break;
+                        }
+                        else if(user.hand.Contains(card2) && user.standby.Contains(card1))
+                        {
+                            handCard1 = card2;
+                            stdbyCard1 = card1;
+                            break;
+                        }
+                    }
+                }
+                // Second swap
+                if (user.standby.Count > 1 && user.hand.Count > 1)
+                {
+                    Game.library.setPromptText("Pick the first pair of cards to swap.");
+                    while(true)
+                    {
+                        Character.Card card1 = Game.library.waitForClick();
+                        Game.library.highlight(card1, 255, 255, 0);
+                        Character.Card card2 = Game.library.waitForClick();
+                        Game.library.clearAllHighlighting();
+                        if(user.hand.Contains(card1) && user.standby.Contains(card2))
+                        {
+                            handCard1 = card1;
+                            stdbyCard1 = card2;
+                            break;
+                        }
+                        else if(user.hand.Contains(card2) && user.standby.Contains(card1))
+                        {
+                            handCard1 = card2;
+                            stdbyCard1 = card1;
+                            break;
+                        }
+                    }
+                }
             }
         }
 
@@ -169,10 +344,7 @@ namespace Warforged
                 color = Color.black;
             }
 
-            public override void activate()
-            {
-                //TODO
-            }
+            // Effects are covered in declarePhase()
         }
 
         private class APromiseUnbroken : Card
@@ -183,11 +355,7 @@ namespace Warforged
                 effect = "Bloodlust: Empower (1).\nStalwart: Reinforce (1).";
                 color = Color.black;
             }
-
-            public override void activate()
-            {
-                //TODO
-            }
+            // Effects are covered in dawn()
         }
 
         private class SunderingStar : Card
@@ -195,7 +363,7 @@ namespace Warforged
             public SunderingStar(Character user) : base(user)
             {
                 name = "Sundering Star";
-                effect = "fense\nEffect: Strive (2): Deal 2 damage for each of your standby Offense cards.\nCounter (G): Deal 3 additional damage.";
+                effect = "Strive (2): Deal 2 damage for each of your standby Offense cards.\nCounter (G): Deal 3 additional damage.";
                 color = Color.red;
             }
 
@@ -210,7 +378,7 @@ namespace Warforged
             public IntheKingsWake(Character user) : base(user)
             {
                 name = "In the King’s Wake";
-                effect = "fense\nEffect: Strive (X): Gain 3 health for every Inherent Card you deactivated.\nCounter (R): Safeguard.";
+                effect = "Strive (X): Gain 3 health for every Inherent Card you deactivated.\nCounter (R): Safeguard.";
                 color = Color.blue;
             }
 
