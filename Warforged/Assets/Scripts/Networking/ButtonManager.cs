@@ -63,7 +63,7 @@ public class ButtonManager : MonoBehaviour
     {
         // Just add more const Ip's as we get more people until we need a server.
 
-        const string joeIP = "192.168.1.13";
+		const string joeIP = "174.44.156.42";
         const string benIP = "50.30.232.143";
         const string jeremyIP = "192.168.2.12";
         const string steveIP = "129.21.141.231";
