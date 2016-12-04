@@ -1,7 +1,7 @@
-﻿
-Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2015
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Warforged.CSharp", "Warforged.CSharp.csproj", "{034740DE-B332-84FC-C3EF-ED8101026AC2}"
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2008
+
+Project("{46672FD4-D374-1AC5-1723-AE724AA6D41D}") = "Warforged", "Assembly-CSharp.csproj", "{C0BD705A-D853-9591-4A37-A9596CF719A1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -9,12 +9,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{034740DE-B332-84FC-C3EF-ED8101026AC2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{034740DE-B332-84FC-C3EF-ED8101026AC2}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{034740DE-B332-84FC-C3EF-ED8101026AC2}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{034740DE-B332-84FC-C3EF-ED8101026AC2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C0BD705A-D853-9591-4A37-A9596CF719A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C0BD705A-D853-9591-4A37-A9596CF719A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C0BD705A-D853-9591-4A37-A9596CF719A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C0BD705A-D853-9591-4A37-A9596CF719A1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(MonoDevelopProperties) = preSolution
+		StartupItem = Assembly-CSharp.csproj
 	EndGlobalSection
 EndGlobal

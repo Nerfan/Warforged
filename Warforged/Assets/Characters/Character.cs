@@ -26,7 +26,6 @@ namespace Warforged
         public int reinforce{get; set;}
         public bool reflect{get; set;}
         public bool absorb{get; set;}
-        public bool undying{get; set;}
         // Information about previous turn
         public bool stalwart{get; protected set;}
         public bool bloodlust{get; protected set;}
@@ -43,14 +42,11 @@ namespace Warforged
         public Character opponent{get; protected set;}
         private List<Card> stroveCards;
 
-        /// Set the opponent character.
-        /// There doesn't need to be a way to un-set this.
         public void setOpponent(Character opponent)
         {
             this.opponent = opponent;
         }
 
-        /// Constructor; takes no parameters and defaults all values
         public Character()
         {
             hp = 10;
@@ -61,7 +57,6 @@ namespace Warforged
             reinforce = 0;
             reflect = false;
             absorb = false;
-            undying = false;
 
             stalwart = false;
             bloodlust = false;
@@ -74,8 +69,6 @@ namespace Warforged
             stroveCards = new List<Card>();
         }
 
-        /// Bolster the first card that is bolster-able.
-        /// Places the card in hand if it's an awakening.
         public void bolster()
         {
             for (int i = 0; i < invocation.Count; i++)
@@ -103,26 +96,6 @@ namespace Warforged
                 dmg = 0;
             }
             hp -= dmg;
-            if (undying && hp < 1)
-            {
-                hp = 1;
-            }
-        }
-
-        /// Add damage from a red card.
-        /// Also adds empower and resets empower to 0.
-        public void addDamage(int dmg)
-        {
-            damage += dmg + empower;
-            empower = 0;
-        }
-
-        /// Add negation effects from a blue card.
-        /// Also adds reinforce and resets reinforce to 0.
-        public void addNegate(int ngt)
-        {
-            negate += ngt + reinforce;
-            reinforce = 0;
         }
 
         /// These next five methods should ALWAYS be called in order.
@@ -186,7 +159,6 @@ namespace Warforged
             activateCard();
         }
 
-        /// Calculate all damage and healing occuring this turn.
         public virtual void damagePhase()
         {
             dealDamage();
@@ -201,8 +173,6 @@ namespace Warforged
         /// to represent if that effect is happening, then make it happen
         public virtual void dusk()
         {
-            // TODO will need changing based on stuff
-            // Can't think of any examples, but I know they exist.
             bloodlust = (damage > opponent.negate) ? true : false;
             stalwart = (opponent.damage > 0 && negate > 0) ? true : false;
         }
@@ -258,8 +228,7 @@ namespace Warforged
             }
         }
 
-        /// Pretty simple; activates the current card
-        /// Definitely doesn't need to be its own function
+        // Pretty simple; activates the current card
         public void activateCard()
         {
             currCard.activate();
@@ -354,8 +323,6 @@ namespace Warforged
         }
 
         /// Swap a standby card with a card in your hand
-        /// If either of the cards are not found, nothing happens.
-        /// Either card can be null.
         public void swap(Card inHand, Card inStandby)
         {
             if (!hand.Contains(inHand) || !standby.Contains(inStandby))
@@ -369,7 +336,6 @@ namespace Warforged
         }
 
         /// Send a standby card to your hand
-        /// card can be null, because then the check fails
         public void takeStandby(Card card)
         {
             if (!standby.Contains(card))
@@ -379,7 +345,7 @@ namespace Warforged
             hand.Add(card);
             standby.Remove(card);
         }
-
+        
 
         /* Nested class representing a generic card */
         public abstract class Card
@@ -396,7 +362,7 @@ namespace Warforged
             //Used in the UI. This is the image assosiated with the card.
 
             //A variable used to easily get the current directory of card images
-
+            
 
             protected Card(Character user)
             {
@@ -406,9 +372,6 @@ namespace Warforged
                 isAwakening = false;
             }
 
-            /// Flags a card as an awakening card.
-            /// You'll notice that this is a one-time thing.
-            /// That's because there's no reason to ever change this.
             protected void setAwakening()
             {
                 isAwakening = true;
@@ -425,9 +388,6 @@ namespace Warforged
 
             /// Covers anything that the card needs to do before effects happen
             /// i.e. Declaration effects (including swaps, strive)
-            /// This happens AFTER both cards are set
-            /// I think this might be redudant, since it happens
-            /// immediately before activate(), with nothing in between
             public virtual void declare() { }
 
             /// Happens when a card is removed from suspention
