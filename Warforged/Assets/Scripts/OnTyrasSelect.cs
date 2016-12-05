@@ -4,23 +4,26 @@ using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using System;
 
-public class OnEdrosSelect : MonoBehaviour, IPointerClickHandler{
+public class OnTyrasSelect : MonoBehaviour, IPointerClickHandler
+{
 
 
 	public void OnPointerClick(PointerEventData eventData)
 	{
-		StartGame.characterPick = new Warforged.Edros();
-		SceneManager.LoadScene("WarforgedBoard",LoadSceneMode.Single);
+		StartGame.characterPick = new Warforged.Tyras();
+		SceneManager.LoadScene("WarforgedBoard", LoadSceneMode.Single);
 
 	}
 
 	// Use this for initialization
-	void Start () {
+	void Start()
+	{
 
 	}
 
 	// Update is called once per frame
-	void Update () {
+	void Update()
+	{
 
 	}
 }
