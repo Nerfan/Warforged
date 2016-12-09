@@ -7,26 +7,12 @@ namespace Warforged
     {
         private bool bolster2;
         private bool bonusEmp;
-
         public Edros() : base()
         {
             name = "Edros";
             title = "Envoy of Toren";
             bolster2 = false;
             bonusEmp = false;
-            hand.Add(new HandofToren(this));
-            hand.Add(new CelestialSurge(this));
-            hand.Add(new PillarofLightning(this));
-            hand.Add(new TorensFavored(this));
-            standby.Add(new SkyBlessedShield(this));
-            standby.Add(new RollingThunder(this));
-            standby.Add(new PurgingLightning(this));
-            standby.Add(new FaithUnquestioned(this));
-            invocation.Add(new WrathofLightning(this));
-            invocation.Add(new GraceofHeaven(this));
-            invocation.Add(new ScornofThunder(this));
-            invocation.Add(new CrashingSky(this));
-            currCard = hand[0];
         }
         
 
@@ -63,9 +49,9 @@ namespace Warforged
         }
 
         // Offense
-        private class PurgingLightning : Card
+        public class PurgingLightning : Card
         {
-            public PurgingLightning(Character user) : base(user)
+            public PurgingLightning() : base()
             {
                 name = "Purging Lightning";
                 effect = "Deal 2 damage.\nBloodlust: Deal 1 additional damage";
@@ -83,9 +69,9 @@ namespace Warforged
             }
         }
 
-        private class HandofToren : Card
+        public class HandofToren : Card
         {
-            public HandofToren(Character user) : base(user)
+            public HandofToren() : base()
             {
                 name = "Hand of Toren";
                 effect = "Deal 1 damage.\nAlign (B, R, R): Deal 3 additional damage.";
@@ -103,9 +89,9 @@ namespace Warforged
             }
         }
 
-        private class RollingThunder : Card
+        public class RollingThunder : Card
         {
-            public RollingThunder(Character user) : base(user)
+            public RollingThunder() : base()
             {
                 name = "Rolling Thunder";
                 effect = "Chain (R): Deal 2 damage.\nStrike: Bolster";
@@ -124,9 +110,9 @@ namespace Warforged
             }
         }
 
-        private class PillarofLightning : Card
+        public class PillarofLightning : Card
         {
-            public PillarofLightning(Character user) : base(user)
+            public PillarofLightning() : base()
             {
                 name = "Pillar of Lightning";
                 effect = "Deal 2 damage.\nCounter(G): Seal (B)";
@@ -144,9 +130,9 @@ namespace Warforged
             }
         }
 
-        private class CelestialSurge : Card
+        public class CelestialSurge : Card
         {
-            public CelestialSurge(Character user) : base(user)
+            public CelestialSurge() : base()
             {
                 name = "Celestial Surge";
                 effect = "Deal 2 damage.\nStrike: Empower (1).";
@@ -162,9 +148,9 @@ namespace Warforged
         }
 
         // Defense TODO
-        private class SkyBlessedShield : Card
+        public class SkyBlessedShield : Card
         {
-            public SkyBlessedShield(Character user) : base(user)
+            public SkyBlessedShield() : base()
             {
                 name = "Sky Blessed Shield";
                 effect = "Gain 2 health.\nEndure (3): Counter (R): Reflect.";
@@ -182,10 +168,10 @@ namespace Warforged
             }
         }
 
-        private class TorensFavored : Card
+        public class TorensFavored : Card
         {
             private bool strove = false;
-            public TorensFavored(Character user) : base(user)
+            public TorensFavored() : base()
             {
                 name = "Toren's Favored";
                 effect = "Strive(1): Negate 3 damage.";
@@ -217,13 +203,13 @@ namespace Warforged
         }
 
         // Utility TODO
-        private class FaithUnquestioned : Card
+        public class FaithUnquestioned : Card
         {
             private bool strove = false;
             Card offenseCard = null;
             Card standbyCard = null;
             Card defenseCard = null;
-            public FaithUnquestioned(Character user) : base(user)
+            public FaithUnquestioned() : base()
             {
                 name = "Faith Unquestioned";
                 effect = "Swap 1 Offense card in your hand with 1 Standby card.\nStrive(1): Send a Standby Defense card to your hand.";
@@ -336,9 +322,9 @@ namespace Warforged
         }
 
         // Invocation TODO all of these
-        private class WrathofLightning : Card
+        public class WrathofLightning : Card
         {
-            public WrathofLightning(Character user) : base(user)
+            public WrathofLightning() : base()
             {
                 name = "Wrath of Lightning";
                 effect = "Depart: Deal damage equal to the amount of Standby Offense cards you have.";
@@ -360,9 +346,9 @@ namespace Warforged
             }
         }
         //TODO: We might be changing the name of this card.
-        private class ScornofThunder : Card
+        public class ScornofThunder : Card
         {
-            public ScornofThunder(Character user) : base(user)
+            public ScornofThunder() : base()
             {
                 name = "Scorn of Thunder";
                 effect = "Depart: Return up to 2 Standby cards to your hand.";
@@ -432,9 +418,9 @@ namespace Warforged
             }
         }
 
-        private class GraceofHeaven : Card
+        public class GraceofHeaven : Card
         {
-            public GraceofHeaven(Character user) : base(user)
+            public GraceofHeaven() : base()
             {
                 name = "Grace of Heaven";
                 effect = "Depart: Gain 2 health for every non-Offense Standby card.";
@@ -456,9 +442,9 @@ namespace Warforged
             }
         }
 
-        private class CrashingSky : Card
+        public class CrashingSky : Card
         {
-            public CrashingSky(Character user) : base(user)
+            public CrashingSky() : base()
             {
                 name = "Crashing Sky";
                 effect = "Choose 1:\nStrive (X)\nOR\nStrive(3): Deal 3 damage.";

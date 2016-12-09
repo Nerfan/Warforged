@@ -23,10 +23,13 @@ namespace Warforged
 		//@param showCurrCard: If this is true the played card will be shown on the UI, otherwise the back of the card is used.
 		public abstract void updateUI(Character ch, bool showCurrCard);
 
-		//Updates the UI for Player 2 based on the character object passed in.
-		//@param showCurrCard: If this is true the played card will be shown on the UI, otherwise the back of the card is used.
-		//@param showHand: If this is true the Opponent's hand will be shown to the user, otherwise the hand will show the back of the cards.
-		public abstract void updateOpponentUI(Character ch, bool showCurrCard, bool showHand);
+        //Updates the Network, so that the opponent recieves our changes
+        public abstract void updateNetowrk(Character ch);
+
+        //Updates the UI for Player 2 based on the character object passed in.
+        //@param showCurrCard: If this is true the played card will be shown on the UI, otherwise the back of the card is used.
+        //@param showHand: If this is true the Opponent's hand will be shown to the user, otherwise the hand will show the back of the cards.
+        public abstract void updateOpponentUI(Character ch, bool showCurrCard, bool showHand);
 
 		public abstract void setPromptText(string text);
 

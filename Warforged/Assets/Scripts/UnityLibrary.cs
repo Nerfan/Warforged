@@ -39,7 +39,8 @@ namespace Warforged
 			barrier.SignalAndWait(threadID);
 			setPromptText("");
 			return returnObject;
-		}
+
+        }
 
 		public override void setPromptText(string text)
 		{
@@ -76,7 +77,13 @@ namespace Warforged
 			}
 		}
 
-		public override void updateOpponentUI(Character ch, bool showCurrCard, bool showHand)
+        public override void updateNetowrk(Character ch)
+        {
+            StartGame.signal = () => { return StartGame.updateNetwork(ch); };
+            barrier.SignalAndWait(threadID);
+        }
+
+        public override void updateOpponentUI(Character ch, bool showCurrCard, bool showHand)
 		{
 			StartGame.signal = () => { return StartGame.updateOpponentUI(ch, showCurrCard,showHand); };
 			barrier.SignalAndWait(threadID);

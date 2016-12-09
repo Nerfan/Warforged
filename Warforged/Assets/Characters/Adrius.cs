@@ -1,7 +1,7 @@
-using System;
-
+/*using System;
 namespace Warforged
 {
+    [Serializable]
     public class Adrius : Character
     {
         public Adrius() : base()
@@ -205,4 +205,4 @@ namespace Warforged
             }
         }
     }
-}
+}*/

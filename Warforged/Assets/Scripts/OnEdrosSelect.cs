@@ -3,14 +3,15 @@ using System.Collections;
 using UnityEngine.EventSystems;
 using UnityEngine.SceneManagement;
 using System;
+using Warforged;
 
 public class OnEdrosSelect : MonoBehaviour, IPointerClickHandler{
 
 
 	public void OnPointerClick(PointerEventData eventData)
 	{
-		StartGame.characterPick = new Warforged.Edros();
-		SceneManager.LoadScene("WarforgedBoard",LoadSceneMode.Single);
+        StartGame.characterPick = new Edros();
+		//SceneManager.LoadScene("WarforgedBoard",LoadSceneMode.Single);
 
 	}
 

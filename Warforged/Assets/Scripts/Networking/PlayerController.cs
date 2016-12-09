@@ -4,25 +4,54 @@ using UnityEngine.SceneManagement;
 using System.Collections;
 using UnityEngine.UI;
 using System;
+using Warforged;
+using System.Xml.Serialization;
+using System.IO;
 
 public class PlayerController : NetworkBehaviour
 {
     #region Player Variables
 
     public string playerName = "Fill"; // Screen name for player
-    public string deck = "";           // The Player's deck, set in second scene: WarforgedCharacterSelect.
-    public string cardForTurn;         // String determining which card will be played by the local player each turn. Set by RPC calls below
+    public static Character deck = null;           // The Player's deck, set in second scene: WarforgedCharacterSelect.
+    public Character opponent = null;
+    public Character characterForTurn;         // String determining which card will be played by the local player each turn. Set by RPC calls below
 
     public string textToSend;          // Used in first scene for chat room
     public bool readyFlag = false;     // Used to determine whther local player is ready to move forward at any given moment.
-    private MatchController controller;// Match Controller reference
+    public static MatchController controller;// Match Controller reference
+    public static PlayerController playerController;
     #endregion
 
     void Awake()
     {
         DontDestroyOnLoad(transform.gameObject); // Immortalizes object
         controller = GameObject.Find("Match Controller").GetComponent<MatchController>(); // Sets match controller reference.
+        playerController = this;
 
+    }
+
+    void SetupReferences(Character ch, Character opponent)
+    {
+        if (opponent == null || ch == null)
+            return;
+        foreach(Character.Card c in ch.hand)
+        {
+            c.init(ch);
+        }
+        foreach (Character.Card c in ch.standby)
+        {
+            c.init(ch);
+        }
+        foreach (Character.Card c in ch.invocation)
+        {
+            c.init(ch);
+        }
+        //TODO: Add more like suspension and link
+        if(ch.currCard != null)
+            ch.currCard.init(ch);
+        ch.setOpponent(opponent);
+        opponent.setOpponent(ch);
     }
 
     #region NetworkBehaviour
@@ -82,6 +111,29 @@ public class PlayerController : NetworkBehaviour
     }
 
     [Command]
+    public void CmdUnReady()
+    {
+        RpcUnReady();
+    }
+
+    [ClientRpc]
+    void RpcUnReady()
+    {
+        /*
+        This method takes in bool: isServer, which tells wether or not the client who called the method
+        is the same client who is currently running it now (as it runs on all machines connected). If it
+        is the same one, it sets the value of the ready flag on the local machine of this script. If it 
+        is not, it sets the value on the remote machine.
+        
+        Use this method in conjuction with your own to tell both machines they are ready to make the 
+        next turn in the game. If you need a better understanding, in my ButtonManager class this method was
+        implemented twice so you can get an idea.
+        */
+        controller.localPlayer.readyFlag = false;
+        controller.remotePlayer.readyFlag = false;
+    }
+
+    [Command]
     public void CmdImReady(bool isServer)
     {
         RpcImReady(isServer);
@@ -120,26 +172,54 @@ public class PlayerController : NetworkBehaviour
         // Simply tells both machines to go to the scene defined from the scene paramater.
         SceneManager.LoadScene(scene);
     }
-
     [Command]
-    public void CmdSetCard(string data, bool isServer)
+    public void CmdSetCharacter(string data, bool isServer)
     {
-        RpcSetCard(data, isServer);
+        RpcSetCharacter(data, isServer);
     }
 
     [ClientRpc]
-    void RpcSetCard(string card, bool isServer)
+    public void RpcSetCharacter(string charcter, bool isServer)
     {
-        /*
-        This function takes in a players card selection and whether or not they are the server (similar
-        to the readyFlag method). It functions identical to that function, setting the local players card
-        for the turn and the remote players card if it is called from the remote machine.
-        */
-        if (isServer == controller.localPlayer.isServer)
-            controller.localPlayer.cardForTurn = card;
+        /// Gets the opposing character from the network
+        if (controller.localPlayer.isServer == isServer)
+        {
+            
+        }
         else
         {
-            controller.remotePlayer.cardForTurn = card;
+            /*XmlSerializer xml = new XmlSerializer(typeof(Character));
+            Game.p1 = (Character)xml.Deserialize(new StringReader(charcter));
+            SetupReferences(Game.p1, Game.p2);*/
+            XmlSerializer xml = new XmlSerializer(typeof(Character));
+            Game.p2 = (Character)xml.Deserialize(new StringReader(charcter));
+            SetupReferences(Game.p2, Game.p1);
+        }
+    }
+
+    [Command]
+    public void CmdInit(string data, bool isServer)
+    {
+        RpcInit(data, isServer);
+    }
+
+    [ClientRpc]
+    public void RpcInit(string charcter, bool isServer)
+    {
+        /// Gets the opposing character from the network
+        if (controller.localPlayer.isServer == isServer)
+        {
+            
+            
+        }
+        else
+        {
+            /*XmlSerializer xml = new XmlSerializer(typeof(Character));
+            Game.p1 = (Character)xml.Deserialize(new StringReader(charcter));
+            SetupReferences(Game.p1, Game.p2);*/
+            XmlSerializer xml = new XmlSerializer(typeof(Character));
+            Game.p2 = (Character)xml.Deserialize(new StringReader(charcter));
+            SetupReferences(Game.p2, Game.p1);
         }
     }
 
@@ -150,7 +230,7 @@ public class PlayerController : NetworkBehaviour
     }
 
     [ClientRpc]
-    void RpcCallTurn()
+    public void RpcCallTurn()
     {
         /*
         This method assumes that you have already called CmdSetCard for both players, meaning both have a string 

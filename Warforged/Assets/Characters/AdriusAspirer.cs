@@ -1,4 +1,4 @@
-﻿using System;
+﻿/*using System;
 
 namespace Warforged
 {
@@ -13,6 +13,7 @@ namespace Warforged
         
 
         /* CARDS */
+        /*
         private class ShatteringBlow : Card
         {
             public ShatteringBlow(Character user) : base(user)
@@ -30,3 +31,4 @@ namespace Warforged
     }
 }
 
+*/

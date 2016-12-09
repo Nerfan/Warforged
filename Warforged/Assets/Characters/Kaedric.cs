@@ -1,7 +1,8 @@
-using System;
+/*using System;
 
 namespace Warforged
 {
+    [Serializable]
     public class Kaedric : Character
     {
         public Kaedric() : base()
@@ -190,4 +191,4 @@ namespace Warforged
             }
         }
     }
-}
+}*/

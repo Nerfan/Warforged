@@ -6,6 +6,9 @@ using Warforged;
 using System;
 using System.Threading;
 using System.Collections.Generic;
+using System.Xml.Serialization;
+using System.IO;
+using System.Xml;
 
 public class StartGame : MonoBehaviour {
 
@@ -14,12 +17,11 @@ public class StartGame : MonoBehaviour {
 	{
 		OnClick.buttonReturn = OnClick.NoReturn;
 		OnClick.cardReturn = OnClick.NoReturn;
-		StartCoroutine(StartModel(characterPick));
-	}
+        StartCoroutine(StartModel(characterPick));
+    }
 
 	// Update is called once per frame
 	void Update () {
-
 	}
 
 	public static Character characterPick = null;
@@ -28,13 +30,30 @@ public class StartGame : MonoBehaviour {
 	public static UnityLibrary lib = null;
 	private static int threadID = 0;
 
-	public static IEnumerator StartModel(Character character)
-	{
-		Thread t = new Thread(() => Game.Main(character));
-		t.Start();
-		yield return new WaitUntil(() => Game.library != null && ((UnityLibrary)Game.library).barrier != null);
-		lib = (UnityLibrary)Game.library;
-		threadID = lib.barrier.AddThread();
+    private static Thread t = null;
+    public static IEnumerator StartModel(Character character)
+    {
+        t = new Thread(() => Game.Main());
+        XmlSerializer xml = new XmlSerializer(typeof(Character));
+        StringWriter sw = new StringWriter();
+        //var xwrite = XmlWriter.Create(sw);
+        xml.Serialize(sw, characterPick);
+        if (PlayerController.controller.localPlayer.isServer)
+        {
+            PlayerController.controller.localPlayer.CmdInit(sw.GetStringBuilder().ToString(), PlayerController.controller.localPlayer.isServer);
+        }
+        else
+        {
+            PlayerController.controller.localPlayer.CmdInit(sw.GetStringBuilder().ToString(), PlayerController.controller.localPlayer.isServer);
+        }
+        yield return new WaitUntil(() => Game.p2 != null);
+        Game.setup(characterPick,Game.p2);
+        t.Start();
+        yield return new WaitUntil(() => Game.library != null && ((UnityLibrary)Game.library).barrier != null);
+
+
+        lib = (UnityLibrary)Game.library;
+        threadID = lib.barrier.AddThread();
 		while (true)
 		{
 			yield return new WaitUntil(() => signal != null);
@@ -100,29 +119,47 @@ public class StartGame : MonoBehaviour {
 		OnClick.Prompt.text = "";
 		yield return null;
 	}
+    public static IEnumerator updateNetwork(Character ch)
+    {
+        XmlSerializer xml = new XmlSerializer(typeof(Character));
+        StringWriter sw = new StringWriter();
+        //var xwrite = XmlWriter.Create(sw);
+        xml.Serialize(sw, ch);
+        if (PlayerController.controller.localPlayer.isServer)
+        {
+            PlayerController.controller.localPlayer.CmdSetCharacter(sw.GetStringBuilder().ToString(), PlayerController.controller.localPlayer.isServer);
+        }
+        else
+        {
+            PlayerController.controller.localPlayer.CmdSetCharacter(sw.GetStringBuilder().ToString(), PlayerController.controller.localPlayer.isServer);
+        }
+        PlayerController.controller.localPlayer.CmdImReady(PlayerController.controller.localPlayer.isServer);
+        yield return new WaitUntil(() => PlayerController.controller.remotePlayer.readyFlag && PlayerController.controller.localPlayer.readyFlag);
+        PlayerController.controller.remotePlayer.readyFlag = false;
+        PlayerController.controller.localPlayer.readyFlag = false;
+        yield return null;
+    }
 
-	public static IEnumerator updateUI(Character ch, bool showCurrCard)
-	{
-		Debug.Log("Hand");
-		for(int i = 0; i<OnClick.Hand.Count; ++i)
-		{
-			if(ch.hand.Count <= i)
-			{
-				OnClick.Hand[i].sprite = null;
-				OnClick.Hand[i].color = new UnityEngine.Color(1.0f, 1.0f, 1.0f, 0.0f);
-				OnClick.Hand[i].gameObject.SetActive(false);
-			}
-			else
-			{
-				Debug.Log(ch.hand[i].name);
+    public static IEnumerator updateUI(Character ch, bool showCurrCard)
+    {
+        for (int i = 0; i < OnClick.Hand.Count; ++i)
+        {
+            if (ch.hand.Count <= i)
+            {
+                OnClick.Hand[i].sprite = null;
+                OnClick.Hand[i].color = new UnityEngine.Color(1.0f, 1.0f, 1.0f, 0.0f);
+                OnClick.Hand[i].gameObject.SetActive(false);
+            }
+            else
+            {
 
-				OnClick.Hand[i].sprite = OnClick.CardImages[ch.hand[i].name];
-				OnClick.Hand[i].color = new UnityEngine.Color(1, 1, 1);
-				OnClick.Hand[i].gameObject.SetActive(true);
-				OnClick.cardDict["Hand"+i] = ch.hand[i];
-			}
-		}
-		/*
+                OnClick.Hand[i].sprite = OnClick.CardImages[ch.hand[i].name];
+                OnClick.Hand[i].color = new UnityEngine.Color(1, 1, 1);
+                OnClick.Hand[i].gameObject.SetActive(true);
+                OnClick.cardDict["Hand" + i] = ch.hand[i];
+            }
+        }
+        /*
         for (int i = 0; i < OnClick.Suspend.Count; ++i)
         {
             if (ch.Suspend.Count <= i)
@@ -134,100 +171,101 @@ public class StartGame : MonoBehaviour {
                 OnClick.Suspend[i].sprite = OnClick.CardImages[ch.name];
             }
         }*/
-		Debug.Log("Standby");
-		for (int i = 0; i < OnClick.Standby.Count; ++i)
-		{
-			if (ch.standby.Count <= i)
-			{
-				OnClick.Standby[i].sprite = null;
-				OnClick.Standby[i].color = new UnityEngine.Color(1.0f, 1.0f, 1.0f, 0.33f);
-				OnClick.Standby[i].gameObject.SetActive(false);
-			}
-			else
-			{
-				OnClick.Standby[i].sprite = OnClick.CardImages[ch.standby[i].name];
-				OnClick.Standby[i].color = new UnityEngine.Color(1, 1, 1);
-				OnClick.Standby[i].gameObject.SetActive(true);
-				OnClick.cardDict["Standby"+(i+1)] = ch.standby[i];
-			}
-		}
-		Debug.Log("Invocation");
-		for (int i = 0; i < OnClick.Invocation.Count; ++i)
-		{
-			if (ch.invocation.Count <= i)
-			{
-				OnClick.Invocation[i].sprite = null;
-				OnClick.Invocation[i].color = new UnityEngine.Color(1.0f, 1.0f, 1.0f, 0.33f);
-				OnClick.Invocation[i].gameObject.SetActive(false);
-			}
-			else if (!ch.invocation[i].active)
-			{
-				OnClick.Invocation[i].sprite = null;
-				OnClick.Invocation[i].color = new UnityEngine.Color(0, 0, 0);
-				OnClick.Invocation[i].gameObject.SetActive(true);
-				OnClick.cardDict["Invocation" + (i + 1)] = OnClick.NoReturn; ;
-			}
-			else
-			{
-				OnClick.Invocation[i].sprite = OnClick.CardImages[ch.invocation[i].name];
-				OnClick.Invocation[i].color = new UnityEngine.Color(1, 1, 1);
-				OnClick.Invocation[i].gameObject.SetActive(true);
-				OnClick.cardDict["Invocation"+(i+1)] = ch.invocation[i];
-			}
-		}
-		if(ch.currCard == null)
-		{
-			OnClick.PlaySlot.sprite = null;
-			OnClick.PlaySlot.color = new UnityEngine.Color(1.0f, 1.0f, 1.0f, 0.33f);
-			OnClick.PlaySlot.gameObject.SetActive(false);
-		}
-		else if (showCurrCard)
-		{
-			OnClick.PlaySlot.sprite = OnClick.CardImages[ch.currCard.name];
-			OnClick.PlaySlot.color = new UnityEngine.Color(1, 1, 1);
-			OnClick.PlaySlot.gameObject.SetActive(true);
-			OnClick.cardDict["PlaySlot"] = ch.currCard;
-		}
-		else
-		{
-			OnClick.PlaySlot.sprite = null;
-			OnClick.PlaySlot.color = new UnityEngine.Color(0, 0, 0);
-			OnClick.PlaySlot.gameObject.SetActive(true);
-			OnClick.cardDict["PlaySlot"] = ch.currCard;
-		}
-		OnClick.CharacterSlot.sprite = OnClick.CardImages[ch.name];
-		OnClick.CharacterSlot.color = new UnityEngine.Color(1, 1, 1);
-		yield return null;
-	}
+        for (int i = 0; i < OnClick.Standby.Count; ++i)
+        {
+            if (ch.standby.Count <= i)
+            {
+                OnClick.Standby[i].sprite = null;
+                OnClick.Standby[i].color = new UnityEngine.Color(1.0f, 1.0f, 1.0f, 0.33f);
+                OnClick.Standby[i].gameObject.SetActive(false);
+            }
+            else
+            {
+                OnClick.Standby[i].sprite = OnClick.CardImages[ch.standby[i].name];
+                OnClick.Standby[i].color = new UnityEngine.Color(1, 1, 1);
+                OnClick.Standby[i].gameObject.SetActive(true);
+                OnClick.cardDict["Standby" + (i + 1)] = ch.standby[i];
+            }
+        }
+        for (int i = 0; i < OnClick.Invocation.Count; ++i)
+        {
+            if (ch.invocation.Count <= i)
+            {
+                OnClick.Invocation[i].sprite = null;
+                OnClick.Invocation[i].color = new UnityEngine.Color(1.0f, 1.0f, 1.0f, 0.33f);
+                OnClick.Invocation[i].gameObject.SetActive(false);
+            }
+            else if (!ch.invocation[i].active)
+            {
+                OnClick.Invocation[i].sprite = null;
+                OnClick.Invocation[i].color = new UnityEngine.Color(0, 0, 0);
+                OnClick.Invocation[i].gameObject.SetActive(true);
+                OnClick.cardDict["Invocation" + (i + 1)] = OnClick.NoReturn; ;
+            }
+            else
+            {
+                OnClick.Invocation[i].sprite = OnClick.CardImages[ch.invocation[i].name];
+                OnClick.Invocation[i].color = new UnityEngine.Color(1, 1, 1);
+                OnClick.Invocation[i].gameObject.SetActive(true);
+                OnClick.cardDict["Invocation" + (i + 1)] = ch.invocation[i];
+            }
+        }
+        if (ch.currCard == null)
+        {
+            OnClick.PlaySlot.sprite = null;
+            OnClick.PlaySlot.color = new UnityEngine.Color(1.0f, 1.0f, 1.0f, 0.33f);
+            OnClick.PlaySlot.gameObject.SetActive(false);
+        }
+        else if (showCurrCard)
+        {
+            OnClick.PlaySlot.sprite = OnClick.CardImages[ch.currCard.name];
+            OnClick.PlaySlot.color = new UnityEngine.Color(1, 1, 1);
+            OnClick.PlaySlot.gameObject.SetActive(true);
+            OnClick.cardDict["PlaySlot"] = ch.currCard;
+        }
+        else
+        {
+            OnClick.PlaySlot.sprite = null;
+            OnClick.PlaySlot.color = new UnityEngine.Color(0, 0, 0);
+            OnClick.PlaySlot.gameObject.SetActive(true);
+            OnClick.cardDict["PlaySlot"] = ch.currCard;
+        }
+        OnClick.CharacterSlot.sprite = OnClick.CardImages[ch.name];
+        OnClick.CharacterSlot.color = new UnityEngine.Color(1, 1, 1);
+        OnClick.Health.text = ch.hp + "HP";
+        OnClick.Empower.text = "EMP(" + ch.empower + ")";
+        OnClick.Reinforce.text = "REI(" + ch.reinforce + ")";
+        yield return null;
+    }
 
 
-	public static IEnumerator updateOpponentUI(Character ch, bool showCurrCard, bool showHand)
-	{
-		for (int i = 0; i < OnClick.OHand.Count; ++i)
-		{
-			if (ch.hand.Count <= i)
-			{
-				OnClick.OHand[i].sprite = null;
-				OnClick.OHand[i].color = new UnityEngine.Color(1.0f, 1.0f, 1.0f, 0.0f);
-				OnClick.OHand[i].gameObject.SetActive(false);
-			}
-			else if(!showHand)
-			{
-				OnClick.OHand[i].sprite = null;
-				OnClick.OHand[i].color = new UnityEngine.Color(0, 0, 0,1);
-				OnClick.OHand[i].gameObject.SetActive(true);
-				OnClick.cardDict["OHand" + i] = ch.hand[i];
-			}
-			else
-			{
+    public static IEnumerator updateOpponentUI(Character ch, bool showCurrCard, bool showHand)
+    {
+        for (int i = 0; i < OnClick.OHand.Count; ++i)
+        {
+            if (ch.hand.Count <= i)
+            {
+                OnClick.OHand[i].sprite = null;
+                OnClick.OHand[i].color = new UnityEngine.Color(1.0f, 1.0f, 1.0f, 0.0f);
+                OnClick.OHand[i].gameObject.SetActive(false);
+            }
+            else if (!showHand)
+            {
+                OnClick.OHand[i].sprite = null;
+                OnClick.OHand[i].color = new UnityEngine.Color(0, 0, 0, 1);
+                OnClick.OHand[i].gameObject.SetActive(true);
+                OnClick.cardDict["OHand" + i] = ch.hand[i];
+            }
+            else
+            {
 
-				OnClick.OHand[i].sprite = OnClick.OCardImages[ch.hand[i].name];
-				OnClick.OHand[i].color = new UnityEngine.Color(1, 1, 1,1);
-				OnClick.OHand[i].gameObject.SetActive(true);
-				OnClick.cardDict["OHand" + i] = ch.hand[i];
-			}
-		}
-		/*
+                OnClick.OHand[i].sprite = OnClick.OCardImages[ch.hand[i].name];
+                OnClick.OHand[i].color = new UnityEngine.Color(1, 1, 1, 1);
+                OnClick.OHand[i].gameObject.SetActive(true);
+                OnClick.cardDict["OHand" + i] = ch.hand[i];
+            }
+        }
+        /*
         for (int i = 0; i < OnClick.Suspend.Count; ++i)
         {
             if (ch.Suspend.Count <= i)
@@ -239,72 +277,75 @@ public class StartGame : MonoBehaviour {
                 OnClick.Suspend[i].sprite = OnClick.CardImages[ch.name];
             }
         }*/
-		for (int i = 0; i < OnClick.OStandby.Count; ++i)
-		{
-			if (ch.standby.Count <= i)
-			{
-				OnClick.OStandby[i].sprite = null;
-				OnClick.OStandby[i].color = new UnityEngine.Color(1.0f, 1.0f, 1.0f, 0.33f);
-				OnClick.OStandby[i].gameObject.SetActive(false);
-			}
-			else
-			{
-				OnClick.OStandby[i].sprite = OnClick.OCardImages[ch.standby[i].name];
-				OnClick.OStandby[i].color = new UnityEngine.Color(1, 1, 1);
-				OnClick.OStandby[i].gameObject.SetActive(true);
-				OnClick.cardDict["OStandby" + (i + 1)] = ch.standby[i];
-			}
-		}
-		for (int i = 0; i < OnClick.OInvocation.Count; ++i)
-		{
-			if (ch.invocation.Count <= i)
-			{
-				OnClick.OInvocation[i].sprite = null;
-				OnClick.OInvocation[i].color = new UnityEngine.Color(1.0f, 1.0f, 1.0f, 0.33f);
-				OnClick.OInvocation[i].gameObject.SetActive(false);
-			}
-			else if (!ch.invocation[i].active)
-			{
-				OnClick.OInvocation[i].sprite = null;
-				OnClick.OInvocation[i].color = new UnityEngine.Color(0, 0, 0);
-				OnClick.OInvocation[i].gameObject.SetActive(true);
-				OnClick.cardDict["OInvocation" + (i + 1)] = OnClick.NoReturn;
-			}
-			else
-			{
-				OnClick.OInvocation[i].sprite = OnClick.OCardImages[ch.invocation[i].name];
-				OnClick.OInvocation[i].color = new UnityEngine.Color(1, 1, 1);
-				OnClick.OInvocation[i].gameObject.SetActive(true);
-				OnClick.cardDict["OInvocation" + (i + 1)] = ch.invocation[i];
-			}
-		}
-		if (ch.currCard == null)
-		{
-			OnClick.OPlaySlot.sprite = null;
-			OnClick.OPlaySlot.color = new UnityEngine.Color(1.0f, 1.0f, 1.0f, 0.33f);
-			OnClick.OPlaySlot.gameObject.SetActive(false);
-		}
-		else if (showCurrCard)
-		{
-			OnClick.OPlaySlot.sprite = OnClick.OCardImages[ch.currCard.name];
-			OnClick.OPlaySlot.color = new UnityEngine.Color(1, 1, 1);
-			OnClick.OPlaySlot.gameObject.SetActive(true);
-			OnClick.cardDict["OPlaySlot"] = ch.currCard;
-		}
-		else
-		{
-			OnClick.OPlaySlot.sprite = null;
-			OnClick.OPlaySlot.color = new UnityEngine.Color(0, 0, 0);
-			OnClick.OPlaySlot.gameObject.SetActive(true);
-			OnClick.cardDict["OPlaySlot"] = ch.currCard;
-		}
-		OnClick.OCharacterSlot.sprite = OnClick.OCardImages[ch.name];
-		OnClick.OCharacterSlot.color = new UnityEngine.Color(1, 1, 1);
-		yield return null;
-	}
+        for (int i = 0; i < OnClick.OStandby.Count; ++i)
+        {
+            if (ch.standby.Count <= i)
+            {
+                OnClick.OStandby[i].sprite = null;
+                OnClick.OStandby[i].color = new UnityEngine.Color(1.0f, 1.0f, 1.0f, 0.33f);
+                OnClick.OStandby[i].gameObject.SetActive(false);
+            }
+            else
+            {
+                OnClick.OStandby[i].sprite = OnClick.OCardImages[ch.standby[i].name];
+                OnClick.OStandby[i].color = new UnityEngine.Color(1, 1, 1);
+                OnClick.OStandby[i].gameObject.SetActive(true);
+                OnClick.cardDict["OStandby" + (i + 1)] = ch.standby[i];
+            }
+        }
+        for (int i = 0; i < OnClick.OInvocation.Count; ++i)
+        {
+            if (ch.invocation.Count <= i)
+            {
+                OnClick.OInvocation[i].sprite = null;
+                OnClick.OInvocation[i].color = new UnityEngine.Color(1.0f, 1.0f, 1.0f, 0.33f);
+                OnClick.OInvocation[i].gameObject.SetActive(false);
+            }
+            else if (!ch.invocation[i].active)
+            {
+                OnClick.OInvocation[i].sprite = null;
+                OnClick.OInvocation[i].color = new UnityEngine.Color(0, 0, 0);
+                OnClick.OInvocation[i].gameObject.SetActive(true);
+                OnClick.cardDict["OInvocation" + (i + 1)] = OnClick.NoReturn;
+            }
+            else
+            {
+                OnClick.OInvocation[i].sprite = OnClick.OCardImages[ch.invocation[i].name];
+                OnClick.OInvocation[i].color = new UnityEngine.Color(1, 1, 1);
+                OnClick.OInvocation[i].gameObject.SetActive(true);
+                OnClick.cardDict["OInvocation" + (i + 1)] = ch.invocation[i];
+            }
+        }
+        if (ch.currCard == null)
+        {
+            OnClick.OPlaySlot.sprite = null;
+            OnClick.OPlaySlot.color = new UnityEngine.Color(1.0f, 1.0f, 1.0f, 0.33f);
+            OnClick.OPlaySlot.gameObject.SetActive(false);
+        }
+        else if (showCurrCard)
+        {
+            OnClick.OPlaySlot.sprite = OnClick.OCardImages[ch.currCard.name];
+            OnClick.OPlaySlot.color = new UnityEngine.Color(1, 1, 1);
+            OnClick.OPlaySlot.gameObject.SetActive(true);
+            OnClick.cardDict["OPlaySlot"] = ch.currCard;
+        }
+        else
+        {
+            OnClick.OPlaySlot.sprite = null;
+            OnClick.OPlaySlot.color = new UnityEngine.Color(0, 0, 0);
+            OnClick.OPlaySlot.gameObject.SetActive(true);
+            OnClick.cardDict["OPlaySlot"] = ch.currCard;
+        }
+        OnClick.OCharacterSlot.sprite = OnClick.OCardImages[ch.name];
+        OnClick.OCharacterSlot.color = new UnityEngine.Color(1, 1, 1);
+        OnClick.OHealth.text = ch.hp + "HP";
+        OnClick.OEmpower.text = "EMP(" + ch.empower + ")";
+        OnClick.OReinforce.text = "REI(" + ch.reinforce + ")";
+        yield return null;
+    }
 
 
-	public static IEnumerator setupEdros(Dictionary<string, Sprite> CurrCardImages)
+    public static IEnumerator setupEdros(Dictionary<string, Sprite> CurrCardImages)
 	{
 
 		CurrCardImages.Add("Celestial Surge", Resources.Load("CardImages/Edros/Celestial Surge", typeof(Sprite)) as Sprite);

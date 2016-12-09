@@ -11,7 +11,7 @@ public class OnTyrasSelect : MonoBehaviour, IPointerClickHandler
 	public void OnPointerClick(PointerEventData eventData)
 	{
 		StartGame.characterPick = new Warforged.Tyras();
-		SceneManager.LoadScene("WarforgedBoard", LoadSceneMode.Single);
+		//SceneManager.LoadScene("WarforgedBoard", LoadSceneMode.Single);
 
 	}
 

@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/Scenes/WarforgedCharacterSelect.unity
+- path: Assets/Scenes/WarforgedMatchMaking.unity
   isLoaded: 1
   isActive: 1

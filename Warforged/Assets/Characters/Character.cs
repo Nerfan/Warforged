@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Xml.Serialization;
 
 namespace Warforged
 {
@@ -11,8 +12,9 @@ namespace Warforged
 		blue,
 		black
 	}
-
-	public abstract class Character
+    [XmlInclude(typeof(Tyras))]
+    [XmlInclude(typeof(Edros))]
+    public abstract class Character
 	{
 		// Overall information
 		public string name{get; protected set;}
@@ -38,9 +40,10 @@ namespace Warforged
 		public List<Card> hand{get; protected set;}
 		public List<Card> invocation{get; protected set;}
 		public Card prevCard{get; protected set;}
-		// Represents the opposing character
-		// Should be fine this way since the game is 1v1
-		public Character opponent{get; protected set;}
+        // Represents the opposing character
+        // Should be fine this way since the game is 1v1
+        [XmlIgnore]
+        public Character opponent{get; protected set;}
 		private List<Card> stroveCards;
 
 		/// Set the opponent character.
@@ -381,26 +384,51 @@ namespace Warforged
 		}
 
 
-		/* Nested class representing a generic card */
-		public abstract class Card
+        /* Nested class representing a generic card */
+        [XmlInclude(typeof(Tyras.ABrothersVirtue))]
+        [XmlInclude(typeof(Tyras.AnOathUnforgotten))]
+        [XmlInclude(typeof(Tyras.APromiseUnbroken))]
+        [XmlInclude(typeof(Tyras.ArmorofAldras))]
+        [XmlInclude(typeof(Tyras.ASoldiersRemorse))]
+        [XmlInclude(typeof(Tyras.DecryingRoar))]
+        [XmlInclude(typeof(Tyras.GrimKnightsDread))]
+        [XmlInclude(typeof(Tyras.IntheKingsWake))]
+        [XmlInclude(typeof(Tyras.OnraisStrike))]
+        [XmlInclude(typeof(Tyras.OnslaughtofTyras))]
+        [XmlInclude(typeof(Tyras.SunderingStar))]
+        [XmlInclude(typeof(Tyras.WarriorsResolve))]
+
+        [XmlInclude(typeof(Edros.CelestialSurge))]
+        [XmlInclude(typeof(Edros.CrashingSky))]
+        [XmlInclude(typeof(Edros.FaithUnquestioned))]
+        [XmlInclude(typeof(Edros.GraceofHeaven))]
+        [XmlInclude(typeof(Edros.HandofToren))]
+        [XmlInclude(typeof(Edros.PillarofLightning))]
+        [XmlInclude(typeof(Edros.PurgingLightning))]
+        [XmlInclude(typeof(Edros.RollingThunder))]
+        [XmlInclude(typeof(Edros.ScornofThunder))]
+        [XmlInclude(typeof(Edros.SkyBlessedShield))]
+        [XmlInclude(typeof(Edros.TorensFavored))]
+        [XmlInclude(typeof(Edros.WrathofLightning))]
+        public abstract class Card
 		{
 			public string name{get; protected set;}
 			public string effect{get; protected set;}
 			public Color color{get; protected set;}
 			public bool active = true;
 			public bool isAwakening{get; private set;}
-			// Nothing other than cards need this reference,
-			// since cards are only called through the reference in the first place
-			protected Character user;
+            // Nothing other than cards need this reference,
+            // since cards are only called through the reference in the first place
+            [XmlIgnore]
+            protected Character user;
 
 			//Used in the UI. This is the image assosiated with the card.
 
 			//A variable used to easily get the current directory of card images
 
 
-			protected Card(Character user)
+			protected Card()
 			{
-				this.user = user;
 				//This was moved to here so the model becomes compatible with an older version of
 				//C# Which is supported by Unity.
 				isAwakening = false;
@@ -432,6 +460,14 @@ namespace Warforged
 
 			/// Happens when a card is removed from suspention
 			public virtual void recall() { }
+            /// <summary>
+            /// This is inplace of our constructor, so card objects can be serialized
+            /// </summary>
+            /// <param name="user"></param>
+            public void init(Character user)
+            {
+                this.user = user;
+            }
 		}
 	}
 }

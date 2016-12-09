@@ -1,7 +1,8 @@
-using System;
+/*using System;
 
 namespace Warforged
 {
+    [Serializable]
     public class Threl : Character
     {
         public Threl() : base()
@@ -190,4 +191,4 @@ namespace Warforged
             }
         }
     }
-}
+}*/

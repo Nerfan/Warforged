@@ -1,7 +1,8 @@
-using System;
+/*using System;
 
 namespace Warforged
 {
+    [Serializable]
     public class Drade : Character
     {
         public Drade() : base()
@@ -190,4 +191,4 @@ namespace Warforged
             }
         }
     }
-}
+}*/
