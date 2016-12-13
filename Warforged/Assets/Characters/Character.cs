@@ -25,8 +25,10 @@ namespace Warforged
 		public int damage{get; set;}
 		public int pierce{get; set;}
 		public int heal{get; set;}
-		public int empower{get; set;}
-		public int reinforce{get; set;}
+		public int empower{get; set;} // Stores how much empower for next turn
+        public int currEmpower{get; set;} // How much attacks this turn are empowered by
+		public int reinforce{get; set;} // Same as above
+		public int currReinforce{get; set;}
 		public bool reflect{get; set;}
 		public bool absorb{get; set;}
 		public bool undying{get; set;}
@@ -63,7 +65,9 @@ namespace Warforged
             pierce = 0;
 			heal = 0;
 			empower = 0;
+            currEmpower = 0;
 			reinforce = 0;
+            currReinforce = 0;
 			reflect = false;
 			absorb = false;
 			undying = false;
@@ -118,16 +122,16 @@ namespace Warforged
 		/// Also adds empower and resets empower to 0.
 		public void addDamage(int dmg)
 		{
-			damage += dmg + empower;
-			empower = 0;
+			damage += dmg + currEmpower;
+			currEmpower = 0;
 		}
 
 		/// Add negation effects from a blue card.
 		/// Also adds reinforce and resets reinforce to 0.
 		public void addNegate(int ngt)
 		{
-			negate += ngt + reinforce;
-			reinforce = 0;
+			negate += ngt + currReinforce;
+			currReinforce = 0;
 		}
 
 		/// These next five methods should ALWAYS be called in order.
@@ -139,6 +143,10 @@ namespace Warforged
 			stroveCards = new List<Card>();
 			negate = 0;
 			damage = 0;
+            currEmpower = empower;
+            empower = 0;
+            currReinforce = reinforce;
+            reinforce = 0;
             pierce = 0;
 			heal = 0;
 			reflect = false;

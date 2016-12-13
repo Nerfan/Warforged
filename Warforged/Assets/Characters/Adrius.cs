@@ -192,7 +192,7 @@ namespace Warforged
                 if (((Adrius)user).form >= Form.Incarnate)
                 {
                     // Incarnate
-                    user.damage += user.empower;
+                    user.damage += user.currEmpower;
                 }
                 // Base
                 // This goes after becuase it "uses up" the empower

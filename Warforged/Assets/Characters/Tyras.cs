@@ -78,8 +78,7 @@ namespace Warforged
 
             public override void activate()
             {
-                user.damage += 2 + user.empower;
-                user.empower = 0;
+                user.addDamage(2);
                 if (user.opponent.currCard.color == Color.green)
                 {
                     user.damage += 2;
@@ -98,12 +97,10 @@ namespace Warforged
 
             public override void activate()
             {
-                user.damage += 2 + user.empower;
-                user.empower = 0;
+                user.addDamage(2);
                 if (user.bloodlust)
                 {
-                    user.negate += 2 + user.reinforce;
-                    user.reinforce = 0;
+                    user.negate += 2; // Don't use reinforce
                 }
             }
         }
@@ -120,8 +117,7 @@ namespace Warforged
 
             public override void activate()
             {
-                user.damage += 2 + user.empower;
-                user.takeStandby(standbyCard);
+                user.addDamage(2);
                 standbyCard = null;
             }
 
@@ -295,8 +291,7 @@ namespace Warforged
 
             public override void activate()
             {
-                user.negate += 2 + user.reinforce;
-                user.reinforce = 0;
+                user.addNegate(2);
                 if (user.opponent.currCard.color == Color.red)
                 {
                     user.sealColor(Color.blue);
@@ -334,8 +329,7 @@ namespace Warforged
 
             public override void activate()
             {
-                user.negate += 2 + user.reinforce;
-                user.reinforce = 0;
+                user.addNegate(2);
                 if (user.stalwart)
                 {
                     user.reflect = true;
@@ -406,8 +400,7 @@ namespace Warforged
                     user.strive(inherent);
                 }
                 // Check standby offense cards
-                user.damage += user.empower;
-                user.empower = 0;
+                user.addDamage(0); // Just add empower
                 foreach (Card card in user.standby)
                 {
                     if (card.color == Color.red)

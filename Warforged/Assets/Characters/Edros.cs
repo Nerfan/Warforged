@@ -63,8 +63,7 @@ namespace Warforged
 
             public override void activate()
             {
-                user.damage += 2 + user.empower;
-                user.empower = 0;
+                user.addDamage(2);
                 if (user.bloodlust)
                 {
                     user.damage += 1;
@@ -83,8 +82,7 @@ namespace Warforged
 
             public override void activate()
             {
-                user.damage += 1 + user.empower;
-                user.empower = 0;
+                user.addDamage(1);
                 if (user.hasAlign("BRR"))
                 {
                     user.damage += 3;
@@ -105,8 +103,7 @@ namespace Warforged
             {
                 if (user.prevCard.color == Color.red)
                 {
-                    user.damage += 2 + user.empower;
-                    user.empower = 0;
+                    user.addDamage(2);
                 }
                 // Strike, and thus bolster, are deided after both card effects take place
                 ((Edros)user).bolster2 = true;
@@ -124,8 +121,7 @@ namespace Warforged
 
             public override void activate()
             {
-                user.damage += 2 + user.empower;
-                user.empower = 0;
+                user.addDamage(2);
                 if (user.opponent.currCard.color == Color.green)
                 {
                     user.sealColor(Color.blue);
@@ -144,8 +140,7 @@ namespace Warforged
 
             public override void activate()
             {
-                user.damage += 2 + user.empower;
-                user.empower = 0;
+                user.addDamage(2);
                 ((Edros)user).bonusEmp = true;
             }
         }
@@ -167,7 +162,6 @@ namespace Warforged
                 {
                     user.reflect = true;
                 }
-                user.empower = 0;
             }
         }
 
@@ -185,10 +179,8 @@ namespace Warforged
             {
                 if (((TorensFavored)this).strove)
                 {
-                    user.negate += 3 + user.reinforce;
-                    user.reinforce = 0;
+                    user.addNegate(3);
                 }
-                user.empower = 0;
             }
 
             public override void declare()
@@ -226,7 +218,6 @@ namespace Warforged
                 {
                     user.takeStandby(defenseCard);
                 }
-                user.empower = 0;
             }
 
             public override void declare()
@@ -345,7 +336,7 @@ namespace Warforged
                         offenseCards += 1;
                     }
                 }
-                user.damage += offenseCards;
+                user.damage += offenseCards; // No empower here
             }
         }
         //TODO: We might be changing the name of this card.
@@ -460,8 +451,7 @@ namespace Warforged
             {
                 if(dealsOwnDamage)
                 {
-                    user.damage += 3 + user.empower;
-                    user.empower = 0;
+                    user.addDamage(3);
                 }
             }
             public override void declare()
