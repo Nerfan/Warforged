@@ -23,6 +23,7 @@ namespace Warforged
 		// Information about the current turn
 		public int negate{get; set;}
 		public int damage{get; set;}
+		public int pierce{get; set;}
 		public int heal{get; set;}
 		public int empower{get; set;}
 		public int reinforce{get; set;}
@@ -59,6 +60,7 @@ namespace Warforged
 			hp = 10;
 			negate = 0;
 			damage = 0;
+            pierce = 0;
 			heal = 0;
 			empower = 0;
 			reinforce = 0;
@@ -137,6 +139,7 @@ namespace Warforged
 			stroveCards = new List<Card>();
 			negate = 0;
 			damage = 0;
+            pierce = 0;
 			heal = 0;
 			reflect = false;
 			absorb = false;
@@ -246,7 +249,12 @@ namespace Warforged
 		public virtual void dealDamage()
 		{
 			// Will probably need more logic in the future
-			int tempdamage = damage - opponent.negate;
+            int tempnegate = opponent.negate = pierce;
+            if (tempnegate < 0)
+            {
+                tempnegate = 0;
+            }
+			int tempdamage = damage - tempnegate;
 			if (opponent.reflect)
 			{
 				takeDamage(tempdamage);
