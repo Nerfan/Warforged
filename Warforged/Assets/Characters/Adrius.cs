@@ -1,18 +1,42 @@
-/*using System;
+using System;
 namespace Warforged
 {
     [Serializable]
     public class Adrius : Character
     {
+        private enum Form
+        {
+            Aspier,
+            Bearer,
+            Incarnate
+        }
+
+        private Form form;
+
         public Adrius() : base()
         {
             name = "Adrius";
-            title = "Ral’Taris Incarnate";
+            title = "The Aspirer";
+            this.form = Form.Aspier;
+        }
+
+        /// Utility method becuase several cards use this
+        private int activeInherents()
+        {
+            int count = 0;
+            foreach (Card inherent in invocations)
+            {
+                if (inherent.active)
+                {
+                    count += 1;
+                }
+            }
+            return count;
         }
 
         private class FistofRuin : Card
         {
-            public FistofRuin(Character user) : base(user)
+            public FistofRuin() : base()
             {
                 name = "Fist of Ruin";
                 effect = "Deal 2 damage.\nBearer: Pierce (2).\nIncarnate: Deal additional damage equal to the amount of active Inherents you have.";
@@ -21,13 +45,24 @@ namespace Warforged
 
             public override void activate()
             {
-                //TODO
+                // Base
+                user.addDamage(2);
+                if (((Adrius)user).form <= Form.Bearer)
+                {
+                    // Bearer
+                    user.pierce += 2;
+                }
+                if (((Adrius)user).form <= Form.Incarnate)
+                {
+                    // Incarnate
+                    user.addDamage(((Adrius)user).activeInherents());
+                }
             }
         }
 
         private class ShatteringBlow : Card
         {
-            public ShatteringBlow(Character user) : base(user)
+            public ShatteringBlow() : base()
             {
                 name = "Shattering Blow";
                 effect = "Deal 1 damage.\nBearer: Counter (G): Bolster.\nIncarnate: Empower equal to the amount of active Inherents you have.";
@@ -36,13 +71,27 @@ namespace Warforged
 
             public override void activate()
             {
-                //TODO
+                // Base
+                user.addDamage(1);
+                if (((Adrius)user).form <= Form.Bearer)
+                {
+                    // Bearer
+                    if (user.opponent.currCard.color == Color.green)
+                    {
+                        user.bolster();
+                    }
+                }
+                if (((Adrius)user).form <= Form.Incarnate)
+                {
+                    // Incarnate
+                    user.empower += ((Adrius)user).activeInherents();
+                }
             }
         }
 
         private class TremoringImpact : Card
         {
-            public TremoringImpact(Character user) : base(user)
+            public TremoringImpact() : base()
             {
                 name = "Tremoring Impact";
                 effect = "Deal 2 damage.\nBearer: Bloodlust: Empower (1).\nIncarnate: Double your Empower effects this turn.";
@@ -51,13 +100,28 @@ namespace Warforged
 
             public override void activate()
             {
-                //TODO
+                if (((Adrius)user).form <= Form.Bearer)
+                {
+                    // Bearer
+                    if (user.bloodlust)
+                    {
+                        user.empower += 1;
+                    }
+                }
+                if (((Adrius)user).form <= Form.Incarnate)
+                {
+                    // Incarnate
+                    user.damage += user.empower;
+                }
+                // Base
+                // This goes after becuase it "uses up" the empower
+                user.addDamage(2);
             }
         }
 
         private class EarthPiercer : Card
         {
-            public EarthPiercer(Character user) : base(user)
+            public EarthPiercer() : base()
             {
                 name = "Earth Piercer";
                 effect = "Deal 1 damage.\nBearer: Strike: Empower (2). Reinforce (2).\nIncarnate: Pierce (4).";
@@ -66,58 +130,263 @@ namespace Warforged
 
             public override void activate()
             {
-                //TODO
+                // Base
+                user.addDamage(1);
+                if (((Adrius)user).form <= Form.Incarnate)
+                {
+                    // Incarnate
+                    user.pierce += 4;
+                }
+                if (((Adrius)user).form <= Form.Bearer)
+                {
+                    // Bearer
+                    // Last because this relies on pierce
+                    if (!(user.opponent.absorb || user.opponent.reflect || (user.opponent.negate - user.pierce) >= user.damage))
+                    {
+                        user.empower += 2;
+                        user.reinforce += 2;
+                    }
+                }
             }
         }
 
         private class HerosResolution : Card
         {
-            public HerosResolution(Character user) : base(user)
+            private Card card1;
+            private List<Card> incarnateCards;
+            public HerosResolution() : base()
             {
                 name = "Hero’s Resolution";
                 effect = "Counter (B): Bolster\nBearer: Send a Standby card to your hand.\nIncarnate: Send Standby cards to your hand equal to the amount of active Inherents you have.";
                 color = Color.green;
+                incarnateCards = new List<Card>(3);
             }
 
             public override void activate()
             {
-                //TODO
+                // Base
+                if (user.opponent.currCard.color == Color.blue)
+                {
+                    user.bolster;
+                }
+                if (((Adrius)user).form <= Form.Bearer)
+                {
+                    // Bearer
+                    user.takeStandby(card1);
+                    card1 = null;
+                }
+                if (((Adrius)user).form <= Form.Incarnate)
+                {
+                    // Incarnate
+                    foreach (Card card in incarnateCards)
+                    {
+                        user.takeStandby(card);
+                    }
+                    incarnateCards.Clear();
+                }
+            }
+
+            public override void declare()
+            {
+                if (((Adrius)user).form <= Form.Bearer)
+                {
+                    // Bearer
+                    Game.library.setPromptText("Select a standby card to send to your hand.");
+                    while (true)
+                    {
+                         card1 = Game.library.waitForClick();
+                        if (user.standby.Contains(card1))
+                        {
+                            break;
+                        }
+                    }
+                    Game.library.setPromptText("");
+                }
+                if (((Adrius)user).form <= Form.Incarnate)
+                {
+                    // Incarnate
+                    for (int i = 0; i < user.activeInherents(); i++)
+                    {
+                        Game.library.setPromptText("Select a standby card to send to your hand."); // TODO format this with number
+                        while (true)
+                        {
+                            Card card = Game.library.waitForClick();
+                            if (user.standby.Contains(card) && !incarnateCards.Contains(card))
+                            {
+                                incarnateCards.Add(card);
+                                Game.library.highlight(card, 255, 255, 0);
+                                break;
+                            }
+                        }
+                    }
+                    Game.library.clearAllHighlighting();
+                    Game.library.setPromptText("");
+                }
             }
         }
 
         private class UnyieldingFaith : Card
         {
-            public UnyieldingFaith(Character user) : base(user)
+            private List<Card> stdbyCards, handCards;
+            public UnyieldingFaith() : base()
             {
                 name = "Unyielding Faith";
-                effect = "Swap a Standby card with a card in your hand.\nBearer: Chain (R): You may swap 2 additional Standby cards.\nIncarnate: Swap up to 4 Standby cards with 4 cards in your hand.";
+                effect = "You may swap a Standby card with a card in your hand.\nBearer: Chain (R): You may swap up to 2 additional Standby cards.\nIncarnate: Swap up to 4 Standby cards with 4 cards in your hand.";
                 color = Color.green;
+                stdbyCards = new List<Card>(4);
+                handCards = new List<Card>(4);
             }
 
             public override void activate()
             {
-                //TODO
+                for (int i = 0; i < stdbyCards.Count; i++)
+                {
+                    user.swap(stdbyCards[i], handCards[i]);
+                }
+                stdbyCards.Clear();
+                handCards.Clear();
+            }
+
+            public override void declare()
+            {
+                // TODO this is a LOT of stuff, so something is definitely broken here.
+                while (true)
+                {
+                    Card card = Game.library.waitForClickOrCancel("Select a Standby card to swap.");
+                    if (user.standby.Contains(card))
+                    {
+                        stdbyCards.Add(card);
+                        break;
+                    }
+                    else if (card == null)
+                    {
+                        break;
+                    }
+                }
+                if (card != null)
+                {
+                    Game.library.setPromptText("Select a card from your hand to swap.");
+                    while (true)
+                    {
+                        card = Game.library.waitForClick();
+                        if (user.hand.Contains(card))
+                        {
+                            handCards.Add(card);
+                            break;
+                        }
+                    }
+                }
+                if (((Adrius)user).form >= Form.Bearer && user.prevCard.color == Color.red)
+                {
+                    for (int i = 0; i < 2; i++)
+                    {
+                        while (true)
+                        {
+                            Card card = Game.library.waitForClickOrCancel("Select a Standby card to swap.");
+                            if (user.standby.Contains(card))
+                            {
+                                stdbyCards.Add(card);
+                                break;
+                            }
+                            else if (card == null)
+                            {
+                                break;
+                            }
+                        }
+                        if (card != null)
+                        {
+                            Game.library.setPromptText("Select a card from your hand to swap.");
+                            while (true)
+                            {
+                                card = Game.library.waitForClick();
+                                if (user.hand.Contains(card))
+                                {
+                                    handCards.Add(card);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                if (((Adrius)user).form >= Form.Incarnate)
+                {
+                    for (int i = 0; i < 4-stdbyCards.Count; i++)
+                    {
+                        while (true)
+                        {
+                            Card card = Game.library.waitForClickOrCancel("Select a Standby card to swap.");
+                            if (user.standby.Contains(card))
+                            {
+                                stdbyCards.Add(card);
+                                break;
+                            }
+                            else if (card == null)
+                            {
+                                break;
+                            }
+                        }
+                        if (card != null)
+                        {
+                            Game.library.setPromptText("Select a card from your hand to swap.");
+                            while (true)
+                            {
+                                card = Game.library.waitForClick();
+                                if (user.hand.Contains(card))
+                                {
+                                    handCards.Add(card);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                Game.library.setPromptText("");
             }
         }
 
         private class WillUnbreakable : Card
         {
-            public WillUnbreakable(Character user) : base(user)
+            public WillUnbreakable() : base()
             {
                 name = "Will Unbreakable";
-                effect = "Undying.\nBearer: Counter (R): Absorb.\nIncarnate: Align (R, G): Gain 4 health.";
+                effect = "Negate 2 damage.\nUndying.\nBearer: Counter (R): Insead, Absorb.\nIncarnate: Align (R, G): Gain 4 health.";
                 color = Color.blue;
             }
 
             public override void activate()
             {
-                //TODO
+                // Base
+                user.undying = true;
+                if (((Adrius)user).form <= Form.Bearer)
+                {
+                    // Bearer
+                    if (user.opponent.currCard.color == Color.red)
+                    {
+                        user.absorb = true;
+                    }
+                    else
+                    {
+                        user.addNegate(2);
+                    }
+                }
+                else
+                {
+                    user.addNegate(2);
+                }
+                if (((Adrius)user).form <= Form.Incarnate)
+                {
+                    // Incarnate
+                    if (user.hasAlign("RG"))
+                    {
+                        user.heal += 4;
+                    }
+                }
             }
         }
 
         private class SurgingHope : Card
         {
-            public SurgingHope(Character user) : base(user)
+            public SurgingHope() : base()
             {
                 name = "Surging Hope";
                 effect = "Negate 2 damage.\nBearer: Bloodlust: Negate 2 additional damage.\nIncarnate: Safeguard.\nEmpower equal to the amount of damage negated.";
@@ -126,13 +395,32 @@ namespace Warforged
 
             public override void activate()
             {
-                //TODO
+                // Base
+                user.addNegate(2);
+                if (((Adrius)user).form <= Form.Bearer)
+                {
+                    // Bearer
+                    if (user.bloodlust)
+                    {
+                        user.addNegate(2);
+                    }
+                }
+                if (((Adrius)user).form <= Form.Incarnate)
+                {
+                    // Incarnate
+                    int negated = user.opponent.damage;
+                    if (negated > user.negate)
+                    {
+                        negated = user.negate;
+                    }
+                    user.empower += negated;
+                }
             }
         }
 
         private class RubyHeart : Card
         {
-            public RubyHeart(Character user) : base(user)
+            public RubyHeart() : base()
             {
                 name = "Ruby Heart";
                 effect = "Align (G, B): Chain (B): This turn, your Offense cards are Ascended.";
@@ -147,7 +435,7 @@ namespace Warforged
 
         private class EmeraldCore : Card
         {
-            public EmeraldCore(Character user) : base(user)
+            public EmeraldCore() : base()
             {
                 name = "Emerald Core";
                 effect = "Align (B, R, R, B): This turn, your Intent cards are Ascended.";
@@ -162,7 +450,7 @@ namespace Warforged
 
         private class SapphireMantle : Card
         {
-            public SapphireMantle(Character user) : base(user)
+            public SapphireMantle() : base()
             {
                 name = "Sapphire Mantle";
                 effect = "Align (R, G): Bloodlust: This turn, your Defense cards are Ascended.";
@@ -175,12 +463,12 @@ namespace Warforged
             }
         }
 
-        private class AscendanceFirstForm : Card
+        private class Ascendance: Card
         {
-            public AscendanceFirstForm(Character user) : base(user)
+            public Ascendance() : base()
             {
                 name = "Ascendance (First Form)";
-                effect = "fense\nEffect: Strive (3): Gain 5 health. Aspirer: Ascend to Bearer. Bearer: Ascend to Incarnate and Shift this card.";
+                effect = "Effect: Strive (3): Gain 5 health. Aspirer: Ascend to Bearer. Bearer: Ascend to Incarnate and Shift this card.";
                 color = Color.black; //TODO;
             }
 
@@ -190,12 +478,12 @@ namespace Warforged
             }
         }
 
-        private class DivineCataclysmIncarnateForm : Card
+        private class DivineCataclysm: Card
         {
-            public DivineCataclysmIncarnateForm(Character user) : base(user)
+            public DivineCataclysm() : base()
             {
                 name = "Divine Cataclysm (Incarnate Form)";
-                effect = "fense\nEffect: Strive (3): Deal damage equal to the sum of you and your opponent’s health.";
+                effect = "Effect: Strive (3): Deal damage equal to the sum of you and your opponent’s health.";
                 color = Color.black; //TODO;
             }
 
@@ -205,4 +493,4 @@ namespace Warforged
             }
         }
     }
-}*/
+}
