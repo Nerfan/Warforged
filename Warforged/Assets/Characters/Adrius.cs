@@ -17,14 +17,95 @@ namespace Warforged
         {
             name = "Adrius";
             title = "The Aspirer";
-            this.form = Form.Aspier;
+            form = Form.Aspier;
+        }
+
+        public override void dawn()
+        {
+            base.dawn();
+            if (form == Form.Incarnate)
+            {
+                bolster();
+            }
+        }
+
+        // TODO lower form bolsters and inherents
+
+        public override int dealDamage()
+        {
+            if (base.dealDamage && form == Form.Aspier)
+            {
+                bolster();
+            }
+        }
+        /// Inherents are handled in here.
+        /// We make sure all conditions are met, then "ascend" to play the card.
+        /// After the card is played, we go back to the old form.
+        public override void declarePhase()
+        {
+            Form currform = form;
+            foreach (Card inherent in invocation)
+            {
+                if (inherent.active)
+                {
+                    if (inherent.name == "Ruby Heart" && hasAlign("GB") && prevCard.color == Color.blue && currCard.color == Color.red)
+                    {
+                        if (form == Form.Aspier)
+                        {
+                            form = Form.Bearer;
+                        }
+                        else if (form == Form.Bearer)
+                        {
+                            form = Form.Incarnate;
+                        }
+                    }
+                    if (inherent.name == "Emerald Core" && hasAlign("BRRB") && currCard.color == Color.green)
+                    {
+                        if (form == Form.Aspier)
+                        {
+                            form = Form.Bearer;
+                        }
+                        else if (form == Form.Bearer)
+                        {
+                            form = Form.Incarnate;
+                        }
+                    }
+                    if (inherent.name == "Sapphire Mantle" && hasAlign("RG") && bloodlust && currCard.color == Color.blue)
+                    {
+                        if (form == Form.Aspier)
+                        {
+                            form = Form.Bearer;
+                        }
+                        else if (form == Form.Bearer)
+                        {
+                            form = Form.Incarnate;
+                        }
+                    }
+                }
+            }
+            base.declarePhase();
+            form = currform;
+        }
+
+        public override void damagePhase()
+        {
+            bool canSurpass = (hp <= opponent.hp);
+            base.damagePhase();
+            if (opponent.damage > 0 && negate > 0 && form == Form.Aspier)
+            {
+                bolster();
+            }
+            if (canSurpass && hp > opponent.hp && form == Form.Bearer)
+            {
+                bolster();
+            }
         }
 
         /// Utility method becuase several cards use this
         private int activeInherents()
         {
             int count = 0;
-            foreach (Card inherent in invocations)
+            foreach (Card inherent in invocation)
             {
                 if (inherent.active)
                 {
@@ -418,6 +499,8 @@ namespace Warforged
             }
         }
 
+
+
         private class RubyHeart : Card
         {
             public RubyHeart() : base()
@@ -425,11 +508,7 @@ namespace Warforged
                 name = "Ruby Heart";
                 effect = "Align (G, B): Chain (B): This turn, your Offense cards are Ascended.";
                 color = Color.black;
-            }
-
-            public override void activate()
-            {
-                //TODO
+                active = false;
             }
         }
 
@@ -440,11 +519,7 @@ namespace Warforged
                 name = "Emerald Core";
                 effect = "Align (B, R, R, B): This turn, your Intent cards are Ascended.";
                 color = Color.black;
-            }
-
-            public override void activate()
-            {
-                //TODO
+                active = false;
             }
         }
 
@@ -455,11 +530,7 @@ namespace Warforged
                 name = "Sapphire Mantle";
                 effect = "Align (R, G): Bloodlust: This turn, your Defense cards are Ascended.";
                 color = Color.black;
-            }
-
-            public override void activate()
-            {
-                //TODO
+                active = false;
             }
         }
 
@@ -474,6 +545,10 @@ namespace Warforged
 
             public override void activate()
             {
+                foreach (Card inherent in user.invocation)
+                {
+                    user.strive(inherent);
+                }
                 if (((Adrius)user).form == Form.Aspier)
                 {
                     ((Adrius)user).form = Form.Bearer);
@@ -492,12 +567,16 @@ namespace Warforged
             {
                 name = "Divine Cataclysm (Incarnate Form)";
                 effect = "Effect: Strive (3): Deal damage equal to the sum of you and your opponent’s health.";
-                color = Color.black; //TODO;
+                color = Color.red;
             }
 
             public override void activate()
             {
-                //TODO
+                foreach (Card inherent in user.invocation)
+                {
+                    user.strive(inherent);
+                }
+                user.addDamage(user.hp + user.opponent.hp);
             }
         }
     }

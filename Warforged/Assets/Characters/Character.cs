@@ -246,10 +246,11 @@ namespace Warforged
 		/// Deal damage to another character
 		/// This happens AFTER the cards are played and effects activated.
 		/// The character has the stats, now they strike.
-		public virtual void dealDamage()
+        /// Returns the amount of damage dealt.
+		public virtual int dealDamage()
 		{
 			// Will probably need more logic in the future
-            int tempnegate = opponent.negate = pierce;
+            int tempnegate = opponent.negate - pierce;
             if (tempnegate < 0)
             {
                 tempnegate = 0;
@@ -258,14 +259,17 @@ namespace Warforged
 			if (opponent.reflect)
 			{
 				takeDamage(tempdamage);
+                return 0;
 			}
 			else if (opponent.absorb)
 			{
 				opponent.heal += tempdamage;
+                return 0;
 			}
 			else
 			{
 				opponent.takeDamage(tempdamage);
+                return tempdamage;
 			}
 		}
 

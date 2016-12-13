@@ -17,15 +17,17 @@ namespace Warforged
         
 
         /// Deal damage to another character
-        public override void dealDamage()
+        public override int dealDamage()
         {
             // Will probably need more logic in the future
             int tempdamage = damage - opponent.negate;
             if (opponent.reflect) {
                 takeDamage(tempdamage);
+                return 0;
             }
             else if (opponent.absorb) {
                 opponent.heal += tempdamage;
+                return 0;
             }
             else
             {
@@ -45,6 +47,7 @@ namespace Warforged
                     bolster();
                     ((Edros)this).bolster2 = false;
                 }
+                return tempdamage;
             }
         }
 
