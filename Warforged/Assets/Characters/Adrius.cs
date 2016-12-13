@@ -47,12 +47,12 @@ namespace Warforged
             {
                 // Base
                 user.addDamage(2);
-                if (((Adrius)user).form <= Form.Bearer)
+                if (((Adrius)user).form >= Form.Bearer)
                 {
                     // Bearer
                     user.pierce += 2;
                 }
-                if (((Adrius)user).form <= Form.Incarnate)
+                if (((Adrius)user).form >= Form.Incarnate)
                 {
                     // Incarnate
                     user.addDamage(((Adrius)user).activeInherents());
@@ -73,7 +73,7 @@ namespace Warforged
             {
                 // Base
                 user.addDamage(1);
-                if (((Adrius)user).form <= Form.Bearer)
+                if (((Adrius)user).form >= Form.Bearer)
                 {
                     // Bearer
                     if (user.opponent.currCard.color == Color.green)
@@ -81,7 +81,7 @@ namespace Warforged
                         user.bolster();
                     }
                 }
-                if (((Adrius)user).form <= Form.Incarnate)
+                if (((Adrius)user).form >= Form.Incarnate)
                 {
                     // Incarnate
                     user.empower += ((Adrius)user).activeInherents();
@@ -100,7 +100,7 @@ namespace Warforged
 
             public override void activate()
             {
-                if (((Adrius)user).form <= Form.Bearer)
+                if (((Adrius)user).form >= Form.Bearer)
                 {
                     // Bearer
                     if (user.bloodlust)
@@ -108,7 +108,7 @@ namespace Warforged
                         user.empower += 1;
                     }
                 }
-                if (((Adrius)user).form <= Form.Incarnate)
+                if (((Adrius)user).form >= Form.Incarnate)
                 {
                     // Incarnate
                     user.damage += user.empower;
@@ -132,12 +132,12 @@ namespace Warforged
             {
                 // Base
                 user.addDamage(1);
-                if (((Adrius)user).form <= Form.Incarnate)
+                if (((Adrius)user).form >= Form.Incarnate)
                 {
                     // Incarnate
                     user.pierce += 4;
                 }
-                if (((Adrius)user).form <= Form.Bearer)
+                if (((Adrius)user).form >= Form.Bearer)
                 {
                     // Bearer
                     // Last because this relies on pierce
@@ -169,13 +169,13 @@ namespace Warforged
                 {
                     user.bolster;
                 }
-                if (((Adrius)user).form <= Form.Bearer)
+                if (((Adrius)user).form >= Form.Bearer)
                 {
                     // Bearer
                     user.takeStandby(card1);
                     card1 = null;
                 }
-                if (((Adrius)user).form <= Form.Incarnate)
+                if (((Adrius)user).form >= Form.Incarnate)
                 {
                     // Incarnate
                     foreach (Card card in incarnateCards)
@@ -188,7 +188,7 @@ namespace Warforged
 
             public override void declare()
             {
-                if (((Adrius)user).form <= Form.Bearer)
+                if (((Adrius)user).form >= Form.Bearer)
                 {
                     // Bearer
                     Game.library.setPromptText("Select a standby card to send to your hand.");
@@ -202,7 +202,7 @@ namespace Warforged
                     }
                     Game.library.setPromptText("");
                 }
-                if (((Adrius)user).form <= Form.Incarnate)
+                if (((Adrius)user).form >= Form.Incarnate)
                 {
                     // Incarnate
                     for (int i = 0; i < user.activeInherents(); i++)
@@ -357,7 +357,7 @@ namespace Warforged
             {
                 // Base
                 user.undying = true;
-                if (((Adrius)user).form <= Form.Bearer)
+                if (((Adrius)user).form >= Form.Bearer)
                 {
                     // Bearer
                     if (user.opponent.currCard.color == Color.red)
@@ -373,7 +373,7 @@ namespace Warforged
                 {
                     user.addNegate(2);
                 }
-                if (((Adrius)user).form <= Form.Incarnate)
+                if (((Adrius)user).form >= Form.Incarnate)
                 {
                     // Incarnate
                     if (user.hasAlign("RG"))
@@ -397,7 +397,7 @@ namespace Warforged
             {
                 // Base
                 user.addNegate(2);
-                if (((Adrius)user).form <= Form.Bearer)
+                if (((Adrius)user).form >= Form.Bearer)
                 {
                     // Bearer
                     if (user.bloodlust)
@@ -405,7 +405,7 @@ namespace Warforged
                         user.addNegate(2);
                     }
                 }
-                if (((Adrius)user).form <= Form.Incarnate)
+                if (((Adrius)user).form >= Form.Incarnate)
                 {
                     // Incarnate
                     int negated = user.opponent.damage;
@@ -468,13 +468,21 @@ namespace Warforged
             public Ascendance() : base()
             {
                 name = "Ascendance (First Form)";
-                effect = "Effect: Strive (3): Gain 5 health. Aspirer: Ascend to Bearer. Bearer: Ascend to Incarnate and Shift this card.";
-                color = Color.black; //TODO;
+                effect = "Effect: Strive (3): Gain 5 health.\nAspirer: Ascend to Bearer.\nBearer: Ascend to Incarnate and Shift this card.";
+                color = Color.blue;
             }
 
             public override void activate()
             {
-                //TODO
+                if (((Adrius)user).form == Form.Aspier)
+                {
+                    ((Adrius)user).form = Form.Bearer);
+                }
+                if (((Adrius)user).form == Form.Bearer)
+                {
+                    ((Adrius)user).form = Form.Incarnate);
+                }
+                // TODO shift this card
             }
         }
 
