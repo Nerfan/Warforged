@@ -30,7 +30,7 @@ def get_card(read, write, color):
     write.write("\n\
         private class " + classname + " : Card\n\
         {\n\
-            public " + classname + "(Character user) : base(user)\n\
+            public " + classname + "() : base()\n\
             {\n\
                 name = \"" + name + "\";\n\
                 effect = \"" + effect + "\";\n\
@@ -63,7 +63,7 @@ def get_character(read):
     line = read.readline().split(",")
     name = line[0]
     title = line[1].strip()
-    write = open("Warforged/Characters/"+name+".cs", "w")
+    write = open("Warforged/Assets/Characters/"+name+".cs", "w")
     write.write("\
 using System;\n\
 using System.Windows.Media;\n\
