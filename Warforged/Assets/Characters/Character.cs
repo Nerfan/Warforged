@@ -21,6 +21,14 @@ namespace Warforged
 		public string title{get; protected set;}
 		public int hp{get; protected set;}
 		// Information about the current turn
+        // Card color that cannot be played this turn; set one turn in advance and reset after a card is played
+		protected Color seal;
+        // Card color that cannot be played next turn; set two turn in advance and reset on dawn on the second turn
+        // This is transitioned into regular seal on the second turn
+        // i.e. Turn 0 sets seal and navySeal
+        //      Turn 1 has seal in place, navySeal waiting
+        //      Turn 2 dawn sees that seal is used up, sets equal to navySeal and clears navySeal
+        protected Color navySeal;
 		public int negate{get; set;}
 		public int damage{get; set;}
 		public int pierce{get; set;}
@@ -36,12 +44,13 @@ namespace Warforged
 		public bool stalwart{get; protected set;}
 		public bool bloodlust{get; protected set;}
 		protected int overheal;
-		protected Color seal;
 		// Information about cards
 		public Card currCard{get; protected set;}
 		public List<Card> standby{get; protected set;}
 		public List<Card> hand{get; protected set;}
 		public List<Card> invocation{get; protected set;}
+        public List<Card> suspended{get; protected set;}
+        public List<Card> recentSuspended{get; protected set;}
 		public Card prevCard{get; protected set;}
         // Represents the opposing character
         // Should be fine this way since the game is 1v1
@@ -76,10 +85,13 @@ namespace Warforged
 			bloodlust = false;
 			overheal = 0;
 			seal = Color.black;
+            navySeal = Color.black;
 
 			standby = new List<Card>();
 			hand = new List<Card>();
 			invocation = new List<Card>();
+            suspended = new List<Card>();
+            recentSuspended = new List<Card>();
 			stroveCards = new List<Card>();
 		}
 
@@ -141,6 +153,7 @@ namespace Warforged
 		public virtual void dawn()
 		{
 			stroveCards = new List<Card>();
+            recentSuspended.Clear();
 			negate = 0;
 			damage = 0;
             currEmpower = empower;
@@ -160,6 +173,11 @@ namespace Warforged
 			{
 				overheal = hp - 10;
 			}
+            if (navySeal != Color.black && seal == Color.black)
+            {
+                seal = navySeal;
+                navySeal = Color.black;
+            }
 		}
 
 		/// Play a card from your hand
@@ -244,6 +262,52 @@ namespace Warforged
 			stroveCards.Add(card);
 			return true;
 		}
+
+        /// Suspend a card.
+        /// Returns true if the card was successfully suspended.
+        /// Only allows suspensions from hand or standby row.
+        /// Card can be null, will return false.
+        public virtual bool suspend(Card card)
+        {
+            if (suspended.Contains(card))
+            {
+                return false;
+            }
+            if (card == null)
+            {
+                return false;
+            }
+            if (hand.Contains(card))
+            {
+                suspended.Add(card);
+                hand.Remove(card);
+                card.residual();
+                return true;
+            }
+            if (standby.Contains(card))
+            {
+                suspended.Add(card);
+                standby.Remove(card);
+                card.residual();
+                return true;
+            }
+            return false;
+        }
+
+        /// Take a card back from the suspended area.
+        /// Returns true if the card was successfully taken back.
+        /// Argument can be null
+        public virtual bool unSuspend(Card card)
+        {
+            if (!suspended.Contains(card))
+            {
+                return false;
+            }
+            hand.Add(card);
+            suspended.Remove(card);
+            card.recall();
+            return true;
+        }
 
 		/// Definitely doesn't need to be its own function
 		public virtual void healSelf()
@@ -376,19 +440,63 @@ namespace Warforged
 			opponent.seal = color;
 		}
 
-		/// Swap a standby card with a card in your hand
+        /// Seals a certain card type for the opponent's next two turns
+        public void superSeal(Color color)
+        {
+            opponent.seal = color;
+            opponent.navySeal = color;
+        }
+
+		/// Swap two cards.
+        /// These cards can be anywhere on the field.
 		/// If either of the cards are not found, nothing happens.
 		/// Either card can be null.
-		public void swap(Card inHand, Card inStandby)
+        /// This does NOT trigger effects based on moving cards.
+        /// e.g. Residuals or recalls will not occur.
+		public void swap(Card card1, Card card2)
 		{
-			if (!hand.Contains(inHand) || !standby.Contains(inStandby))
+			if (hand.Contains(card1) && standby.Contains(card2))
 			{
-				return;
+                standby.Insert(standby.IndexOf(card2), card1);
+                hand.Add(card2);
+                standby.Remove(card2);
+                hand.Remove(card1);
 			}
-			standby.Insert(standby.IndexOf(inStandby), inHand);
-			hand.Add(inStandby);
-			standby.Remove(inStandby);
-			hand.Remove(inHand);
+            else if (standby.Contains(card1) && hand.Contains(card2))
+            {
+                standby.Insert(standby.IndexOf(card1), card2);
+                hand.Add(card1);
+                standby.Remove(card1);
+                hand.Remove(card2);
+            }
+            else if (hand.Contains(card1) && suspended.Contains(card2))
+            {
+                hand.Add(card2);
+                suspended.Add(card1);
+                hand.Remove(card1);
+                suspended.Remove((card2));
+            }
+            else if (suspended.Contains(card1) && hand.Contains(card2))
+            {
+                hand.Add(card1);
+                suspended.Add(card2);
+                hand.Remove(card2);
+                suspended.Remove((card1));
+            }
+            else if (standby.Contains(card1) && suspended.Contains(card2))
+            {
+                standby.Insert(standby.IndexOf(card1), card2);
+                suspended.Add(card1);
+                standby.Remove(card1);
+                suspended.Remove(card2);
+            }
+            else if (suspended.Contains(card1) && standby.Contains(card2))
+			{
+                standby.Insert(standby.IndexOf(card2), card1);
+                suspended.Add(card2);
+                standby.Remove(card2);
+                suspended.Remove(card1);
+			}
 		}
 
 		/// Send a standby card to your hand
