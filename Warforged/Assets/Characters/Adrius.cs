@@ -13,11 +13,14 @@ namespace Warforged
 
         private Form form;
 
+        private bool strikeEmp;
+
         public Adrius() : base()
         {
             name = "Adrius";
             title = "The Aspirer";
             form = Form.Aspier;
+            strikeEmp = false;
         }
 
         public override void dawn()
@@ -33,9 +36,18 @@ namespace Warforged
 
         public override int dealDamage()
         {
-            if (base.dealDamage && form == Form.Aspier)
+            if (base.dealDamage())
             {
-                bolster();
+                if (form == Form.Aspier)
+                {
+                    bolster();
+                }
+                if (form == Form.Bearer && strikeEmp)
+                {
+                    empower += 2;
+                    reinforce += 2;
+                }
+                strikeEmp = false;
             }
         }
         /// Inherents are handled in here.
@@ -222,11 +234,7 @@ namespace Warforged
                 {
                     // Bearer
                     // Last because this relies on pierce
-                    if (!(user.opponent.absorb || user.opponent.reflect || (user.opponent.negate - user.pierce) >= user.damage))
-                    {
-                        user.empower += 2;
-                        user.reinforce += 2;
-                    }
+                    ((Adrius)user).strikeEmp = true;
                 }
             }
         }
@@ -551,11 +559,11 @@ namespace Warforged
                 }
                 if (((Adrius)user).form == Form.Aspier)
                 {
-                    ((Adrius)user).form = Form.Bearer);
+                    ((Adrius)user).form = Form.Bearer;
                 }
                 if (((Adrius)user).form == Form.Bearer)
                 {
-                    ((Adrius)user).form = Form.Incarnate);
+                    ((Adrius)user).form = Form.Incarnate;
                 }
                 // TODO shift this card
             }
