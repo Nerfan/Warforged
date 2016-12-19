@@ -487,6 +487,7 @@ namespace Warforged
                 color = Color.green;
                 declared = Color.black;
                 active = false;
+                setAwakening();
             }
 
             public override void activate()
@@ -525,6 +526,7 @@ namespace Warforged
                 effect = "Effect: Align (R, B, R, G): Deal 2 damage. Deal additional damage equal to the difference between you and your opponent’s health totals.";
                 color = Color.red;
                 active = false;
+                setAwakening();
             }
 
             public override void activate()

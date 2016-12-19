@@ -357,6 +357,10 @@ namespace Warforged
 		/// Right end of standby goes to hand
 		public void rotate()
 		{
+            if (currCard == null)
+            {
+                return;
+            }
 			if (currCard.isAwakening)
 			{
 				currCard.active = false;

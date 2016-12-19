@@ -14,6 +14,7 @@ namespace Warforged
         private Form form;
 
         private bool strikeEmp;
+        private bool negateEmp;
 
         public Adrius() : base()
         {
@@ -21,6 +22,7 @@ namespace Warforged
             title = "The Aspirer";
             form = Form.Aspier;
             strikeEmp = false;
+            negateEmp = false;
         }
 
         public override void dawn()
@@ -31,8 +33,6 @@ namespace Warforged
                 bolster();
             }
         }
-
-        // TODO lower form bolsters and inherents
 
         public override int dealDamage()
         {
@@ -50,6 +50,7 @@ namespace Warforged
                 strikeEmp = false;
             }
         }
+
         /// Inherents are handled in here.
         /// We make sure all conditions are met, then "ascend" to play the card.
         /// After the card is played, we go back to the old form.
@@ -95,7 +96,7 @@ namespace Warforged
                     }
                 }
             }
-            base.declarePhase();
+            base.declarePhase(); // All card effects activate
             form = currform;
         }
 
@@ -110,6 +111,16 @@ namespace Warforged
             if (canSurpass && hp > opponent.hp && form == Form.Bearer)
             {
                 bolster();
+            }
+            if (negateEmp)
+            {
+                int negated = opponent.damage;
+                if (negated > negate)
+                {
+                    negated = negate;
+                }
+                empower += negated;
+                negateEmp = false;
             }
         }
 
@@ -296,7 +307,7 @@ namespace Warforged
                     // Incarnate
                     for (int i = 0; i < user.activeInherents(); i++)
                     {
-                        Game.library.setPromptText("Select a standby card to send to your hand."); // TODO format this with number
+                        Game.library.setPromptText(String.Format("Select Standby card #{0} to send to your hand.", i+2));
                         while (true)
                         {
                             Card card = Game.library.waitForClick();
@@ -497,12 +508,7 @@ namespace Warforged
                 if (((Adrius)user).form >= Form.Incarnate)
                 {
                     // Incarnate
-                    int negated = user.opponent.damage;
-                    if (negated > user.negate)
-                    {
-                        negated = user.negate;
-                    }
-                    user.empower += negated;
+                    user.negateEmp = true;
                 }
             }
         }
@@ -549,6 +555,7 @@ namespace Warforged
                 name = "Ascendance (First Form)";
                 effect = "Effect: Strive (3): Gain 5 health.\nAspirer: Ascend to Bearer.\nBearer: Ascend to Incarnate and Shift this card.";
                 color = Color.blue;
+                setAwakening();
             }
 
             public override void activate()
@@ -564,8 +571,9 @@ namespace Warforged
                 if (((Adrius)user).form == Form.Bearer)
                 {
                     ((Adrius)user).form = Form.Incarnate;
+                    user.invocation.Add(new DivineCataclysm());
+                    user.currCard = null;
                 }
-                // TODO shift this card
             }
         }
 
@@ -576,6 +584,7 @@ namespace Warforged
                 name = "Divine Cataclysm (Incarnate Form)";
                 effect = "Effect: Strive (3): Deal damage equal to the sum of you and your opponent’s health.";
                 color = Color.red;
+                setAwakening();
             }
 
             public override void activate()
