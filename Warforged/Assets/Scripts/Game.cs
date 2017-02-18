@@ -71,7 +71,35 @@ namespace Warforged
                     c.init(p1);
                 }
             }
-            Thread.Sleep(30);
+
+            else if (p1 is Adrius)
+            {
+                p1.hand.Add(new Adrius.SurgingHope());
+                p1.hand.Add(new Adrius.WillUnbreakable());
+                p1.hand.Add(new Adrius.FistofRuin());
+                p1.hand.Add(new Adrius.TremoringImpact());
+                foreach (Character.Card c in p1.hand)
+                {
+                    c.init(p1);
+                }
+                p1.standby.Add(new Adrius.EarthPiercer());
+                p1.standby.Add(new Adrius.ShatteringBlow());
+                p1.standby.Add(new Adrius.HerosResolution());
+                p1.standby.Add(new Adrius.UnyieldingFaith());
+                foreach (Character.Card c in p1.standby)
+                {
+                    c.init(p1);
+                }
+                p1.invocation.Add(new Adrius.SapphireMantle());
+                p1.invocation.Add(new Adrius.RubyHeart());
+                p1.invocation.Add(new Adrius.EmeraldCore());
+                p1.invocation.Add(new Adrius.Ascendance());
+                foreach (Character.Card c in p1.invocation)
+                {
+                    c.init(p1);
+                }
+            }
+                Thread.Sleep(30);
             p2 = opponent;
 
             if (p2 is Edros)
@@ -129,48 +157,98 @@ namespace Warforged
                     c.init(p2);
                 }
             }
-            p1.setOpponent(p2);
-            p2.setOpponent(p1);
+            if (p2 is Adrius)
+            {
+                p2.hand.Add(new Adrius.SurgingHope());
+                p2.hand.Add(new Adrius.WillUnbreakable());
+                p2.hand.Add(new Adrius.FistofRuin());
+                p2.hand.Add(new Adrius.TremoringImpact());
+                foreach (Character.Card c in p2.hand)
+                {
+                    c.init(p2);
+                }
+                p2.standby.Add(new Adrius.EarthPiercer());
+                p2.standby.Add(new Adrius.ShatteringBlow());
+                p2.standby.Add(new Adrius.HerosResolution());
+                p2.standby.Add(new Adrius.UnyieldingFaith());
+                foreach (Character.Card c in p2.standby)
+                {
+                    c.init(p2);
+                }
+                p2.invocation.Add(new Adrius.SapphireMantle());
+                p2.invocation.Add(new Adrius.RubyHeart());
+                p2.invocation.Add(new Adrius.EmeraldCore());
+                p2.invocation.Add(new Adrius.Ascendance());
+                foreach (Character.Card c in p2.invocation)
+                {
+                    c.init(p2);
+                }
+                p2.setOpponent(p2);
+            }
+            p2.setOpponent(p2);
         }
 		public void takeTurn()
         {
+            try
+            {
+                //library.setPromptText("before sleep0");
+                library.updateUI(p1, true);
+                ++p1.turn;
+                library.updateNetowrk(p1);
+                library.waitOnNetwork(ref p1, ref p2);
+                //library.updateNetowrk(p1);
+                library.updateOpponentUI(p2, true, false);
+                //library.setPromptText("before sleep");
 
-            library.updateUI(p1, true);
-            library.updateNetowrk(p1);
-            library.updateOpponentUI(p2, true, false);
+                p1.playCard();
+                //p2.playCard();
 
-			p1.playCard();
-            //p2.playCard();
+                library.updateUI(p1, false);
+                ++p1.turn;
+                library.updateNetowrk(p1);
+                library.waitOnNetwork(ref p1, ref p2);
+                library.updateOpponentUI(p2, false, false);
+                //library.setPromptText("before sleep1");
 
-
-			library.updateUI(p1,false);
-            library.updateNetowrk(p1);
-            library.updateOpponentUI(p2, false,false);
-
-			p1.declarePhase();
-			//p2.declarePhase();
+                p1.declarePhase();
+                //p2.declarePhase();
 
 
-            library.updateUI(p1, true);
-            library.updateNetowrk(p1);
-            library.updateOpponentUI(p2, true, false);
-			p1.damagePhase();
-            p2.damagePhase();
-            Thread.Sleep(2500);
+                library.updateUI(p1, true);
+                ++p1.turn;
+                library.updateNetowrk(p1);
+                library.waitOnNetwork(ref p1, ref p2);
+                //library.updateNetowrk(p1);
+                library.updateOpponentUI(p2, true, false);
+                //library.setPromptText("before sleep2");
+                p1.damagePhase();
+                p2.damagePhase();
+                //library.setPromptText("before sleep3");
+                Thread.Sleep(2500);
+                //library.setPromptText("after sleep");
+                library.updateUI(p1, true);
+                ++p1.turn;
+                library.updateNetowrk(p1);
+                library.waitOnNetwork(ref p1, ref p2);
+                //library.updateNetowrk(p1);
+                library.updateOpponentUI(p2, true, false);
+                //library.setPromptText("after sleep1");
+
+                p1.dusk();
 
 
-            library.updateUI(p1, true);
-            library.updateNetowrk(p1);
-            library.updateOpponentUI(p2, true, false);
+                library.updateUI(p1, true);
+                ++p1.turn;
+                library.updateNetowrk(p1);
+                library.waitOnNetwork(ref p1, ref p2);
+                library.updateOpponentUI(p2, true, false);
+                //library.setPromptText("after sleep2");
 
-			p1.dusk();
-            
-
-            library.updateUI(p1, true);
-            library.updateNetowrk(p1);
-            library.updateOpponentUI(p2, true, false);
-
-			p1.dawn();
+                p1.dawn();
+            } catch(Exception e)
+            {
+                library.setPromptText("Exception: "+e);
+            }
 
 			// Heal
 			// If anyone dies, do it at the end
@@ -193,6 +271,10 @@ namespace Warforged
             {
                 library.setupTyras(1);
             }
+            else if (p1 is Adrius)
+            {
+                library.setupAdrius(1);
+            }
 
             Thread.Sleep(30);
 
@@ -203,6 +285,10 @@ namespace Warforged
             else if (p2 is Tyras)
             {
                 library.setupTyras(2);
+            }
+            else if (p2 is Adrius)
+            {
+                library.setupAdrius(2);
             }
 
             while (true)

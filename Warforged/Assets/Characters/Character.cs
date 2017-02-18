@@ -14,10 +14,11 @@ namespace Warforged
 	}
     [XmlInclude(typeof(Tyras))]
     [XmlInclude(typeof(Edros))]
+    [XmlInclude(typeof(Adrius))]
     public abstract class Character
 	{
 		// Overall information
-		public string name{get; protected set;}
+		public string name{get; set;}
 		public string title{get; protected set;}
 		public int hp{get; protected set;}
 		// Information about the current turn
@@ -44,6 +45,7 @@ namespace Warforged
 		public bool stalwart{get; protected set;}
 		public bool bloodlust{get; protected set;}
 		protected int overheal;
+        public int turn = 0;
 		// Information about cards
 		public Card currCard{get; protected set;}
 		public List<Card> standby{get; protected set;}
@@ -192,8 +194,10 @@ namespace Warforged
 			}
 			while (true)
 			{
-				Card card = Game.library.waitForClick();
-				if (!hand.Contains(card))
+                Card card = Game.library.waitForClick();
+                //Card card = hand[0];
+
+                if (!hand.Contains(card))
 				{
 					continue;
 				}
@@ -517,6 +521,20 @@ namespace Warforged
 
 
         /* Nested class representing a generic card */
+        [XmlInclude(typeof(Adrius.Ascendance))]
+        [XmlInclude(typeof(Adrius.DivineCataclysm))]
+        [XmlInclude(typeof(Adrius.EarthPiercer))]
+        [XmlInclude(typeof(Adrius.EmeraldCore))]
+        [XmlInclude(typeof(Adrius.FistofRuin))]
+        [XmlInclude(typeof(Adrius.HerosResolution))]
+        [XmlInclude(typeof(Adrius.RubyHeart))]
+        [XmlInclude(typeof(Adrius.SapphireMantle))]
+        [XmlInclude(typeof(Adrius.ShatteringBlow))]
+        [XmlInclude(typeof(Adrius.SurgingHope))]
+        [XmlInclude(typeof(Adrius.TremoringImpact))]
+        [XmlInclude(typeof(Adrius.UnyieldingFaith))]
+        [XmlInclude(typeof(Adrius.WillUnbreakable))]
+
         [XmlInclude(typeof(Tyras.ABrothersVirtue))]
         [XmlInclude(typeof(Tyras.AnOathUnforgotten))]
         [XmlInclude(typeof(Tyras.APromiseUnbroken))]

@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Xml.Serialization;
 using System.IO;
 using System.Xml;
+using UnityEngine.Networking;
 
 public class StartGame : MonoBehaviour {
 
@@ -18,13 +19,20 @@ public class StartGame : MonoBehaviour {
 		OnClick.buttonReturn = OnClick.NoReturn;
 		OnClick.cardReturn = OnClick.NoReturn;
         StartCoroutine(StartModel(characterPick));
+        
     }
 
 	// Update is called once per frame
 	void Update () {
 	}
+    public static bool clientReady = false;
 
-	public static Character characterPick = null;
+    //void OnSerializeNetworkView(BitStream stream, NetworkMessageInfo info)
+    //{
+
+    //}
+    public static bool networkUpdated = false;
+    public static Character characterPick = null;
 	public delegate IEnumerator ModelSignal();
 	public static ModelSignal signal = null;
 	public static UnityLibrary lib = null;
@@ -58,8 +66,8 @@ public class StartGame : MonoBehaviour {
 		{
 			yield return new WaitUntil(() => signal != null);
 			yield return signal();
-			lib.barrier.SignalAndWait(threadID);
-			signal = null;
+            signal = null;
+            lib.barrier.SignalAndWait(threadID);
 		}
 	}
 
@@ -118,7 +126,12 @@ public class StartGame : MonoBehaviour {
 		OnClick.buttonReturn = OnClick.NoReturn;
 		OnClick.Prompt.text = "";
 		yield return null;
-	}
+    }
+    public static IEnumerator waitOnNetwork(Character ch1, Character ch2)
+    {
+        yield return new WaitUntil(() => { Debug.Log("Turn 1: "+ Game.p1.turn+" Turn 2: "+ Game.p2.turn); return networkUpdated; });
+        networkUpdated = false;
+    }
     public static IEnumerator updateNetwork(Character ch)
     {
         XmlSerializer xml = new XmlSerializer(typeof(Character));
@@ -133,10 +146,101 @@ public class StartGame : MonoBehaviour {
         {
             PlayerController.controller.localPlayer.CmdSetCharacter(sw.GetStringBuilder().ToString(), PlayerController.controller.localPlayer.isServer);
         }
-        PlayerController.controller.localPlayer.CmdImReady(PlayerController.controller.localPlayer.isServer);
-        yield return new WaitUntil(() => PlayerController.controller.remotePlayer.readyFlag && PlayerController.controller.localPlayer.readyFlag);
-        PlayerController.controller.remotePlayer.readyFlag = false;
-        PlayerController.controller.localPlayer.readyFlag = false;
+        /*if (!PlayerController.controller.localPlayer.isServer)
+        {
+            //yield return new WaitUntil(() => PlayerController.controller.remotePlayer.remoteSequence + 1 >= PlayerController.controller.remotePlayer.localSequence);
+            Debug.Log("ClientReady: "+ PlayerController.playerController.getClientReady()+" ServerReady: "+ PlayerController.playerController.getServerReady());
+            PlayerController.controller.localPlayer.CmdClientReady(PlayerController.playerController.getClientReady() + 1);
+            yield return new WaitUntil(() => {
+                var rdy = PlayerController.playerController.getServerReady() > PlayerController.controller.localPlayer.prevServerReady+3;
+                if(rdy)
+                {
+                    PlayerController.controller.localPlayer.CmdClientReady(PlayerController.playerController.getClientReady() + 6);
+                    PlayerController.controller.localPlayer.prevServerReady = PlayerController.playerController.getServerReady();
+                    return true;
+                }
+                else
+                {
+                    PlayerController.controller.localPlayer.CmdClientReady(PlayerController.playerController.getClientReady()+1);
+                    Debug.Log("ClientReady: " + PlayerController.playerController.getClientReady() + " ServerReady: " + PlayerController.playerController.getServerReady());
+                }
+                return false;
+            });
+            //yield return new WaitUntil(() => PlayerController.controller.remotePlayer.readyFlag == false);
+        }
+        else
+        {
+            //yield return new WaitUntil(() => PlayerController.controller.remotePlayer.remoteSequence + 1 >= PlayerController.controller.remotePlayer.localSequence);
+            yield return new WaitUntil(() => {
+                var rdy = PlayerController.playerController.getClientReady() > PlayerController.controller.localPlayer.prevClientReady+5;
+                if (rdy)
+                {
+                    PlayerController.controller.localPlayer.prevClientReady = PlayerController.playerController.getClientReady();
+                    PlayerController.playerController.updateServerReady(PlayerController.playerController.getServerReady()+4);
+                    Debug.Log("ClientReady: " + PlayerController.playerController.getClientReady() + " ServerReady: " + PlayerController.playerController.getServerReady());
+                    return true;
+                }
+                else
+                {
+                    PlayerController.playerController.updateServerReady(PlayerController.playerController.getServerReady() + 1);
+                    Debug.Log("ClientReady: " + PlayerController.playerController.getClientReady() + " ServerReady: " + PlayerController.playerController.getServerReady());
+                }
+                return false;
+            });
+            //yield return new WaitUntil(() => PlayerController.controller.remotePlayer.readyFlag == false);
+        }*/
+        //PlayerController.controller.localPlayer.CmdImReady(PlayerController.controller.localPlayer.isServer);
+        ////if (!PlayerController.controller.remotePlayer.readyFlag)
+        //{
+        //    yield return new WaitUntil(() => {
+        //        PlayerController.controller.localPlayer.CmdImReady(PlayerController.controller.localPlayer.isServer);
+        //        PlayerController.controller.localPlayer.CmdImReady1(PlayerController.controller.localPlayer.isServer);
+        //        return PlayerController.controller.remotePlayer.readyFlag;
+        //    });
+        //    /*yield return new WaitUntil(() => {
+        //        PlayerController.controller.localPlayer.CmdImReady(PlayerController.controller.localPlayer.isServer);
+        //        PlayerController.controller.localPlayer.CmdImReady1(PlayerController.controller.localPlayer.isServer);
+        //        return PlayerController.controller.localPlayer.readyFlag;
+        //    });*/
+        //}
+        //PlayerController.controller.remotePlayer.readyFlag = false;
+        //PlayerController.controller.localPlayer.readyFlag = false;
+        //PlayerController.controller.localPlayer.CmdImReady1(PlayerController.controller.localPlayer.isServer);
+        ////if (!PlayerController.controller.remotePlayer.readyFlag)
+        //{
+        //    yield return new WaitUntil(() => {
+        //        PlayerController.controller.localPlayer.CmdImReady1(PlayerController.controller.localPlayer.isServer);
+        //        PlayerController.controller.localPlayer.CmdImReady2(PlayerController.controller.localPlayer.isServer);
+        //        return PlayerController.controller.remotePlayer.readyFlag1;
+        //    });
+        //    /*yield return new WaitUntil(() => {
+        //        PlayerController.controller.localPlayer.CmdImReady1(PlayerController.controller.localPlayer.isServer);
+        //        PlayerController.controller.localPlayer.CmdImReady2(PlayerController.controller.localPlayer.isServer);
+        //        return PlayerController.controller.localPlayer.readyFlag1;
+        //    });*/
+        //}
+        //PlayerController.controller.remotePlayer.readyFlag1 = false;
+        //PlayerController.controller.localPlayer.readyFlag1 = false;
+        //PlayerController.controller.localPlayer.CmdImReady2(PlayerController.controller.localPlayer.isServer);
+        ////if (!PlayerController.controller.remotePlayer.readyFlag)
+        //{
+        //    yield return new WaitUntil(() => {
+        //        PlayerController.controller.localPlayer.CmdImReady2(PlayerController.controller.localPlayer.isServer);
+        //        PlayerController.controller.localPlayer.CmdImReady(PlayerController.controller.localPlayer.isServer);
+        //        return PlayerController.controller.remotePlayer.readyFlag2;
+        //    });
+        //    /*yield return new WaitUntil(() => {
+        //        PlayerController.controller.localPlayer.CmdImReady2(PlayerController.controller.localPlayer.isServer);
+        //        PlayerController.controller.localPlayer.CmdImReady(PlayerController.controller.localPlayer.isServer);
+        //        return PlayerController.controller.localPlayer.readyFlag2;
+        //    });*/
+        //}
+
+        //PlayerController.controller.remotePlayer.readyFlag2 = false;
+        //PlayerController.controller.localPlayer.readyFlag2 = false;
+        //PlayerController.controller.localPlayer.CmdUnReady(PlayerController.controller.localPlayer.isServer);
+        //yield return new WaitUntil(() => PlayerController.controller.remotePlayer.readyFlag == false);
+        //yield return new WaitUntil(() => PlayerController.controller.localPlayer.readyFlag == false);
         yield return null;
     }
 
@@ -367,7 +471,33 @@ public class StartGame : MonoBehaviour {
 		yield return null;
 	}
 
-	public static IEnumerator setupTyras(Dictionary<string, Sprite> CurrCardImages)
+    public static IEnumerator setupAdrius(Dictionary<string, Sprite> CurrCardImages)
+    {
+
+        CurrCardImages.Add("Ascendance", Resources.Load("CardImages/Adrius/Ascendance", typeof(Sprite)) as Sprite);
+        CurrCardImages.Add("Divine Cataclysm", Resources.Load("CardImages/Adrius/Divine Cataclysm", typeof(Sprite)) as Sprite);
+        CurrCardImages.Add("Earth Piercer", Resources.Load("CardImages/Adrius/Earth Piercer", typeof(Sprite)) as Sprite);
+
+        CurrCardImages.Add("Adrius (Ral'Taris Incarnate)", Resources.Load<Sprite>("CardImages/Adrius/Adrius (Ral'Taris Incarnate)"));
+        CurrCardImages.Add("Adrius (The Aspirer)", Resources.Load<Sprite>("CardImages/Adrius/Adrius (The Aspirer)"));
+        CurrCardImages.Add("Adrius (The Realm Bearer)", Resources.Load<Sprite>("CardImages/Adrius/Adrius (The Realm Bearer)"));
+
+        CurrCardImages.Add("Emerald Core", Resources.Load("CardImages/Adrius/Emerald Core", typeof(Sprite)) as Sprite);
+        CurrCardImages.Add("Fist of Ruin", Resources.Load("CardImages/Adrius/Fist of Ruin", typeof(Sprite)) as Sprite);
+        CurrCardImages.Add("Hero’s Resolution", Resources.Load("CardImages/Adrius/Hero’s Resolution", typeof(Sprite)) as Sprite);
+
+        CurrCardImages.Add("Ruby Heart", Resources.Load("CardImages/Adrius/Ruby Heart", typeof(Sprite)) as Sprite);
+        CurrCardImages.Add("Sapphire Mantle", Resources.Load("CardImages/Adrius/Sapphire Mantle", typeof(Sprite)) as Sprite);
+        CurrCardImages.Add("Shattering Blow", Resources.Load("CardImages/Adrius/Shattering Blow", typeof(Sprite)) as Sprite);
+
+        CurrCardImages.Add("Surging Hope", Resources.Load("CardImages/Adrius/Surging Hope", typeof(Sprite)) as Sprite);
+        CurrCardImages.Add("Tremoring Impact", Resources.Load("CardImages/Adrius/Tremoring Impact", typeof(Sprite)) as Sprite);
+        CurrCardImages.Add("Unyielding Faith", Resources.Load("CardImages/Adrius/Unyielding Faith", typeof(Sprite)) as Sprite);
+        CurrCardImages.Add("Will Unbreakable", Resources.Load("CardImages/Adrius/Will Unbreakable", typeof(Sprite)) as Sprite);
+        yield return null;
+    }
+
+    public static IEnumerator setupTyras(Dictionary<string, Sprite> CurrCardImages)
 	{
 
 		CurrCardImages.Add("A Brother's Virtue", Resources.Load("CardImages/Tyras/A Brother's Virtue", typeof(Sprite)) as Sprite);

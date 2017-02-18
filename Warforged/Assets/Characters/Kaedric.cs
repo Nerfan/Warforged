@@ -1,6 +1,5 @@
 using System;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
+using System.Collections.Generic;
 
 namespace Warforged
 {
@@ -62,7 +61,7 @@ namespace Warforged
                     {
                         break;
                     }
-                    if (card == user.standby[user.standby.Count = 1])
+                    if (card == user.standby[user.standby.Count - 1])
                     {
                         rightSuspend = true;
                         break;
@@ -116,14 +115,14 @@ namespace Warforged
                 }
             }
 
-            public override void delcare()
+            public override void declare()
             {
                 if (user.hasAlign("RB"))
                 {
                     Game.library.setPromptText("Select a card to suspend.");
                     while (true)
                     {
-                        suspendCard = waitForClick();
+                        suspendCard = Game.library.waitForClick();
                         if (user.hand.Contains(suspendCard) || user.standby.Contains(suspendCard))
                         {
                             break;
@@ -132,7 +131,7 @@ namespace Warforged
                     Game.library.setPromptText("Select a suspended card to return. Can be the card being suspended this turn.");
                     while (true)
                     {
-                        returnCard = waitForClick();
+                        returnCard = Game.library.waitForClick();
                         if (user.suspended.Contains(returnCard) || returnCard == suspendCard)
                         {
                             break;
@@ -239,7 +238,7 @@ namespace Warforged
                 {
                     while (true)
                     {
-                        Card card = waitForClick();
+                        Card card = Game.library.waitForClick();
                         if (user.standby.Contains(card) && !newOrder.Contains(card))
                         {
                             newOrder.Add(card);
@@ -263,7 +262,7 @@ namespace Warforged
                 name = "Umbral Order";
                 effect = "Swap up to 2 Suspended cards with 2 cards. (Does not trigger Residual)\nResidual: Empower (2).";
                 color = Color.green;
-                suspendCards = new List<Card>(2);
+                suspendedCards = new List<Card>(2);
                 otherCards = new List<Card>(2);
             }
 
@@ -271,7 +270,7 @@ namespace Warforged
             {
                 user.swap(suspendedCards[0], otherCards[0]);
                 user.swap(suspendedCards[1], otherCards[1]);
-                suspendCards.Clear();
+                suspendedCards.Clear();
                 otherCards.Clear();
             }
 
@@ -370,7 +369,7 @@ namespace Warforged
 
             public override void residual()
             {
-                user.hp += user.suspended.Count - user.recentSuspended.Count;
+                user.heal += user.suspended.Count - user.recentSuspended.Count;
             }
         }
 
@@ -460,14 +459,14 @@ namespace Warforged
                         Game.library.highlight(card1, 255, 255, 0);
                         Character.Card card2 = Game.library.waitForClick();
                         Game.library.clearAllHighlighting();
-                        if(user.suspended.Contains(card1) && user.standby.Contains(card2))
+                        if(suspended.Contains(card1) && standby.Contains(card2))
                         {
-                            user.swap(card1, card2);
+                            swap(card1, card2);
                             break;
                         }
-                        else if(user.suspended.Contains(card2) && user.standby.Contains(card1))
+                        else if(suspended.Contains(card2) && standby.Contains(card1))
                         {
-                            user.swap(card1, card2);
+                            swap(card1, card2);
                             break;
                         }
                     }
@@ -494,7 +493,7 @@ namespace Warforged
             {
                 if (user.hasAlign("BGRG"))
                 {
-                    user.superSeal(delcared);
+                    user.superSeal(declared);
                     declared = Color.black;
                 }
             }

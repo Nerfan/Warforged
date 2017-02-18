@@ -18,14 +18,16 @@ namespace Warforged
 		//This function must be called twice, once for each player.
 		public abstract void setupEdros(int player);
 		public abstract void setupTyras(int player);
+        public abstract void setupAdrius(int player);
 
-		//Updates the UI for Player 1 based on the character object passed in.
-		//@param showCurrCard: If this is true the played card will be shown on the UI, otherwise the back of the card is used.
-		public abstract void updateUI(Character ch, bool showCurrCard);
+        //Updates the UI for Player 1 based on the character object passed in.
+        //@param showCurrCard: If this is true the played card will be shown on the UI, otherwise the back of the card is used.
+        public abstract void updateUI(Character ch, bool showCurrCard);
 
         //Updates the Network, so that the opponent recieves our changes
         public abstract void updateNetowrk(Character ch);
-
+        //Waits for both players to have cards out on the field
+        public abstract void waitOnNetwork(ref Character ch1, ref Character ch2);
         //Updates the UI for Player 2 based on the character object passed in.
         //@param showCurrCard: If this is true the played card will be shown on the UI, otherwise the back of the card is used.
         //@param showHand: If this is true the Opponent's hand will be shown to the user, otherwise the hand will show the back of the cards.

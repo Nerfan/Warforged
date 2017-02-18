@@ -77,6 +77,20 @@ namespace Warforged
 			}
 		}
 
+        public override void setupAdrius(int player)
+        {
+            if (player == 2)
+            {
+                StartGame.signal = () => { return StartGame.setupAdrius(OnClick.OCardImages); };
+                barrier.SignalAndWait(threadID);
+            }
+            else
+            {
+                StartGame.signal = () => { return StartGame.setupAdrius(OnClick.CardImages); };
+                barrier.SignalAndWait(threadID);
+            }
+        }
+
         public override void updateNetowrk(Character ch)
         {
             StartGame.signal = () => { return StartGame.updateNetwork(ch); };
@@ -121,5 +135,13 @@ namespace Warforged
 			setPromptText("");
 			return (bool)returnObject;
 		}
-	}
+
+        public override void waitOnNetwork(ref Character ch1, ref Character ch2)
+        {
+            var p1 = ch1;
+            var p2 = ch2;
+            StartGame.signal = () =>{ return StartGame.waitOnNetwork(p1,p2); };
+            barrier.SignalAndWait(threadID);
+        }
+    }
 }

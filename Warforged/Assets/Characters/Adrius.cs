@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+
 namespace Warforged
 {
     [Serializable]
@@ -18,7 +20,7 @@ namespace Warforged
 
         public Adrius() : base()
         {
-            name = "Adrius";
+            name = "Adrius (The Aspirer)";
             title = "The Aspirer";
             form = Form.Aspier;
             strikeEmp = false;
@@ -36,7 +38,8 @@ namespace Warforged
 
         public override int dealDamage()
         {
-            if (base.dealDamage())
+            int dmg = base.dealDamage();
+            if (dmg > 0)
             {
                 if (form == Form.Aspier)
                 {
@@ -49,6 +52,7 @@ namespace Warforged
                 }
                 strikeEmp = false;
             }
+            return dmg;
         }
 
         /// Inherents are handled in here.
@@ -138,7 +142,7 @@ namespace Warforged
             return count;
         }
 
-        private class FistofRuin : Card
+        public class FistofRuin : Card
         {
             public FistofRuin() : base()
             {
@@ -164,7 +168,7 @@ namespace Warforged
             }
         }
 
-        private class ShatteringBlow : Card
+        public class ShatteringBlow : Card
         {
             public ShatteringBlow() : base()
             {
@@ -193,7 +197,7 @@ namespace Warforged
             }
         }
 
-        private class TremoringImpact : Card
+        public class TremoringImpact : Card
         {
             public TremoringImpact() : base()
             {
@@ -223,7 +227,7 @@ namespace Warforged
             }
         }
 
-        private class EarthPiercer : Card
+        public class EarthPiercer : Card
         {
             public EarthPiercer() : base()
             {
@@ -250,7 +254,7 @@ namespace Warforged
             }
         }
 
-        private class HerosResolution : Card
+        public class HerosResolution : Card
         {
             private Card card1;
             private List<Card> incarnateCards;
@@ -267,7 +271,7 @@ namespace Warforged
                 // Base
                 if (user.opponent.currCard.color == Color.blue)
                 {
-                    user.bolster;
+                    user.bolster();
                 }
                 if (((Adrius)user).form >= Form.Bearer)
                 {
@@ -305,7 +309,7 @@ namespace Warforged
                 if (((Adrius)user).form >= Form.Incarnate)
                 {
                     // Incarnate
-                    for (int i = 0; i < user.activeInherents(); i++)
+                    for (int i = 0; i < ((Adrius)user).activeInherents(); i++)
                     {
                         Game.library.setPromptText(String.Format("Select Standby card #{0} to send to your hand.", i+2));
                         while (true)
@@ -325,7 +329,7 @@ namespace Warforged
             }
         }
 
-        private class UnyieldingFaith : Card
+        public class UnyieldingFaith : Card
         {
             private List<Card> stdbyCards, handCards;
             public UnyieldingFaith() : base()
@@ -350,9 +354,10 @@ namespace Warforged
             public override void declare()
             {
                 // TODO this is a LOT of stuff, so something is definitely broken here.
+                Card card = null;
                 while (true)
                 {
-                    Card card = Game.library.waitForClickOrCancel("Select a Standby card to swap.");
+                    card = Game.library.waitForClickOrCancel("Select a Standby card to swap.");
                     if (user.standby.Contains(card))
                     {
                         stdbyCards.Add(card);
@@ -382,7 +387,7 @@ namespace Warforged
                     {
                         while (true)
                         {
-                            Card card = Game.library.waitForClickOrCancel("Select a Standby card to swap.");
+                            card = Game.library.waitForClickOrCancel("Select a Standby card to swap.");
                             if (user.standby.Contains(card))
                             {
                                 stdbyCards.Add(card);
@@ -414,7 +419,7 @@ namespace Warforged
                     {
                         while (true)
                         {
-                            Card card = Game.library.waitForClickOrCancel("Select a Standby card to swap.");
+                            card = Game.library.waitForClickOrCancel("Select a Standby card to swap.");
                             if (user.standby.Contains(card))
                             {
                                 stdbyCards.Add(card);
@@ -444,7 +449,7 @@ namespace Warforged
             }
         }
 
-        private class WillUnbreakable : Card
+        public class WillUnbreakable : Card
         {
             public WillUnbreakable() : base()
             {
@@ -484,7 +489,7 @@ namespace Warforged
             }
         }
 
-        private class SurgingHope : Card
+        public class SurgingHope : Card
         {
             public SurgingHope() : base()
             {
@@ -508,14 +513,14 @@ namespace Warforged
                 if (((Adrius)user).form >= Form.Incarnate)
                 {
                     // Incarnate
-                    user.negateEmp = true;
+                    ((Adrius)user).negateEmp = true;
                 }
             }
         }
 
 
 
-        private class RubyHeart : Card
+        public class RubyHeart : Card
         {
             public RubyHeart() : base()
             {
@@ -526,7 +531,7 @@ namespace Warforged
             }
         }
 
-        private class EmeraldCore : Card
+        public class EmeraldCore : Card
         {
             public EmeraldCore() : base()
             {
@@ -537,7 +542,7 @@ namespace Warforged
             }
         }
 
-        private class SapphireMantle : Card
+        public class SapphireMantle : Card
         {
             public SapphireMantle() : base()
             {
@@ -548,13 +553,14 @@ namespace Warforged
             }
         }
 
-        private class Ascendance: Card
+        public class Ascendance: Card
         {
             public Ascendance() : base()
             {
-                name = "Ascendance (First Form)";
+                name = "Ascendance";
                 effect = "Effect: Strive (3): Gain 5 health.\nAspirer: Ascend to Bearer.\nBearer: Ascend to Incarnate and Shift this card.";
                 color = Color.blue;
+                active = false;
                 setAwakening();
             }
 
@@ -567,23 +573,26 @@ namespace Warforged
                 if (((Adrius)user).form == Form.Aspier)
                 {
                     ((Adrius)user).form = Form.Bearer;
+                    user.name = "Adrius (The Realm Bearer)";
                 }
                 if (((Adrius)user).form == Form.Bearer)
                 {
                     ((Adrius)user).form = Form.Incarnate;
+                    user.name = "Adrius (Ral'Taris Incarnate)";
                     user.invocation.Add(new DivineCataclysm());
-                    user.currCard = null;
+                    ((Adrius)user).currCard = null;
                 }
             }
         }
 
-        private class DivineCataclysm: Card
+        public class DivineCataclysm: Card
         {
             public DivineCataclysm() : base()
             {
-                name = "Divine Cataclysm (Incarnate Form)";
+                name = "Divine Cataclysm";
                 effect = "Effect: Strive (3): Deal damage equal to the sum of you and your opponent’s health.";
                 color = Color.red;
+                active = false;
                 setAwakening();
             }
 

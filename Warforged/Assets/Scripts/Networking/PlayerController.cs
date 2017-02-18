@@ -10,6 +10,11 @@ using System.IO;
 
 public class PlayerController : NetworkBehaviour
 {
+
+    [SyncVar]
+    private int serverReady = 0;
+    [SyncVar]
+    private int clientReady = 0;
     #region Player Variables
 
     public string playerName = "Fill"; // Screen name for player
@@ -17,8 +22,12 @@ public class PlayerController : NetworkBehaviour
     public Character opponent = null;
     public Character characterForTurn;         // String determining which card will be played by the local player each turn. Set by RPC calls below
 
+    public int prevServerReady = 0;
+    public int prevClientReady = 0;
     public string textToSend;          // Used in first scene for chat room
     public bool readyFlag = false;     // Used to determine whther local player is ready to move forward at any given moment.
+    public bool readyFlag1 = false;
+    public bool readyFlag2 = false;
     public static MatchController controller;// Match Controller reference
     public static PlayerController playerController;
     #endregion
@@ -62,6 +71,7 @@ public class PlayerController : NetworkBehaviour
         controller.OnPlayerStarted(this, null);
     }
 
+
     public override void OnStartLocalPlayer() // Called on client on connect
     {
         base.OnStartLocalPlayer();
@@ -73,7 +83,24 @@ public class PlayerController : NetworkBehaviour
         controller.OnPlayerDestroyed(this, null);
     }
     #endregion
-
+    [Server]
+    public void updateServerReady(int r)
+    {
+        serverReady = r;
+    }
+    [Client]
+    public void updateClientReady(int r)
+    {
+        clientReady = r;
+    }
+    public int getServerReady()
+    {
+        return serverReady;
+    }
+    public int getClientReady()
+    {
+        return clientReady;
+    }
     #region Networking
 
     /*
@@ -83,7 +110,18 @@ public class PlayerController : NetworkBehaviour
     relevant to you guys. Remember, you MUST call the Cmd version, or it will not sync correctly.
     All of the Cmd versions will call the Rpc versions of the methods.
     */
-    
+
+    [Command]
+    public void CmdClientReady(int seq)
+    {
+        clientReady = seq;
+    }
+    [ClientRpc]
+    public void RpcServerReady(int seq)
+    {
+        //if (!controller.localPlayer.isServer)
+            //controller.remotePlayer.remoteSequence = seq;
+    }
     [Command]
     public void CmdConnectionStatus(string status)
     {
@@ -111,13 +149,14 @@ public class PlayerController : NetworkBehaviour
     }
 
     [Command]
-    public void CmdUnReady()
+    public void CmdUnReady(bool isServer)
     {
-        RpcUnReady();
+        RpcUnReady(isServer);
     }
+    
 
     [ClientRpc]
-    void RpcUnReady()
+    void RpcUnReady(bool isServer)
     {
         /*
         This method takes in bool: isServer, which tells wether or not the client who called the method
@@ -129,8 +168,12 @@ public class PlayerController : NetworkBehaviour
         next turn in the game. If you need a better understanding, in my ButtonManager class this method was
         implemented twice so you can get an idea.
         */
-        controller.localPlayer.readyFlag = false;
-        controller.remotePlayer.readyFlag = false;
+        if (isServer == controller.localPlayer.isServer)
+            controller.localPlayer.readyFlag = false;
+        else
+        {
+            controller.remotePlayer.readyFlag = false;
+        }
     }
 
     [Command]
@@ -157,6 +200,60 @@ public class PlayerController : NetworkBehaviour
         else
         {
             controller.remotePlayer.readyFlag = true;
+        }
+    }
+
+    [Command]
+    public void CmdImReady1(bool isServer)
+    {
+        RpcImReady1(isServer);
+    }
+
+    [ClientRpc]
+    void RpcImReady1(bool isServer)
+    {
+        /*
+        This method takes in bool: isServer, which tells wether or not the client who called the method
+        is the same client who is currently running it now (as it runs on all machines connected). If it
+        is the same one, it sets the value of the ready flag on the local machine of this script. If it 
+        is not, it sets the value on the remote machine.
+        
+        Use this method in conjuction with your own to tell both machines they are ready to make the 
+        next turn in the game. If you need a better understanding, in my ButtonManager class this method was
+        implemented twice so you can get an idea.
+        */
+        if (isServer == controller.localPlayer.isServer)
+            controller.localPlayer.readyFlag1 = true;
+        else
+        {
+            controller.remotePlayer.readyFlag1 = true;
+        }
+    }
+
+    [Command]
+    public void CmdImReady2(bool isServer)
+    {
+        RpcImReady2(isServer);
+    }
+
+    [ClientRpc]
+    void RpcImReady2(bool isServer)
+    {
+        /*
+        This method takes in bool: isServer, which tells wether or not the client who called the method
+        is the same client who is currently running it now (as it runs on all machines connected). If it
+        is the same one, it sets the value of the ready flag on the local machine of this script. If it 
+        is not, it sets the value on the remote machine.
+        
+        Use this method in conjuction with your own to tell both machines they are ready to make the 
+        next turn in the game. If you need a better understanding, in my ButtonManager class this method was
+        implemented twice so you can get an idea.
+        */
+        if (isServer == controller.localPlayer.isServer)
+            controller.localPlayer.readyFlag2 = true;
+        else
+        {
+            controller.remotePlayer.readyFlag2 = true;
         }
     }
 
@@ -194,6 +291,7 @@ public class PlayerController : NetworkBehaviour
             XmlSerializer xml = new XmlSerializer(typeof(Character));
             Game.p2 = (Character)xml.Deserialize(new StringReader(charcter));
             SetupReferences(Game.p2, Game.p1);
+            StartGame.networkUpdated = true;
         }
     }
 
@@ -209,8 +307,8 @@ public class PlayerController : NetworkBehaviour
         /// Gets the opposing character from the network
         if (controller.localPlayer.isServer == isServer)
         {
-            
-            
+
+
         }
         else
         {
@@ -221,6 +319,7 @@ public class PlayerController : NetworkBehaviour
             Game.p2 = (Character)xml.Deserialize(new StringReader(charcter));
             SetupReferences(Game.p2, Game.p1);
         }
+        //NetworkServer.SetClientReady(controller.localPlayer.connectionToClient);
     }
 
     [Command]
