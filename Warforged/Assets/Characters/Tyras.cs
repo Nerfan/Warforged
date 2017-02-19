@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 
 namespace Warforged
 {
@@ -217,11 +218,16 @@ namespace Warforged
                 stdbyCard2 = null;
                 if (user.hp <= 5) // TODO does this come before or after
                 {
+                    List<Card> tmp = new List<Card>();
                     foreach (Card card in user.standby)
                     {
-                        if (card.color == Color.red)
+                        tmp.Add(card);
+                    }
+                    foreach(Card t in tmp)
+                    {
+                        if (t.color == Color.red)
                         {
-                            user.takeStandby(card);
+                            user.takeStandby(t);
                         }
                     }
                 }
@@ -263,16 +269,16 @@ namespace Warforged
                         Game.library.highlight(card1, 255, 255, 0);
                         Character.Card card2 = Game.library.waitForClick();
                         Game.library.clearAllHighlighting();
-                        if (user.hand.Contains(card1) && user.standby.Contains(card2))
+                        if (user.hand.Contains(card1) && user.standby.Contains(card2) && handCard1 != card1 && handCard1 != card2 && stdbyCard1 != card1 && stdbyCard1 != card2)
                         {
-                            handCard1 = card1;
-                            stdbyCard1 = card2;
+                            handCard2 = card1;
+                            stdbyCard2 = card2;
                             break;
                         }
-                        else if (user.hand.Contains(card2) && user.standby.Contains(card1))
+                        else if (user.hand.Contains(card2) && user.standby.Contains(card1) && handCard1 != card1 && handCard1 != card2 && stdbyCard1 != card1 && stdbyCard1 != card2)
                         {
-                            handCard1 = card2;
-                            stdbyCard1 = card1;
+                            handCard2 = card2;
+                            stdbyCard2 = card1;
                             break;
                         }
                     }
