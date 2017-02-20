@@ -1,4 +1,4 @@
 sceneSetups:
-- path: Assets/Scenes/WarforgedMatchMaking.unity
+- path: Assets/Scenes/WarforgedHandBuilder.unity
   isLoaded: 1
   isActive: 1
